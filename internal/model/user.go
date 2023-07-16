@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -12,7 +13,10 @@ type User struct {
 	Password string `gorm:"not null"`
 }
 
-const MinimumPasswordLength = 8
+const (
+	MinimumPasswordLength = 8
+	DefaultCost           = 10
+)
 
 func (u *User) Validate(db *gorm.DB) error {
 	if u.Email == "" {
@@ -39,9 +43,25 @@ func (u *User) Delete(db *gorm.DB) error {
 }
 
 func (u *User) BeforeCreate(db *gorm.DB) error {
+	// hash password
+	err := u.HashPassword()
+	if err != nil {
+		return err
+	}
+
 	return u.Validate(db)
 }
 
 func (u *User) BeforeUpdate(db *gorm.DB) error {
 	return u.Validate(db)
+}
+
+func (u *User) HashPassword() error {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(u.Password), DefaultCost)
+	if err != nil {
+		return err
+	}
+	u.Password = string(bytes)
+
+	return nil
 }

@@ -4,7 +4,7 @@ clean:
 
 # Run the application with live reload
 run:
-	gin run main.go
+	go run main.go
 
 migrateDB:
 	go run cmd/migration/main.go

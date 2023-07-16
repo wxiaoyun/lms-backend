@@ -33,8 +33,8 @@ func SetupAndRunApp() error {
 		ErrorHandler: api.ErrorHandler,
 	})
 
-	// attach middleware
-	middleware.SetupMiddleware(app)
+	// attach app middleware
+	middleware.SetupAppMiddleware(app)
 
 	// setup routes
 	router.SetUpRoutes(app)
