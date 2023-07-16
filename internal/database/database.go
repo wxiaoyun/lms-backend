@@ -7,7 +7,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var DB *gorm.DB
+var db *gorm.DB
 
 func OpenDataBase() error {
 	var err error
@@ -17,7 +17,7 @@ func OpenDataBase() error {
 		return err
 	}
 
-	DB, err = gorm.Open(postgres.Open(dsn), GetConfig())
+	db, err = gorm.Open(postgres.Open(dsn), GetConfig())
 	if err != nil {
 		return err
 	}
@@ -26,5 +26,5 @@ func OpenDataBase() error {
 }
 
 func GetDB() *gorm.DB {
-	return DB
+	return db
 }
