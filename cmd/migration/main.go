@@ -1,6 +1,8 @@
 package main
 
-import "auth-practice/internal/database"
+import (
+	"auth-practice/internal/database"
+)
 
 func main() {
 	database.OpenDataBase()

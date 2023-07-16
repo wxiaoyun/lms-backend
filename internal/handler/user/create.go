@@ -1,13 +1,14 @@
 package userhandler
 
 import (
+	"fmt"
+
+	"github.com/gofiber/fiber/v2"
+
 	"auth-practice/internal/api"
 	"auth-practice/internal/database"
 	"auth-practice/internal/params/userparams"
 	"auth-practice/internal/view/userview"
-	"fmt"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 func HandleCreateUser(c *fiber.Ctx) error {

@@ -8,7 +8,6 @@ require (
 	github.com/gofiber/swagger v0.1.12
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.9
-	github.com/pkg/errors v0.9.1
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.2
 )
