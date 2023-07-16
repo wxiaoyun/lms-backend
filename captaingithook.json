@@ -1,6 +1,6 @@
 {
 	"hooks": {
 		"pre-push": "golangci-lint run",
-		"pre-commit": "go mod tidy"
+		"pre-commit": "go mod tidy && gofmt -s -w . && go vet ./... && golangci-lint run"
 	}
 }

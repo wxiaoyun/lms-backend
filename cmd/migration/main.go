@@ -5,6 +5,12 @@ import (
 )
 
 func main() {
-	database.OpenDataBase()
-	database.AutoMigration()
+	err := database.OpenDataBase()
+	if err != nil {
+		panic(err)
+	}
+	err = database.AutoMigration()
+	if err != nil {
+		panic(err)
+	}
 }
