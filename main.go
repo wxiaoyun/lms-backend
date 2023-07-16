@@ -1,6 +1,8 @@
 package main
 
-import "auth-practice/internal/app"
+import (
+	"auth-practice/internal/app"
+)
 
 func main() {
 	// Setup and run the app
