@@ -7,6 +7,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Summary SignOut
+// @Description signs out the user and revoke their session
+// @Tags user
+// @Accept */*
+// @Produce plain
+// @Success 200 "OK"
+// @Router /api/v1/logout [get]
 func HandleSignOut(c *fiber.Ctx) error {
 	sess, err := session.Store.Get(c)
 	if err != nil {

@@ -11,6 +11,13 @@ import (
 	"auth-practice/internal/view/userview"
 )
 
+// @Summary Create a user
+// @Description create an instance of user in the database
+// @Tags user
+// @Accept */*
+// @Produce plain
+// @Success 200 "OK"
+// @Router /api/v1/signup [post]
 func HandleCreateUser(c *fiber.Ctx) error {
 	var params userparams.CreateUserParams
 	err := c.BodyParser(&params)

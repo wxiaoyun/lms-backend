@@ -2,7 +2,6 @@ package sessionmiddleware
 
 import (
 	"auth-practice/internal/session"
-	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,8 +9,8 @@ import (
 
 func SessionMiddleware(c *fiber.Ctx) error {
 	// skip auth routes - /api/v1/auth/*
-	fmt.Println(c.Path())
-	if strings.Split(c.Path(), "/")[3] == "auth" {
+	paths := strings.Split(c.Path(), "/")
+	if paths[1] == "swagger" || (len(paths) >= 3 && paths[3] == "auth") {
 		return c.Next()
 	}
 

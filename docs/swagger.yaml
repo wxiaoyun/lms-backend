@@ -1,0 +1,57 @@
+info:
+  contact: {}
+  title: Auth Practice API
+paths:
+  /api/v1/health:
+    get:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      summary: Show the status of server.
+      tags:
+      - health
+  /api/v1/login:
+    post:
+      consumes:
+      - '*/*'
+      description: signs in a user and creates a session
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      summary: sign in a user
+      tags:
+      - user
+  /api/v1/logout:
+    get:
+      consumes:
+      - '*/*'
+      description: signs out the user and revoke their session
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      summary: SignOut
+      tags:
+      - user
+  /api/v1/signup:
+    post:
+      consumes:
+      - '*/*'
+      description: create an instance of user in the database
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      summary: Create a user
+      tags:
+      - user
+swagger: "2.0"

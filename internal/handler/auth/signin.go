@@ -12,6 +12,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Summary sign in a user
+// @Description signs in a user and creates a session
+// @Tags user
+// @Accept */*
+// @Produce plain
+// @Success 200 "OK"
+// @Router /api/v1/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
 	var params userparams.BaseUserParams
 	err := c.BodyParser(&params)
