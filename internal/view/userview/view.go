@@ -1,9 +1,11 @@
 package userview
 
-import "auth-practice/internal/model"
+import (
+	"auth-practice/internal/model"
+)
 
 type UserView struct {
-	ID    uint   `json:"id;omitempty"`
+	ID    uint   `json:"id,omitempty"`
 	Email string `json:"email"`
 }
 

@@ -27,7 +27,7 @@ func HandleCreateUser(c *fiber.Ctx) error {
 
 	view := userview.ToView(user)
 
-	return c.Status(fiber.StatusCreated).JSON(api.ApiResponse{
+	return c.Status(fiber.StatusCreated).JSON(api.Response{
 		Data: view,
 		Messages: []string{fmt.Sprintf(
 			"User %s created successfully", user.Email,

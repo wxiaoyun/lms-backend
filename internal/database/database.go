@@ -4,7 +4,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // postgres driver
 )
 
 var db *gorm.DB

@@ -13,7 +13,7 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 		code = e.Code
 	}
 	c.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSONCharsetUTF8)
-	return c.Status(code).JSON(ApiResponse{
+	return c.Status(code).JSON(Response{
 		Error: err.Error(),
 	})
 }
