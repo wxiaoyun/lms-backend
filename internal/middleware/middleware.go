@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	sessionmiddleware "auth-practice/internal/middleware/session"
-	"auth-practice/internal/session"
+	sessionmiddleware "technical-test/internal/middleware/session"
+	"technical-test/internal/session"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

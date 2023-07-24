@@ -1,7 +1,55 @@
+definitions:
+  model.User:
+    type: object
 info:
   contact: {}
-  title: Auth Practice API
+  title: technical test API
 paths:
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - '*/*'
+      description: signs in a user and creates a session
+      parameters:
+      - description: User JSON
+        in: body
+        name: userjson
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: sign in a user
+      tags:
+      - user
+  /api/v1/auth/logout:
+    get:
+      consumes:
+      - '*/*'
+      description: signs out the user and revoke their session
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      summary: SignOut
+      tags:
+      - user
+  /api/v1/auth/signup:
+    post:
+      consumes:
+      - '*/*'
+      description: create an instance of user in the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Create a user
+      tags:
+      - user
   /api/v1/health:
     get:
       consumes:
@@ -15,43 +63,17 @@ paths:
       summary: Show the status of server.
       tags:
       - health
-  /api/v1/login:
-    post:
-      consumes:
-      - '*/*'
-      description: signs in a user and creates a session
-      produces:
-      - text/plain
-      responses:
-        "200":
-          description: OK
-      summary: sign in a user
-      tags:
-      - user
-  /api/v1/logout:
+  /api/v1/worksheet/:
     get:
       consumes:
       - '*/*'
-      description: signs out the user and revoke their session
+      description: list all the existing worksheets
       produces:
-      - text/plain
+      - application/json
       responses:
         "200":
           description: OK
-      summary: SignOut
+      summary: List all the existing worksheets
       tags:
-      - user
-  /api/v1/signup:
-    post:
-      consumes:
-      - '*/*'
-      description: create an instance of user in the database
-      produces:
-      - text/plain
-      responses:
-        "200":
-          description: OK
-      summary: Create a user
-      tags:
-      - user
+      - worksheet
 swagger: "2.0"

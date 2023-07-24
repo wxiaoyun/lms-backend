@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"auth-practice/internal/api"
-	"auth-practice/internal/dataaccess/user"
-	"auth-practice/internal/database"
-	"auth-practice/internal/params/userparams"
-	"auth-practice/internal/session"
-	"auth-practice/internal/view/userview"
 	"fmt"
+	"technical-test/internal/api"
+	"technical-test/internal/dataaccess/user"
+	"technical-test/internal/database"
+	"technical-test/internal/params/userparams"
+	"technical-test/internal/session"
+	"technical-test/internal/view/userview"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,9 +16,10 @@ import (
 // @Description signs in a user and creates a session
 // @Tags user
 // @Accept */*
-// @Produce plain
+// @Param   userjson  body     model.User     false  "User JSON"       default({ "email": "user@example", "password": "password" })
+// @Produce application/json
 // @Success 200 "OK"
-// @Router /api/v1/login [post]
+// @Router /api/v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
 	var params userparams.BaseUserParams
 	err := c.BodyParser(&params)

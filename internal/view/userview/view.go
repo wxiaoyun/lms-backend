@@ -1,7 +1,7 @@
 package userview
 
 import (
-	"auth-practice/internal/model"
+	"technical-test/internal/model"
 )
 
 type UserView struct {

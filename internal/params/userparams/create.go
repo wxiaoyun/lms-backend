@@ -1,6 +1,6 @@
 package userparams
 
-import "auth-practice/internal/model"
+import "technical-test/internal/model"
 
 type CreateUserParams struct {
 	BaseUserParams
@@ -8,4 +8,8 @@ type CreateUserParams struct {
 
 func (c *CreateUserParams) ToModel() *model.User {
 	return c.BaseUserParams.ToModel()
+}
+
+func (c *CreateUserParams) Validate() error {
+	return c.BaseUserParams.Validate()
 }

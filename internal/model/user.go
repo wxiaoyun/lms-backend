@@ -1,6 +1,8 @@
 package model
 
 import (
+	"regexp"
+
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -13,14 +15,39 @@ type User struct {
 	Password string `gorm:"not null"`
 }
 
+var (
+	emailReg = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+)
+
 const (
 	MinimumPasswordLength = 8
 	DefaultCost           = 10
 )
 
+func (u *User) ensureEmailIsUnique(db *gorm.DB) error {
+	var exists int64
+
+	result := db.Model(&User{}).
+		Where("email = ?", u.Email).
+		Count(&exists)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if exists > 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "email already exists")
+	}
+
+	return nil
+}
+
 func (u *User) Validate(db *gorm.DB) error {
 	if u.Email == "" {
 		return fiber.NewError(fiber.StatusBadRequest, "email is required")
+	}
+
+	if err := u.ensureEmailIsUnique(db); err != nil {
+		return err
 	}
 
 	if len(u.Password) < MinimumPasswordLength {
@@ -49,10 +76,18 @@ func (u *User) BeforeCreate(db *gorm.DB) error {
 		return err
 	}
 
+	if !emailReg.MatchString(u.Email) {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid email")
+	}
+
 	return u.Validate(db)
 }
 
 func (u *User) BeforeUpdate(db *gorm.DB) error {
+	if !emailReg.MatchString(u.Email) {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid email")
+	}
+
 	return u.Validate(db)
 }
 

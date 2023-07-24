@@ -3,7 +3,7 @@ package database
 import (
 	"errors"
 
-	"auth-practice/internal/model"
+	"technical-test/internal/model"
 )
 
 func AutoMigration() error {
@@ -11,7 +11,10 @@ func AutoMigration() error {
 		return errors.New("database is not initialized")
 	}
 
-	err := db.AutoMigrate(&model.User{})
+	err := db.AutoMigrate(
+		&model.User{},
+		&model.Worksheet{},
+	)
 	if err != nil {
 		return err
 	}

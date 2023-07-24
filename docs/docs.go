@@ -16,6 +16,76 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/auth/login": {
+            "post": {
+                "description": "signs in a user and creates a session",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "sign in a user",
+                "parameters": [
+                    {
+                        "description": "User JSON",
+                        "name": "userjson",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "get": {
+                "description": "signs out the user and revoke their session",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "SignOut",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/signup": {
+            "post": {
+                "description": "create an instance of user in the database",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create a user",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/v1/health": {
             "get": {
                 "description": "get the status of server.",
@@ -36,65 +106,30 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/login": {
-            "post": {
-                "description": "signs in a user and creates a session",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "sign in a user",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/api/v1/logout": {
+        "/api/v1/worksheet/": {
             "get": {
-                "description": "signs out the user and revoke their session",
+                "description": "list all the existing worksheets",
                 "consumes": [
                     "*/*"
                 ],
                 "produces": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "worksheet"
                 ],
-                "summary": "SignOut",
+                "summary": "List all the existing worksheets",
                 "responses": {
                     "200": {
                         "description": "OK"
                     }
                 }
             }
-        },
-        "/api/v1/signup": {
-            "post": {
-                "description": "create an instance of user in the database",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Create a user",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
+        }
+    },
+    "definitions": {
+        "model.User": {
+            "type": "object"
         }
     }
 }`
@@ -105,7 +140,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Auth Practice API",
+	Title:            "technical test API",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

@@ -1,4 +1,4 @@
-module auth-practice
+module technical-test
 
 go 1.20
 

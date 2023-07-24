@@ -1,8 +1,8 @@
 package sessionmiddleware
 
 import (
-	"auth-practice/internal/session"
 	"strings"
+	"technical-test/internal/session"
 
 	"github.com/gofiber/fiber/v2"
 )

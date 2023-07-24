@@ -5,31 +5,25 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"auth-practice/internal/api"
-	"auth-practice/internal/config"
-	"auth-practice/internal/database"
-	"auth-practice/internal/middleware"
-	"auth-practice/internal/router"
+	"technical-test/internal/api"
+	"technical-test/internal/config"
+	"technical-test/internal/database"
+	"technical-test/internal/middleware"
+	"technical-test/internal/router"
 )
 
 func SetupAndRunApp() error {
 	var err error
 
 	// load ENV
-	err = config.LoadENV()
-	if err != nil {
-		return err
-	}
-
-	// open database
-	err = database.OpenDataBase()
+	err = LoadEnvAndConnectToDB()
 	if err != nil {
 		return err
 	}
 
 	// create app
 	app := fiber.New(fiber.Config{
-		AppName:      "auth-practice",
+		AppName:      "tech-test",
 		ErrorHandler: api.ErrorHandler,
 	})
 
@@ -45,4 +39,18 @@ func SetupAndRunApp() error {
 	// get the port and start
 	port := os.Getenv("PORT")
 	return app.Listen(":" + port)
+}
+
+func LoadEnvAndConnectToDB() error {
+	err := config.LoadENV()
+	if err != nil {
+		return err
+	}
+
+	err = database.OpenDataBase()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -3,4 +3,5 @@
 vendor/
 vendor
 
-.env.*
+.env.development
+.env.production

@@ -1,7 +1,7 @@
 package user
 
 import (
-	"auth-practice/internal/model"
+	"technical-test/internal/model"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -23,4 +23,16 @@ func VerifyLogin(db *gorm.DB, user *model.User) error {
 	}
 
 	return nil
+}
+
+func ReadByEmail(db *gorm.DB, email string) (*model.User, error) {
+	var user model.User
+	result := db.Model(&model.User{}).
+		Where("email = ?", email).
+		First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, nil
 }

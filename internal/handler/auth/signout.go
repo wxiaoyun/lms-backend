@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"auth-practice/internal/api"
-	"auth-practice/internal/session"
+	"technical-test/internal/api"
+	"technical-test/internal/session"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -13,7 +13,7 @@ import (
 // @Accept */*
 // @Produce plain
 // @Success 200 "OK"
-// @Router /api/v1/logout [get]
+// @Router /api/v1/auth/logout [get]
 func HandleSignOut(c *fiber.Ctx) error {
 	sess, err := session.Store.Get(c)
 	if err != nil {

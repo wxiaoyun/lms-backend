@@ -24,7 +24,6 @@ linters-settings:
 
   forbidigo:
     forbid:
-      - ^(fmt\.Print(|f|ln)|print|println)$
       - 'http\.Default(Client|Transport)'
       # TODO: Eventually enable these patterns
       # - 'time\.Sleep'
@@ -138,7 +137,6 @@ linters:
     - bodyclose
     - containedctx
     - contextcheck
-    - depguard
     - dogsled
     - durationcheck
     - errcheck

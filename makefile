@@ -11,3 +11,10 @@ run:
 
 migrateDB:
 	go run cmd/migration/main.go
+
+seedDB:
+	go run cmd/seed/main.go
+
+setupDB:
+	migrateDB
+	seedDB

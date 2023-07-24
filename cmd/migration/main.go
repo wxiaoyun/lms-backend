@@ -1,17 +1,12 @@
 package main
 
 import (
-	"auth-practice/internal/config"
-	"auth-practice/internal/database"
+	"technical-test/internal/app"
+	"technical-test/internal/database"
 )
 
 func main() {
-	err := config.LoadENV()
-	if err != nil {
-		panic(err)
-	}
-
-	err = database.OpenDataBase()
+	err := app.LoadEnvAndConnectToDB()
 	if err != nil {
 		panic(err)
 	}

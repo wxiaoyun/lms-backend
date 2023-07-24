@@ -5,22 +5,27 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"auth-practice/internal/api"
-	"auth-practice/internal/database"
-	"auth-practice/internal/params/userparams"
-	"auth-practice/internal/view/userview"
+	"technical-test/internal/api"
+	"technical-test/internal/database"
+	"technical-test/internal/params/userparams"
+	"technical-test/internal/view/userview"
 )
 
 // @Summary Create a user
 // @Description create an instance of user in the database
 // @Tags user
 // @Accept */*
-// @Produce plain
+// @Produce application/json
 // @Success 200 "OK"
-// @Router /api/v1/signup [post]
+// @Router /api/v1/auth/signup [post]
 func HandleCreateUser(c *fiber.Ctx) error {
 	var params userparams.CreateUserParams
 	err := c.BodyParser(&params)
+	if err != nil {
+		return err
+	}
+
+	err = params.Validate()
 	if err != nil {
 		return err
 	}
