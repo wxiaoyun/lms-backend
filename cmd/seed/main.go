@@ -74,6 +74,17 @@ func seedUser(db *gorm.DB) (*model.User, error) {
 }
 
 func seedWorkSheets(db *gorm.DB, user1 *model.User) error {
+	var count int64
+	result := db.Model(&model.Worksheet{}).Count(&count)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	// If there are already 1000 work sheets, do not seed
+	if count >= 1000 {
+		return nil
+	}
+
 	workSheets := make([]model.Worksheet, 1000)
 	for i := 0; i < 1000; i++ {
 		workSheets[i] = model.Worksheet{
