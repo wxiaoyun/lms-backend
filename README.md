@@ -1,4 +1,4 @@
-# My (Golang) Version of the Rails Backend
+# Golang Version of the Rails Backend
 
 ## Setup
 
@@ -7,9 +7,6 @@
 `https://golang.google.cn/doc/install`
 
 ### Setting up DB
-
-- Make sure you have created the corresponding database in your local postgresql with the same name as the one in the .env.development file.
-- Run the following command to setup the database:
 
 ```bash
 make setupDB
