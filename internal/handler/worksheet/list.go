@@ -32,8 +32,8 @@ func HandleList(c *fiber.Ctx) error {
 
 	return c.JSON(api.Response{
 		Data: view,
-		Messages: []string{
-			"worksheets listed successfully",
+		Messages: []api.Message{
+			api.SuccessMessage("worksheets listed successfully"),
 		},
 	})
 }

@@ -18,7 +18,7 @@ func HandleSignOut(c *fiber.Ctx) error {
 	sess, err := session.Store.Get(c)
 	if err != nil {
 		return c.Status(fiber.StatusOK).JSON(api.Response{
-			Messages: []string{"User is not logged in"},
+			Messages: []api.Message{api.ErrorMessage("User is not logged in")},
 		})
 	}
 
@@ -28,6 +28,6 @@ func HandleSignOut(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(api.Response{
-		Messages: []string{"User is logged out successfully"},
+		Messages: []api.Message{api.SuccessMessage("User is logged out successfully")},
 	})
 }

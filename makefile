@@ -9,12 +9,16 @@ swagger:
 run:
 	go run main.go
 
+createDB:
+	go run cmd/createdb/main.go
+
+dropDB:
+	go run cmd/dropdb/main.go
+
 migrateDB:
 	go run cmd/migration/main.go
 
 seedDB:
 	go run cmd/seed/main.go
 
-setupDB:
-	migrateDB
-	seedDB
+setupDB: createDB migrateDB seedDB

@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func dnsBuilder() (string, error) {
+func dnsBuilder(isDefault bool) (string, error) {
 	dsn := strings.Builder{}
 
 	dbUsername, ok := os.LookupEnv("DB_USERNAME")
@@ -33,7 +33,7 @@ func dnsBuilder() (string, error) {
 	}
 
 	dbName, ok := os.LookupEnv("DB_NAME")
-	if ok {
+	if ok && !isDefault {
 		_, err := dsn.WriteString(" dbname=" + dbName)
 		if err != nil {
 			return "", err

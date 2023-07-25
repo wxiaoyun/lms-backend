@@ -23,8 +23,10 @@ func HandleRead(c *fiber.Ctx) error {
 	worksheetID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(api.Response{
-			Messages: []string{fmt.Sprintf("%s is not a valid worksheet id.", param)},
-			Error:    err.Error(),
+			Messages: []api.Message{api.ErrorMessage(
+				fmt.Sprintf("%s is not a valid worksheet id.", param)),
+			},
+			Error: err.Error(),
 		})
 	}
 
@@ -37,7 +39,9 @@ func HandleRead(c *fiber.Ctx) error {
 	view := worksheetview.ToView(ws)
 
 	return c.JSON(api.Response{
-		Data:     view,
-		Messages: []string{fmt.Sprintf("Worksheet %s retrieved successfully.", ws.Title)},
+		Data: view,
+		Messages: []api.Message{api.ErrorMessage(
+			fmt.Sprintf("Worksheet %s retrieved successfully.", ws.Title)),
+		},
 	})
 }

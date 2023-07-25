@@ -14,6 +14,7 @@ func AutoMigration() error {
 	err := db.AutoMigrate(
 		&model.User{},
 		&model.Worksheet{},
+		&model.Question{},
 	)
 	if err != nil {
 		return err

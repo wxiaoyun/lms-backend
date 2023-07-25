@@ -14,7 +14,7 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 	}
 	c.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSONCharsetUTF8)
 	return c.Status(code).JSON(Response{
-		Messages: []string{"Something went wrong: " + err.Error()},
+		Messages: []Message{ErrorMessage("Something went wrong: " + err.Error())},
 		Error:    err.Error(),
 	})
 }

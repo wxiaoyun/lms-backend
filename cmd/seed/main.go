@@ -33,8 +33,15 @@ func main() {
 	}
 
 	//nolint:revive // ignore error
-	fmt.Println("Seeding work sheets...")
+	fmt.Println("Seeding worksheets...")
 	err = seedWorkSheets(db, user1)
+	if err != nil {
+		panic(err)
+	}
+
+	//nolint:revive // ignore error
+	fmt.Println("Seeding questions...")
+	err = seedQuestions(db)
 	if err != nil {
 		panic(err)
 	}
@@ -75,21 +82,21 @@ func seedUser(db *gorm.DB) (*model.User, error) {
 
 func seedWorkSheets(db *gorm.DB, user1 *model.User) error {
 	var count int64
+
 	result := db.Model(&model.Worksheet{}).Count(&count)
 	if result.Error != nil {
 		return result.Error
 	}
 
-	// If there are already 1000 work sheets, do not seed
 	if count >= 1000 {
 		return nil
 	}
 
 	workSheets := make([]model.Worksheet, 1000)
-	for i := 0; i < 1000; i++ {
-		workSheets[i] = model.Worksheet{
-			Title:       fmt.Sprintf("Title - %d", i+1),
-			Description: fmt.Sprintf("Description - %d", i+1),
+	for i := 1; i <= 1000; i++ {
+		workSheets[i-1] = model.Worksheet{
+			Title:       fmt.Sprintf("Title - %d", i),
+			Description: fmt.Sprintf("Description - %d", i),
 			//nolint:gosec // cost does not need to be secure
 			Cost: rand.Float64() * 10,
 			//nolint:gosec // cost does not need to be secure
@@ -99,4 +106,31 @@ func seedWorkSheets(db *gorm.DB, user1 *model.User) error {
 	}
 
 	return db.Create(&workSheets).Error
+}
+
+func seedQuestions(db *gorm.DB) error {
+	var count int64
+
+	result := db.Model(&model.Question{}).Count(&count)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if count >= 1000 {
+		return nil
+	}
+
+	questions := make([]model.Question, 1000)
+	for i := 1; i <= 1000; i++ {
+		questions[i-1] = model.Question{
+			Description: fmt.Sprintf("Description - %d", i),
+			Answer:      fmt.Sprintf("Answer - %d", i),
+			//nolint:gosec // cost does not need to be secure
+			Cost: rand.Float64() * 10,
+			//nolint:gosec // cost does not need to be secure
+			WorksheetID: int64(rand.Intn(1000) + 1),
+		}
+	}
+
+	return db.Create(&questions).Error
 }
