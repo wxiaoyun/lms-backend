@@ -2,6 +2,7 @@ package sessionmiddleware
 
 import (
 	"strings"
+	"technical-test/internal/api"
 	"technical-test/internal/session"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,7 +22,9 @@ func SessionMiddleware(c *fiber.Ctx) error {
 
 	token := sess.Get(session.CookieKey)
 	if token == nil {
-		return fiber.ErrUnauthorized
+		return c.Status(fiber.StatusUnauthorized).JSON(api.Response{
+			Messages: []api.Message{api.InfoMessage("User is not logged in")},
+		})
 	}
 
 	return c.Next()

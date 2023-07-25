@@ -16,6 +16,7 @@ func SetUpRoutes(app *fiber.App) error {
 	publicRoutes.Get("/heath", health.HandleHealth)
 
 	authRoutes := publicRoutes.Group("/auth")
+	authRoutes.Get("/currentuser", userhandler.HandleGetCurrentUser)
 	authRoutes.Post("/signup", userhandler.HandleCreateUser)
 	authRoutes.Post("/login", auth.HandleSignIn)
 	authRoutes.Get("/logout", auth.HandleSignOut)
