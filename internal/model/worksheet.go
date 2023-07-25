@@ -8,12 +8,14 @@ import (
 type Worksheet struct {
 	gorm.Model
 
-	Title       string `gorm:"unique;not null"`
+	Title       string `gorm:"not null"`
 	UserID      uint   `gorm:"not null"`
 	User        *User
-	Cost        float64 `gorm:"not null"`
-	Price       float64 `gorm:"not null"`
+	Cost        float64 `gorm:"not null;check:cost > 0"`
+	Price       float64 `gorm:"not null;check:price > 0"`
 	Description string  `gorm:"not null"`
+
+	Questions []Question
 }
 
 func (w *Worksheet) ensureTitleIsUnique(db *gorm.DB) error {

@@ -1,6 +1,4 @@
-# Golang Version of the Rails Backend
-
-Because ruby cringe
+# My (Golang) Version of the Rails Backend
 
 ## Setup
 

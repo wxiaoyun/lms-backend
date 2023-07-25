@@ -2,24 +2,24 @@ package worksheetview
 
 import (
 	"technical-test/internal/model"
+	"technical-test/internal/view/questionview"
 )
 
 type WorkSheetView struct {
-	ID          uint    `json:"id,omitempty"`
-	Title       string  `json:"title"`
-	UserID      uint    `json:"user_id"`
-	Cost        float64 `json:"cost"`
-	Price       float64 `json:"price"`
-	Description string  `json:"description"`
+	WorkSheetListView
+
+	Questions []questionview.QuestionView `json:"questions"`
 }
 
 func ToView(workSheet *model.Worksheet) *WorkSheetView {
+	questionViews := make([]questionview.QuestionView, len(workSheet.Questions))
+	for i, question := range workSheet.Questions {
+		//nolint:gosec // loop does not modify struct
+		questionViews[i] = *questionview.ToView(&question)
+	}
+
 	return &WorkSheetView{
-		ID:          workSheet.ID,
-		Title:       workSheet.Title,
-		UserID:      workSheet.UserID,
-		Cost:        workSheet.Cost,
-		Price:       workSheet.Price,
-		Description: workSheet.Description,
+		WorkSheetListView: *ToListView(workSheet),
+		Questions:         questionViews,
 	}
 }
