@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"technical-test/internal/model"
 
 	"github.com/gofiber/fiber/v2"
@@ -30,8 +31,11 @@ func Read(db *gorm.DB, id int64) (*model.User, error) {
 	result := db.Model(&model.User{}).
 		Where("id = ?", id).
 		First(&user)
-	if result.Error != nil {
-		return nil, result.Error
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fiber.NewError(fiber.StatusNotFound, "user not found")
+		}
+		return nil, err
 	}
 
 	return &user, nil
@@ -42,8 +46,11 @@ func ReadByEmail(db *gorm.DB, email string) (*model.User, error) {
 	result := db.Model(&model.User{}).
 		Where("email = ?", email).
 		First(&user)
-	if result.Error != nil {
-		return nil, result.Error
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fiber.NewError(fiber.StatusNotFound, "user not found")
+		}
+		return nil, err
 	}
 
 	return &user, nil

@@ -32,6 +32,9 @@ func SessionMiddleware(c *fiber.Ctx) error {
 		if err != nil {
 			return err
 		}
+		if err := sess.Destroy(); err != nil {
+			return err
+		}
 		return fiber.NewError(fiber.StatusUnauthorized, "User is not logged in")
 	}
 

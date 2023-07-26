@@ -19,6 +19,9 @@ func SetupStore() {
 	Store = session.New(session.Config{
 		Expiration:     MaxAge,
 		KeyLookup:      "cookie:token",
+		CookieSameSite: "None",
+		CookieSecure:   true,
 		CookieHTTPOnly: true,
+		CookiePath:     "/",
 	})
 }

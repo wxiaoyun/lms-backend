@@ -1,8 +1,10 @@
 package worksheet
 
 import (
+	"errors"
 	"technical-test/internal/model"
 
+	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
@@ -29,8 +31,11 @@ func Read(db *gorm.DB, id int64) (*model.Worksheet, error) {
 		Scopes(preloadAssociations).
 		Where("id = ?", id).
 		First(&worksheet)
-	if result.Error != nil {
-		return nil, result.Error
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fiber.NewError(fiber.StatusNotFound, "user not found")
+		}
+		return nil, err
 	}
 
 	return &worksheet, nil

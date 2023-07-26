@@ -17,8 +17,6 @@ func HandleGetCurrentUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	fmt.Println("handlers: ", userID)
-
 	db := database.GetDB()
 
 	user1, err := user.Read(db, userID)

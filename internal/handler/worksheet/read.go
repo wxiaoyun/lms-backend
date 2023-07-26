@@ -40,7 +40,7 @@ func HandleRead(c *fiber.Ctx) error {
 
 	return c.JSON(api.Response{
 		Data: view,
-		Messages: []api.Message{api.ErrorMessage(
+		Messages: []api.Message{api.SuccessMessage(
 			fmt.Sprintf("Worksheet %s retrieved successfully.", ws.Title)),
 		},
 	})

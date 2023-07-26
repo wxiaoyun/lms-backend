@@ -20,11 +20,10 @@ func SetupAppMiddleware(app *fiber.App) {
 	}))
 
 	session.SetupStore()
-
 	app.Use(sessionmiddleware.SessionMiddleware)
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
-		AllowOrigins:     "*",
+		AllowOrigins:     "http://localhost:3000",
 		AllowHeaders:     "Origin, Content-Type, Accept",
 	}))
 }
