@@ -1,6 +1,11 @@
 package session
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"fmt"
+	"technical-test/internal/api"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 type LoginSession struct {
 	UserID         uint
@@ -8,17 +13,37 @@ type LoginSession struct {
 	IsMasquerading bool
 }
 
-func GetLoginSession(c *fiber.Ctx) (LoginSession, error) {
+func GetLoginSession(c *fiber.Ctx) (int64, error) {
 	sess, err := Store.Get(c)
 	if err != nil {
-		return LoginSession{}, err
+		return 0, err
 	}
 
-	loginSession := sess.Get(CookieKey)
-	if loginSession == nil {
-		return LoginSession{}, nil
+	token := sess.Get(CookieKey)
+	if token == nil {
+
+		c.Status(fiber.StatusUnauthorized).JSON(api.Response{
+			Messages: []api.Message{api.InfoMessage("User is not logged in")},
+		})
+		return 0, fiber.NewError(fiber.StatusUnauthorized, "User is not logged in")
+	}
+	fmt.Println("Mdware1: ", token)
+
+	userID, ok := token.(uint)
+	if !ok {
+		return 0, fiber.NewError(fiber.StatusInternalServerError, "Erro casting session to integer")
+	}
+	fmt.Println("Mdware2: ", userID)
+
+	if userID == 0 {
+		//nolint:errcheck // this always return nil error
+		c.Status(fiber.StatusUnauthorized).JSON(api.Response{
+			Messages: []api.Message{api.InfoMessage("User is not logged in")},
+		})
+		return 0, fiber.NewError(fiber.StatusUnauthorized, "User is not logged in")
 	}
 
-	//nolint:forcetypeassert // we know that loginSession is a LoginSession
-	return loginSession.(LoginSession), nil
+	fmt.Println("Mdware3: ", userID)
+
+	return int64(userID), nil
 }

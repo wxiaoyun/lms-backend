@@ -12,7 +12,9 @@ import (
 
 // attach middleware
 func SetupAppMiddleware(app *fiber.App) {
-	app.Use(recover.New())
+	app.Use(recover.New(recover.Config{
+		EnableStackTrace: true,
+	}))
 	app.Use(logger.New(logger.Config{
 		Format: "[${ip}]:${port} ${status} - ${method} ${path} ${latency}\n",
 	}))

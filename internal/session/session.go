@@ -1,7 +1,6 @@
 package session
 
 import (
-	"encoding/gob"
 	"time"
 
 	"github.com/gofiber/fiber/v2/middleware/session"
@@ -19,8 +18,7 @@ const (
 func SetupStore() {
 	Store = session.New(session.Config{
 		Expiration:     MaxAge,
+		KeyLookup:      "cookie:token",
 		CookieHTTPOnly: true,
 	})
-
-	gob.Register(LoginSession{})
 }

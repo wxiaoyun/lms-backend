@@ -29,7 +29,7 @@ func HandleSignIn(c *fiber.Ctx) error {
 
 	userModel := params.ToModel()
 	db := database.GetDB()
-	err = user.VerifyLogin(db, userModel)
+	userModel, err = user.VerifyLogin(db, userModel)
 	if err != nil {
 		return err
 	}
@@ -39,16 +39,11 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
-	sess.Set(session.CookieKey, session.LoginSession{
-		UserID:         userModel.ID,
-		Email:          userModel.Email,
-		IsMasquerading: false,
-	})
+	sess.Set(session.CookieKey, userModel.ID)
 	err = sess.Save()
 	if err != nil {
 		return err
 	}
-	c.UserContext()
 
 	view := userview.ToView(userModel)
 

@@ -12,16 +12,16 @@ import (
 )
 
 func HandleGetCurrentUser(c *fiber.Ctx) error {
-	sess, err := session.GetLoginSession(c)
+	userID, err := session.GetLoginSession(c)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(api.Response{
-			Messages: []api.Message{api.InfoMessage("User is not logged in")},
-		})
+		return err
 	}
+
+	fmt.Println("handlers: ", userID)
 
 	db := database.GetDB()
 
-	user1, err := user.ReadByEmail(db, sess.Email)
+	user1, err := user.Read(db, userID)
 	if err != nil {
 		return err
 	}
