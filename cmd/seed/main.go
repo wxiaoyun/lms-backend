@@ -120,8 +120,8 @@ func seedQuestions(db *gorm.DB) error {
 		return nil
 	}
 
-	questions := make([]model.Question, 1000)
-	for i := 1; i <= 1000; i++ {
+	questions := make([]model.Question, 3000)
+	for i := 1; i <= 3000; i++ {
 		questions[i-1] = model.Question{
 			Description: fmt.Sprintf("Description - %d", i),
 			Answer:      fmt.Sprintf("Answer - %d", i),
