@@ -126,11 +126,15 @@ func seedQuestions(db *gorm.DB) error {
 		return nil
 	}
 
+	loremIpsumGenerator := loremipsum.New()
+
 	questions := make([]model.Question, 3000)
 	for i := 1; i <= 3000; i++ {
 		questions[i-1] = model.Question{
-			Description: fmt.Sprintf("Description - %d", i),
-			Answer:      fmt.Sprintf("Answer - %d", i),
+			//nolint:gosec // description does not need to be secure
+			Description: loremIpsumGenerator.Sentences(rand.Intn(3) + 1),
+			//nolint:gosec // answer does not need to be secure
+			Answer: loremIpsumGenerator.Paragraphs(rand.Intn(3) + 1),
 			//nolint:gosec // cost does not need to be secure
 			Cost: rand.Float64() * 10,
 			//nolint:gosec // cost does not need to be secure
