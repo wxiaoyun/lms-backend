@@ -8,6 +8,8 @@ import (
 	"technical-test/internal/database"
 	"technical-test/internal/model"
 
+	"github.com/go-loremipsum/loremipsum"
+
 	"gorm.io/gorm"
 )
 
@@ -92,11 +94,15 @@ func seedWorkSheets(db *gorm.DB, user1 *model.User) error {
 		return nil
 	}
 
+	loremIpsumGenerator := loremipsum.New()
+
 	workSheets := make([]model.Worksheet, 1000)
 	for i := 1; i <= 1000; i++ {
 		workSheets[i-1] = model.Worksheet{
-			Title:       fmt.Sprintf("Title - %d", i),
-			Description: fmt.Sprintf("Description - %d", i),
+			//nolint:gosec // title does not need to be secure
+			Title: loremIpsumGenerator.Words(rand.Intn(10) + 1),
+			//nolint:gosec // description does not need to be secure
+			Description: loremIpsumGenerator.Paragraphs(rand.Intn(10) + 1),
 			//nolint:gosec // cost does not need to be secure
 			Cost: rand.Float64() * 10,
 			//nolint:gosec // cost does not need to be secure
