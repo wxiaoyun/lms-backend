@@ -6,6 +6,10 @@
 
 `https://golang.google.cn/doc/install`
 
+### Updating Environment Variables
+
+- Edit the variables in .env.development accordingly
+
 ### Setting up DB
 
 ```bash
