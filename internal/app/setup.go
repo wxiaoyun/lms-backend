@@ -34,7 +34,7 @@ func SetupAndRunApp() error {
 	router.SetUpRoutes(app)
 
 	// attach swagger
-	config.AddSwaggerRoutes(app)
+	AddSwaggerRoutes(app)
 
 	// get the port and start
 	port := os.Getenv("PORT")

@@ -75,8 +75,13 @@ func (u *User) Delete(db *gorm.DB) error {
 }
 
 func (u *User) BeforeCreate(db *gorm.DB) error {
+	err := u.Validate(db)
+	if err != nil {
+		return err
+	}
+
 	// hash password
-	err := u.HashPassword()
+	err = u.HashPassword()
 	if err != nil {
 		return err
 	}
@@ -85,7 +90,7 @@ func (u *User) BeforeCreate(db *gorm.DB) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid email")
 	}
 
-	return u.Validate(db)
+	return nil
 }
 
 func (u *User) BeforeUpdate(db *gorm.DB) error {
