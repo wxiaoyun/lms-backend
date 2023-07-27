@@ -9,6 +9,7 @@ type QuestionView struct {
 	Description string  `json:"description"`
 	Answer      string  `json:"answer"`
 	Cost        float64 `json:"cost"`
+	WorksheetID uint    `json:"worksheet_id"`
 }
 
 func ToView(question *model.Question) *QuestionView {
@@ -17,5 +18,6 @@ func ToView(question *model.Question) *QuestionView {
 		Description: question.Description,
 		Answer:      question.Answer,
 		Cost:        question.Cost,
+		WorksheetID: question.WorksheetID,
 	}
 }

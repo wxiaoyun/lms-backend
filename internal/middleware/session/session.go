@@ -15,7 +15,7 @@ func SessionMiddleware(c *fiber.Ctx) error {
 		return c.Next()
 	}
 
-	if len(paths) >= 3 && paths[3] == "auth" {
+	if len(paths) >= 3 && paths[3] == "auth" || paths[3] == "health" {
 		return c.Next()
 	}
 

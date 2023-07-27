@@ -21,6 +21,7 @@ var (
 
 const (
 	MinimumPasswordLength = 8
+	MaximumPasswordLength = 32
 	DefaultCost           = 10
 )
 
@@ -52,6 +53,10 @@ func (u *User) Validate(db *gorm.DB) error {
 
 	if len(u.Password) < MinimumPasswordLength {
 		return fiber.NewError(fiber.StatusBadRequest, "password must be at least 8 characters")
+	}
+
+	if len(u.Password) > MaximumPasswordLength {
+		return fiber.NewError(fiber.StatusBadRequest, "password must be at most 32 characters")
 	}
 
 	return nil

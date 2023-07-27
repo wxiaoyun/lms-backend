@@ -12,7 +12,7 @@ type Question struct {
 	Answer      string  `gorm:"not null"`
 	Cost        float64 `gorm:"not null;check:cost > 0"`
 
-	WorksheetID int64 `gorm:"not null"`
+	WorksheetID uint `gorm:"not null"`
 	Worksheet   *Worksheet
 }
 

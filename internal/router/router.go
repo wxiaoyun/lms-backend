@@ -13,7 +13,7 @@ func SetUpRoutes(app *fiber.App) error {
 	v1Routes := app.Group("/api/v1")
 
 	publicRoutes := v1Routes.Group("")
-	publicRoutes.Get("/heath", health.HandleHealth)
+	publicRoutes.Get("/health", health.HandleHealth)
 
 	authRoutes := publicRoutes.Group("/auth")
 	authRoutes.Get("/currentuser", userhandler.HandleGetCurrentUser)
