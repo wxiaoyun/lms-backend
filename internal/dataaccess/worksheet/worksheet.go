@@ -16,6 +16,7 @@ func List(db *gorm.DB) ([]model.Worksheet, error) {
 	var worksheets []model.Worksheet
 
 	result := db.Model(&model.Worksheet{}).
+		Scopes(preloadAssociations).
 		Find(&worksheets)
 	if result.Error != nil {
 		return nil, result.Error

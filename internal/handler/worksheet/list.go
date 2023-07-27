@@ -24,10 +24,10 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	var view = []*worksheetview.WorkSheetListView{}
+	var view = []*worksheetview.WorkSheetView{}
 	for _, w := range worksheets {
 		//nolint:gosec // loop does not modify struct
-		view = append(view, worksheetview.ToListView(&w))
+		view = append(view, worksheetview.ToView(&w))
 	}
 
 	return c.JSON(api.Response{
