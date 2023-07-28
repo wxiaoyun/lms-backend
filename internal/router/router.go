@@ -24,6 +24,7 @@ func SetUpRoutes(app *fiber.App) error {
 	privateRoutes := v1Routes.Group("")
 
 	worksheetRoutes := privateRoutes.Group("/worksheet")
+	worksheetRoutes.Get("/summary", worksheethandler.HandleWorksheetSummary)
 	worksheetRoutes.Get("/", worksheethandler.HandleList)
 	worksheetRoutes.Get("/:id", worksheethandler.HandleRead)
 

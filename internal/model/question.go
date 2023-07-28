@@ -72,3 +72,7 @@ func (q *Question) BeforeCreate(db *gorm.DB) error {
 func (q *Question) BeforeUpdate(db *gorm.DB) error {
 	return q.Validate(db)
 }
+
+func (q *Question) GetCost() float64 {
+	return q.Cost
+}

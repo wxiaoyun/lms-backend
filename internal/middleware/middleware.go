@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"os"
 	sessionmiddleware "technical-test/internal/middleware/session"
 	"technical-test/internal/session"
 
@@ -23,7 +24,7 @@ func SetupAppMiddleware(app *fiber.App) {
 	app.Use(sessionmiddleware.SessionMiddleware)
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
-		AllowOrigins:     "http://localhost:3000",
+		AllowOrigins:     os.Getenv("FRONTEND_URL"),
 		AllowHeaders:     "Origin, Content-Type, Accept",
 	}))
 }

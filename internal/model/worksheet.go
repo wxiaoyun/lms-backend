@@ -78,3 +78,28 @@ func (w *Worksheet) BeforeCreate(db *gorm.DB) error {
 func (w *Worksheet) BeforeUpdate(db *gorm.DB) error {
 	return w.Validate(db)
 }
+
+// Assumes questions is properly preloaded
+func (w *Worksheet) GetTotalCost() float64 {
+	var cost float64
+	for _, q := range w.Questions {
+		cost += q.GetCost()
+	}
+	return cost + w.Cost
+}
+
+func (w *Worksheet) GetTotalPrice() float64 {
+	return w.Price
+}
+
+func (w *Worksheet) GetTotalProfit() float64 {
+	return w.GetTotalPrice() - w.GetTotalCost()
+}
+
+func (w *Worksheet) IsPositiveProfit() bool {
+	return w.GetTotalProfit() > 0
+}
+
+func (w *Worksheet) IsNegativeProfit() bool {
+	return w.GetTotalProfit() < 0
+}
