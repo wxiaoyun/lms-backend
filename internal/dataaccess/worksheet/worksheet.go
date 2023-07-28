@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"technical-test/internal/model"
 	viewmodel "technical-test/internal/viewmodel/worksheet"
+	collection "technical-test/pkg/collectionquery"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -14,11 +15,14 @@ func preloadAssociations(db *gorm.DB) *gorm.DB {
 	return db.Preload("Questions")
 }
 
-func List(db *gorm.DB) ([]model.Worksheet, error) {
+func List(db *gorm.DB, cq *collection.Query) ([]model.Worksheet, error) {
 	var worksheets []model.Worksheet
 
 	result := db.Model(&model.Worksheet{}).
 		Scopes(preloadAssociations).
+		Where("title ILIKE ? OR description ILIKE ?", "%"+cq.Search+"%", "%"+cq.Search+"%").
+		Offset(cq.Offset).
+		Limit(cq.Limit).
 		Find(&worksheets)
 	if result.Error != nil {
 		return nil, result.Error
@@ -49,6 +53,19 @@ func Count(db *gorm.DB) (int64, error) {
 	var count int64
 
 	result := db.Model(&model.Worksheet{}).Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
+}
+
+func CountFiltered(db *gorm.DB, cq *collection.Query) (int64, error) {
+	var count int64
+
+	result := db.Model(&model.Worksheet{}).
+		Where("title ILIKE ? OR description ILIKE ?", "%"+cq.Search+"%", "%"+cq.Search+"%").
+		Count(&count)
 	if result.Error != nil {
 		return 0, result.Error
 	}

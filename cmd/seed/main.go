@@ -100,7 +100,7 @@ func seedWorkSheets(db *gorm.DB, user1 *model.User) error {
 	for i := 1; i <= 1000; i++ {
 		workSheets[i-1] = model.Worksheet{
 			//nolint:gosec // title does not need to be secure
-			Title: loremIpsumGenerator.Words(rand.Intn(10) + 1),
+			Title: loremIpsumGenerator.Words(rand.Intn(6) + 4),
 			//nolint:gosec // description does not need to be secure
 			Description: loremIpsumGenerator.Paragraphs(rand.Intn(3) + 1),
 			//nolint:gosec // cost does not need to be secure
@@ -132,9 +132,9 @@ func seedQuestions(db *gorm.DB) error {
 	for i := 1; i <= 3000; i++ {
 		questions[i-1] = model.Question{
 			//nolint:gosec // description does not need to be secure
-			Description: loremIpsumGenerator.Sentences(rand.Intn(3) + 1),
+			Description: loremIpsumGenerator.Sentences(rand.Intn(2) + 1),
 			//nolint:gosec // answer does not need to be secure
-			Answer: loremIpsumGenerator.Paragraphs(rand.Intn(2) + 1),
+			Answer: loremIpsumGenerator.Paragraphs(rand.Intn(3) + 1),
 			//nolint:gosec // cost does not need to be secure
 			Cost: rand.Float64() * 2,
 			//nolint:gosec // cost does not need to be secure

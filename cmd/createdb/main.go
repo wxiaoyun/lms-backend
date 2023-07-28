@@ -19,5 +19,5 @@ func main() {
 		panic(err)
 	}
 	//nolint:revive // ignore error
-	fmt.Println("Successfully created database...")
+	fmt.Println("Successfully created database.")
 }

@@ -5,6 +5,7 @@ import (
 	"technical-test/internal/dataaccess/worksheet"
 	"technical-test/internal/database"
 	"technical-test/internal/view/worksheetview"
+	collection "technical-test/pkg/collectionquery"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,7 +20,19 @@ import (
 func HandleList(c *fiber.Ctx) error {
 	db := database.GetDB()
 
-	worksheets, err := worksheet.List(db)
+	cq := collection.GetCollectionQueryFromParam(c)
+
+	totalCount, err := worksheet.Count(db)
+	if err != nil {
+		return err
+	}
+
+	worksheets, err := worksheet.List(db, cq)
+	if err != nil {
+		return err
+	}
+
+	filteredCount, err := worksheet.CountFiltered(db, cq)
 	if err != nil {
 		return err
 	}
@@ -32,6 +45,10 @@ func HandleList(c *fiber.Ctx) error {
 
 	return c.JSON(api.Response{
 		Data: view,
+		Meta: api.Meta{
+			TotalCount:    totalCount,
+			FilteredCount: filteredCount,
+		},
 		Messages: []api.Message{
 			api.SuccessMessage("worksheets listed successfully"),
 		},
