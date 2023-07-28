@@ -19,7 +19,6 @@ func List(db *gorm.DB, cq *collection.Query) ([]model.Worksheet, error) {
 	var worksheets []model.Worksheet
 
 	result := db.Model(&model.Worksheet{}).
-		Scopes(preloadAssociations).
 		Where("title ILIKE ? OR description ILIKE ?", "%"+cq.Search+"%", "%"+cq.Search+"%").
 		Offset(cq.Offset).
 		Limit(cq.Limit).
@@ -35,6 +34,7 @@ func Read(db *gorm.DB, id int64) (*model.Worksheet, error) {
 	var worksheet model.Worksheet
 
 	result := db.Model(&model.Worksheet{}).
+		Scopes(preloadAssociations).
 		Where("id = ?", id).
 		First(&worksheet)
 	if err := result.Error; err != nil {
