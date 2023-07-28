@@ -3,6 +3,7 @@ package model
 import (
 	"regexp"
 
+	"github.com/dlclark/regexp2"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -16,7 +17,8 @@ type User struct {
 }
 
 var (
-	emailReg = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+	emailReg    = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+	passwordReg = regexp2.MustCompile(`^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,32}$`, regexp2.None)
 )
 
 const (
@@ -43,14 +45,6 @@ func (u *User) ensureEmailIsUnique(db *gorm.DB) error {
 }
 
 func (u *User) Validate(db *gorm.DB) error {
-	if u.Email == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "email is required")
-	}
-
-	if err := u.ensureEmailIsUnique(db); err != nil {
-		return err
-	}
-
 	if len(u.Password) < MinimumPasswordLength {
 		return fiber.NewError(fiber.StatusBadRequest, "password must be at least 8 characters")
 	}
@@ -59,7 +53,22 @@ func (u *User) Validate(db *gorm.DB) error {
 		return fiber.NewError(fiber.StatusBadRequest, "password must be at most 32 characters")
 	}
 
-	return nil
+	if ok, err := passwordReg.MatchString(u.Password); !ok || err != nil {
+		return fiber.NewError(fiber.StatusBadRequest,
+			"password must contain at least one lowercase letter, "+
+				"one uppercase letter, one digit, and one special character",
+		)
+	}
+
+	if u.Email == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "email is required")
+	}
+
+	if !emailReg.MatchString(u.Email) {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid email")
+	}
+
+	return u.ensureEmailIsUnique(db)
 }
 
 func (u *User) Create(db *gorm.DB) error {
@@ -80,24 +89,10 @@ func (u *User) BeforeCreate(db *gorm.DB) error {
 		return err
 	}
 
-	// hash password
-	err = u.HashPassword()
-	if err != nil {
-		return err
-	}
-
-	if !emailReg.MatchString(u.Email) {
-		return fiber.NewError(fiber.StatusBadRequest, "invalid email")
-	}
-
-	return nil
+	return u.HashPassword()
 }
 
 func (u *User) BeforeUpdate(db *gorm.DB) error {
-	if !emailReg.MatchString(u.Email) {
-		return fiber.NewError(fiber.StatusBadRequest, "invalid email")
-	}
-
 	return u.Validate(db)
 }
 

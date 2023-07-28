@@ -16,6 +16,12 @@
 make setupDB
 ```
 
+### Running Tests
+
+```bash
+make test
+```
+
 ### Running the Server
 
 ```bash

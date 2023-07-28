@@ -55,7 +55,7 @@ func main() {
 func seedUser(db *gorm.DB) (*model.User, error) {
 	user1 := model.User{
 		Email:    "admin@gmail.com",
-		Password: "password",
+		Password: "Strongpassword123!",
 	}
 
 	var exists int64
@@ -69,7 +69,7 @@ func seedUser(db *gorm.DB) (*model.User, error) {
 
 	if exists == 0 {
 		if err := user1.Create(db); err != nil {
-			return nil, result.Error
+			return nil, err
 		}
 		return &user1, nil
 	}

@@ -2,16 +2,15 @@ package database
 
 import (
 	"errors"
-
 	"technical-test/internal/model"
 )
 
 func AutoMigration() error {
-	if db == nil {
+	if DB == nil {
 		return errors.New("database is not initialized")
 	}
 
-	err := db.AutoMigrate(
+	err := DB.AutoMigrate(
 		&model.User{},
 		&model.Worksheet{},
 		&model.Question{},

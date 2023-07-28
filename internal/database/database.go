@@ -12,7 +12,7 @@ import (
 	_ "github.com/lib/pq" // postgres driver
 )
 
-var db *gorm.DB
+var DB *gorm.DB
 
 func OpenDataBase() error {
 	var err error
@@ -22,7 +22,7 @@ func OpenDataBase() error {
 		return err
 	}
 
-	db, err = gorm.Open(postgres.Open(dsn), GetConfig())
+	DB, err = gorm.Open(postgres.Open(dsn), GetConfig())
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func OpenDataBase() error {
 }
 
 func GetDB() *gorm.DB {
-	return db
+	return DB
 }
 
 func ConnectToDefaultDB() (*sql.DB, error) {
