@@ -16,7 +16,7 @@ import (
 func HandleHealth(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(api.Response{
 		Messages: []api.Message{
-			api.SuccessMessage("server is running"),
+			api.SilentMessage("server is running"),
 		},
 	})
 }

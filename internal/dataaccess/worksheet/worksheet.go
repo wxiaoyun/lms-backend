@@ -98,3 +98,17 @@ func Summarize(db *gorm.DB) (*viewmodel.WorksheetSummaryViewModel, error) {
 
 	return &summary, nil
 }
+
+func Find(db *gorm.DB, search string, limit int) ([]model.Worksheet, error) {
+	var worksheets []model.Worksheet
+
+	result := db.Model(&model.Worksheet{}).
+		Where("title ILIKE ?", "%"+search+"%").
+		Limit(limit).
+		Find(&worksheets)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return worksheets, nil
+}
