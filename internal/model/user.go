@@ -2,6 +2,7 @@ package model
 
 import (
 	"regexp"
+	"time"
 
 	"github.com/dlclark/regexp2"
 	"github.com/gofiber/fiber/v2"
@@ -12,8 +13,11 @@ import (
 type User struct {
 	gorm.Model
 
-	Email    string `gorm:"unique;not null"`
-	Password string `gorm:"not null"`
+	Email              string `gorm:"unique;not null"`
+	EncryptedPassword  string `gorm:"not null"`
+	CurrentSignInCount int    `gorm:"not null;default:0"`
+	CurrentSignIn      time.Time
+	LastSignInAt       time.Time
 }
 
 var (
@@ -45,15 +49,15 @@ func (u *User) ensureEmailIsUnique(db *gorm.DB) error {
 }
 
 func (u *User) Validate(db *gorm.DB) error {
-	if len(u.Password) < MinimumPasswordLength {
+	if len(u.EncryptedPassword) < MinimumPasswordLength {
 		return fiber.NewError(fiber.StatusBadRequest, "password must be at least 8 characters")
 	}
 
-	if len(u.Password) > MaximumPasswordLength {
+	if len(u.EncryptedPassword) > MaximumPasswordLength {
 		return fiber.NewError(fiber.StatusBadRequest, "password must be at most 32 characters")
 	}
 
-	if ok, err := passwordReg.MatchString(u.Password); !ok || err != nil {
+	if ok, err := passwordReg.MatchString(u.EncryptedPassword); !ok || err != nil {
 		return fiber.NewError(fiber.StatusBadRequest,
 			"password must contain at least one lowercase letter, "+
 				"one uppercase letter, one digit, and one special character",
@@ -97,11 +101,11 @@ func (u *User) BeforeUpdate(db *gorm.DB) error {
 }
 
 func (u *User) HashPassword() error {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(u.Password), DefaultCost)
+	bytes, err := bcrypt.GenerateFromPassword([]byte(u.EncryptedPassword), DefaultCost)
 	if err != nil {
 		return err
 	}
-	u.Password = string(bytes)
+	u.EncryptedPassword = string(bytes)
 
 	return nil
 }

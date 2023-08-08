@@ -7,14 +7,14 @@ import (
 )
 
 func main() {
-	err := config.LoadENV()
+	cf, err := config.LoadEnvAndGetConfig()
 	if err != nil {
 		panic(err)
 	}
 
 	//nolint:revive // ignore error
 	fmt.Println("Creating database...")
-	err = database.CreateDB()
+	err = database.CreateDB(cf)
 	if err != nil {
 		panic(err)
 	}

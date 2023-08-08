@@ -1,4 +1,4 @@
-# Golang Version of the Rails Backend
+# Library Management System
 
 ## Setup
 

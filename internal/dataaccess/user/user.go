@@ -4,13 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"technical-test/internal/model"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
-func VerifyLogin(db *gorm.DB, user *model.User) (*model.User, error) {
+func Login(db *gorm.DB, user *model.User) (*model.User, error) {
 	var userInDB model.User
 	result := db.Model(&model.User{}).
 		Where("email = ?", user.Email).
@@ -19,12 +20,16 @@ func VerifyLogin(db *gorm.DB, user *model.User) (*model.User, error) {
 		return nil, fiber.NewError(fiber.StatusUnauthorized, "user not found or invalid password")
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(userInDB.Password), []byte(user.Password))
+	err := bcrypt.CompareHashAndPassword([]byte(userInDB.EncryptedPassword), []byte(user.EncryptedPassword))
 	if err != nil {
 		return nil, fiber.NewError(fiber.StatusUnauthorized, "user not found or invalid password")
 	}
 
-	return ReadByEmail(db, user.Email)
+	user.LastSignInAt = userInDB.CurrentSignIn
+	user.CurrentSignIn = time.Now()
+	user.CurrentSignInCount = userInDB.CurrentSignInCount + 1
+
+	return Update(db, user)
 }
 
 func Read(db *gorm.DB, id int64) (*model.User, error) {
@@ -42,6 +47,17 @@ func Read(db *gorm.DB, id int64) (*model.User, error) {
 	}
 
 	return &user, nil
+}
+
+func Update(db *gorm.DB, user *model.User) (*model.User, error) {
+	result := db.Model(&model.User{}).
+		Where("id = ?", user.ID).
+		Updates(user)
+	if err := result.Error; err != nil {
+		return nil, err
+	}
+
+	return Read(db, int64(user.ID))
 }
 
 func ReadByEmail(db *gorm.DB, email string) (*model.User, error) {

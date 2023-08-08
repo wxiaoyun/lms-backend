@@ -18,8 +18,8 @@ type BaseUserParams struct {
 
 func (b *BaseUserParams) ToModel() *model.User {
 	return &model.User{
-		Email:    b.Email,
-		Password: b.Password,
+		Email:             b.Email,
+		EncryptedPassword: b.Password,
 	}
 }
 

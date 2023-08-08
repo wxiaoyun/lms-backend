@@ -23,7 +23,7 @@ func SetupAndRunApp() error {
 
 	// create app
 	app := fiber.New(fiber.Config{
-		AppName:      "tech-test",
+		AppName:      "Library Management System Backend",
 		ErrorHandler: api.ErrorHandler,
 	})
 
@@ -42,12 +42,11 @@ func SetupAndRunApp() error {
 }
 
 func LoadEnvAndConnectToDB() error {
-	err := config.LoadENV()
+	cf, err := config.LoadEnvAndGetConfig()
 	if err != nil {
-		return err
+		panic(err)
 	}
-
-	err = database.OpenDataBase()
+	err = database.OpenDataBase(cf)
 	if err != nil {
 		return err
 	}

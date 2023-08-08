@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
+	"technical-test/internal/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,10 +14,10 @@ import (
 
 var DB *gorm.DB
 
-func OpenDataBase() error {
+func OpenDataBase(cf *config.Config) error {
 	var err error
 
-	dsn, err := dnsBuilder(false)
+	dsn, err := GormDSNBuilder(cf)
 	if err != nil {
 		return err
 	}
@@ -34,10 +34,10 @@ func GetDB() *gorm.DB {
 	return DB
 }
 
-func ConnectToDefaultDB() (*sql.DB, error) {
+func ConnectToDefaultDB(cf *config.Config) (*sql.DB, error) {
 	var err error
 
-	dsn, err := dnsBuilder(true)
+	dsn, err := DSNBuilder(cf)
 	if err != nil {
 		return nil, err
 	}
@@ -50,13 +50,13 @@ func ConnectToDefaultDB() (*sql.DB, error) {
 	return pgdb, nil
 }
 
-func CreateDB() error {
-	pgdb, err := ConnectToDefaultDB()
+func CreateDB(cf *config.Config) error {
+	pgdb, err := ConnectToDefaultDB(cf)
 	if err != nil {
 		return err
 	}
 
-	dbName := os.Getenv("DB_NAME") // Note that CREATE DATABASE cannot be executed within a transaction block.
+	dbName := cf.DBName // Note that CREATE DATABASE cannot be executed within a transaction block.
 	_, err = pgdb.Exec(fmt.Sprintf("CREATE DATABASE \"%s\"", dbName))
 	if err != nil {
 		//nolint:revive // ignore lint
@@ -67,13 +67,13 @@ func CreateDB() error {
 	return nil
 }
 
-func DropDB() error {
-	pgdb, err := ConnectToDefaultDB()
+func DropDB(cf *config.Config) error {
+	pgdb, err := ConnectToDefaultDB(cf)
 	if err != nil {
 		return err
 	}
 
-	dbName := os.Getenv("DB_NAME")
+	dbName := cf.DBName
 	_, err = pgdb.Exec(fmt.Sprintf("DROP DATABASE \"%s\"", dbName))
 	if err != nil {
 		//nolint:revive // ignore lint

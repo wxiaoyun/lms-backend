@@ -5,7 +5,6 @@ clean:
 swagger:
 	swag init
 	
-# Run the application with live reload
 run:
 	go run main.go
 
@@ -18,13 +17,15 @@ createDB:
 dropDB:
 	go run cmd/dropdb/main.go
 
-
 migrateDB:
-	go run cmd/migration/main.go
+	go run cmd/migration/main.go -dir=up
+
+rollbackDB:
+	go run cmd/migration/main.go -step=$(step) -dir=down
 
 seedDB:
 	go run cmd/seed/main.go
 
-setupDB: createDB migrateDB seedDB
+setupDB: createDB migrateDB
 
 resetDB: dropDB setupDB

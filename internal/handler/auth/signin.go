@@ -29,7 +29,7 @@ func HandleSignIn(c *fiber.Ctx) error {
 
 	userModel := params.ToModel()
 	db := database.GetDB()
-	userModel, err = user.VerifyLogin(db, userModel)
+	userModel, err = user.Login(db, userModel)
 	if err != nil {
 		return err
 	}
