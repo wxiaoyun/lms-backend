@@ -5,6 +5,31 @@ info:
   contact: {}
   title: technical test API
 paths:
+  /api/v1/audit_log/:
+    get:
+      consumes:
+      - '*/*'
+      description: list relevang audit logs
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: list audit logs
+      tags:
+      - audit log
+    post:
+      consumes:
+      - '*/*'
+      description: create an entry in the audit log
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: post audit logs
+      tags:
+      - audit log
   /api/v1/auth/login:
     post:
       consumes:
@@ -74,6 +99,45 @@ paths:
         "200":
           description: OK
       summary: List all the existing worksheets
+      tags:
+      - worksheet
+  /api/v1/worksheet/:id:
+    get:
+      consumes:
+      - '*/*'
+      description: list all the existing worksheets
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: List all the existing worksheets
+      tags:
+      - worksheet
+  /api/v1/worksheet/find:
+    get:
+      consumes:
+      - '*/*'
+      description: find first few worksheets with matching title to the search query
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Find first few worksheets with matching title to the search query
+      tags:
+      - worksheet
+  /api/v1/worksheet/summary:
+    get:
+      consumes:
+      - '*/*'
+      description: summarizes important information about all the existing worksheets
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Summarize all the existing worksheets
       tags:
       - worksheet
 swagger: "2.0"

@@ -17,7 +17,7 @@ import (
 // @Accept */*
 // @Produce application/json
 // @Success 200 "OK"
-// @Router /api/v1/worksheet/find?search=&limit= [get]
+// @Router /api/v1/worksheet/find [get]
 func HandleFind(c *fiber.Ctx) error {
 	search := c.Query("search")
 	limit, err := strconv.ParseInt(c.Query("limit"), 10, 64)

@@ -16,6 +16,44 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/audit_log/": {
+            "get": {
+                "description": "list relevang audit logs",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "audit log"
+                ],
+                "summary": "list audit logs",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "description": "create an entry in the audit log",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "audit log"
+                ],
+                "summary": "post audit logs",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/v1/auth/login": {
             "post": {
                 "description": "signs in a user and creates a session",
@@ -119,6 +157,66 @@ const docTemplate = `{
                     "worksheet"
                 ],
                 "summary": "List all the existing worksheets",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/worksheet/:id": {
+            "get": {
+                "description": "list all the existing worksheets",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "worksheet"
+                ],
+                "summary": "List all the existing worksheets",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/worksheet/find": {
+            "get": {
+                "description": "find first few worksheets with matching title to the search query",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "worksheet"
+                ],
+                "summary": "Find first few worksheets with matching title to the search query",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/worksheet/summary": {
+            "get": {
+                "description": "summarizes important information about all the existing worksheets",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "worksheet"
+                ],
+                "summary": "Summarize all the existing worksheets",
                 "responses": {
                     "200": {
                         "description": "OK"
