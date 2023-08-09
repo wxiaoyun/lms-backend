@@ -8,14 +8,16 @@ import (
 
 // generateISBN13 generates a random ISBN-13 number.
 func GenerateISBN13() string {
-	rand.Seed(time.Now().UnixNano())
+	source := rand.NewSource(time.Now().UnixNano())
+	//nolint:gosec
+	r := rand.New(source)
 
 	// Prefix
 	prefix := 978
 
 	// Group, publisher, and item numbers
 	//nolint:gosec
-	groupPublisherItem := rand.Intn(1000000000)
+	groupPublisherItem := r.Intn(1000000000)
 
 	// Compute the checksum
 	isbn := fmt.Sprintf("%d%09d", prefix, groupPublisherItem)
