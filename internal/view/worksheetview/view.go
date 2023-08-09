@@ -8,11 +8,11 @@ import (
 type WorkSheetView struct {
 	WorkSheetListView
 
-	Questions []questionview.QuestionView `json:"questions"`
+	Questions []questionview.View `json:"questions"`
 }
 
 func ToView(workSheet *model.Worksheet) *WorkSheetView {
-	questionViews := make([]questionview.QuestionView, len(workSheet.Questions))
+	questionViews := make([]questionview.View, len(workSheet.Questions))
 	for i, question := range workSheet.Questions {
 		//nolint:gosec // loop does not modify struct
 		questionViews[i] = *questionview.ToView(&question)

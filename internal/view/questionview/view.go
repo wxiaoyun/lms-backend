@@ -4,7 +4,7 @@ import (
 	"technical-test/internal/model"
 )
 
-type QuestionView struct {
+type View struct {
 	ID          uint    `json:"id,omitempty"`
 	Description string  `json:"description"`
 	Answer      string  `json:"answer"`
@@ -12,8 +12,8 @@ type QuestionView struct {
 	WorksheetID uint    `json:"worksheet_id"`
 }
 
-func ToView(question *model.Question) *QuestionView {
-	return &QuestionView{
+func ToView(question *model.Question) *View {
+	return &View{
 		ID:          question.ID,
 		Description: question.Description,
 		Answer:      question.Answer,

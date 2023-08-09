@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gofiber/fiber/v2"
 
+	auditloghandler "technical-test/internal/handler/auditlog"
 	"technical-test/internal/handler/auth"
 	"technical-test/internal/handler/health"
 	userhandler "technical-test/internal/handler/user"
@@ -28,6 +29,10 @@ func SetUpRoutes(app *fiber.App) error {
 	worksheetRoutes.Get("/find", worksheethandler.HandleFind)
 	worksheetRoutes.Get("/", worksheethandler.HandleList)
 	worksheetRoutes.Get("/:id", worksheethandler.HandleRead)
+
+	auditlogRoutes := privateRoutes.Group("/audit_log")
+	auditlogRoutes.Get("/", auditloghandler.HandleList)
+	auditlogRoutes.Post("/", auditloghandler.HandleCreate)
 
 	return nil
 }

@@ -31,7 +31,7 @@ func OpenDataBase(cf *config.Config) error {
 }
 
 func GetDB() *gorm.DB {
-	return DB
+	return DB.Session(&gorm.Session{NewDB: true})
 }
 
 func ConnectToDB(cf *config.Config) (*sql.DB, error) {

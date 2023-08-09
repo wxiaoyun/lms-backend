@@ -1,15 +1,27 @@
 package userparams
 
-import "technical-test/internal/model"
+import (
+	"fmt"
+	"technical-test/internal/model"
+	"technical-test/internal/params/peopleparams"
+)
 
 type CreateUserParams struct {
 	BaseUserParams
+	PersonParams peopleparams.BaseParams `json:"person_attributes"`
 }
 
 func (c *CreateUserParams) ToModel() *model.User {
-	return c.BaseUserParams.ToModel()
+	usr := c.BaseUserParams.ToModel()
+	usr.Person = c.PersonParams.ToModel()
+	fmt.Println(usr)
+	return usr
 }
 
 func (c *CreateUserParams) Validate() error {
-	return c.BaseUserParams.Validate()
+	if err := c.BaseUserParams.Validate(); err != nil {
+		return err
+	}
+
+	return c.PersonParams.Validate()
 }

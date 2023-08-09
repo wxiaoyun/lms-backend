@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"regexp"
 	"time"
 
@@ -76,11 +77,7 @@ func (u *User) ensurePersonIsNewOrExists(db *gorm.DB) error {
 	return nil
 }
 
-func (u *User) Validate(db *gorm.DB) error {
-	if err := u.ensurePersonIsNewOrExists(db); err != nil {
-		return err
-	}
-
+func (u *User) ValidatePassword() error {
 	if len(u.EncryptedPassword) < MinimumPasswordLength {
 		return fiber.NewError(fiber.StatusBadRequest, "password must be at least 8 characters")
 	}
@@ -96,6 +93,18 @@ func (u *User) Validate(db *gorm.DB) error {
 		)
 	}
 
+	return nil
+}
+
+func (u *User) ValidateEmail(db *gorm.DB) error {
+	return u.ensureEmailIsUnique(db)
+}
+
+func (u *User) Validate(db *gorm.DB) error {
+	if err := u.ensurePersonIsNewOrExists(db); err != nil {
+		return err
+	}
+
 	if u.Email == "" {
 		return fiber.NewError(fiber.StatusBadRequest, "email is required")
 	}
@@ -104,10 +113,11 @@ func (u *User) Validate(db *gorm.DB) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid email")
 	}
 
-	return u.ensureEmailIsUnique(db)
+	return nil
 }
 
 func (u *User) Create(db *gorm.DB) error {
+	fmt.Println("User.Create", u)
 	return db.Create(u).Error
 }
 
@@ -120,8 +130,15 @@ func (u *User) Delete(db *gorm.DB) error {
 }
 
 func (u *User) BeforeCreate(db *gorm.DB) error {
-	err := u.Validate(db)
-	if err != nil {
+	if err := u.ValidatePassword(); err != nil {
+		return err
+	}
+
+	if err := u.ValidateEmail(db); err != nil {
+		return err
+	}
+
+	if err := u.Validate(db); err != nil {
 		return err
 	}
 

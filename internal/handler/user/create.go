@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"technical-test/internal/api"
+	audit "technical-test/internal/auditlog"
 	"technical-test/internal/database"
 	"technical-test/internal/params/userparams"
 	"technical-test/internal/view/userview"
@@ -32,7 +33,10 @@ func HandleCreateUser(c *fiber.Ctx) error {
 
 	user := params.ToModel()
 	db := database.GetDB()
-	err = user.Create(db)
+	tx, rollBackOrCommit := audit.Begin(c, db, fmt.Sprintf("create new user %s", user.Email))
+	defer rollBackOrCommit()
+
+	err = user.Create(tx)
 	if err != nil {
 		return err
 	}
