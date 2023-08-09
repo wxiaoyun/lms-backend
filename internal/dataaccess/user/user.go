@@ -25,9 +25,9 @@ func Login(db *gorm.DB, user *model.User) (*model.User, error) {
 		return nil, fiber.NewError(fiber.StatusUnauthorized, "user not found or invalid password")
 	}
 
-	user.LastSignInAt = userInDB.CurrentSignIn
-	user.CurrentSignIn = time.Now()
-	user.CurrentSignInCount = userInDB.CurrentSignInCount + 1
+	user.LastSignInAt = userInDB.CurrentSignInAt
+	user.CurrentSignInAt = time.Now()
+	user.SignInCount = userInDB.SignInCount + 1
 
 	return Update(db, user)
 }

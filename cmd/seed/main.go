@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
+	"log"
+	"technical-test/cmd/seed/helper"
 	"technical-test/internal/app"
-	"technical-test/internal/dataaccess/user"
 	"technical-test/internal/database"
 	"technical-test/internal/model"
+	"time"
 
 	"github.com/go-loremipsum/loremipsum"
-
 	"gorm.io/gorm"
 )
 
@@ -19,73 +19,75 @@ func main() {
 	// Load environment variables and connect to database
 	err = app.LoadEnvAndConnectToDB()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	db := database.GetDB()
+
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
 
 	//nolint:revive // ignore error
 	fmt.Println("Seeding database...")
 
 	//nolint:revive // ignore error
-	fmt.Println("Seeding users...")
-	user1, err := seedUser(db)
+	fmt.Println("Seeding users and people...")
+	err = seedUsersAndPeople(db)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	//nolint:revive // ignore error
-	fmt.Println("Seeding worksheets...")
-	err = seedWorkSheets(db, user1)
+	fmt.Println("Seeding books...")
+	err = seedBooks(db)
 	if err != nil {
-		panic(err)
-	}
-
-	//nolint:revive // ignore error
-	fmt.Println("Seeding questions...")
-	err = seedQuestions(db)
-	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	//nolint:revive // ignore error
 	fmt.Println("Seeding complete!")
 }
 
-func seedUser(db *gorm.DB) (*model.User, error) {
-	user1 := model.User{
-		Email:             "admin@gmail.com",
-		EncryptedPassword: "Strongpassword123!",
-	}
-
-	var exists int64
-
-	result := db.Model(&model.User{}).
-		Where("email = ?", user1.Email).
-		Count(&exists)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	if exists == 0 {
-		if err := user1.Create(db); err != nil {
-			return nil, err
-		}
-		return &user1, nil
-	}
-
-	userPtr, err := user.ReadByEmail(db, user1.Email)
-	if err != nil {
-		return nil, err
-	}
-
-	return userPtr, nil
-}
-
-func seedWorkSheets(db *gorm.DB, user1 *model.User) error {
+func seedUsersAndPeople(db *gorm.DB) error {
 	var count int64
 
-	result := db.Model(&model.Worksheet{}).Count(&count)
+	result := db.Model(&model.User{}).Count(&count)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if count >= 100 {
+		return nil
+	}
+
+	loremIpsumGenerator := loremipsum.New()
+
+	// Generate 100 users
+	users := make([]model.User, 100)
+	for i := 1; i <= 100; i++ {
+		users[i-1] = model.User{
+			Email:             fmt.Sprintf("user%d@gmail.com", i),
+			EncryptedPassword: "P4ssw0rd!",
+			Person: &model.Person{
+				FirstName: loremIpsumGenerator.Word(),
+				LastName:  loremIpsumGenerator.Word(),
+			},
+		}
+	}
+
+	return db.Create(&users).Error
+}
+
+func seedBooks(db *gorm.DB) error {
+	var count int64
+
+	result := db.Model(&model.Book{}).Count(&count)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -96,51 +98,20 @@ func seedWorkSheets(db *gorm.DB, user1 *model.User) error {
 
 	loremIpsumGenerator := loremipsum.New()
 
-	workSheets := make([]model.Worksheet, 1000)
-	for i := 1; i <= 1000; i++ {
-		workSheets[i-1] = model.Worksheet{
-			//nolint:gosec // title does not need to be secure
-			Title: loremIpsumGenerator.Words(rand.Intn(6) + 4),
-			//nolint:gosec // description does not need to be secure
-			Description: loremIpsumGenerator.Paragraphs(rand.Intn(3) + 1),
-			//nolint:gosec // cost does not need to be secure
-			Cost: rand.Float64() * 3,
-			//nolint:gosec // cost does not need to be secure
-			Price:  rand.Float64() * 10,
-			UserID: user1.ID,
-		}
-	}
-
-	return db.Create(&workSheets).Error
-}
-
-func seedQuestions(db *gorm.DB) error {
-	var count int64
-
-	result := db.Model(&model.Question{}).Count(&count)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	if count >= 1000 {
-		return nil
-	}
-
-	loremIpsumGenerator := loremipsum.New()
-
-	questions := make([]model.Question, 3000)
+	books := make([]model.Book, 3000)
 	for i := 1; i <= 3000; i++ {
-		questions[i-1] = model.Question{
-			//nolint:gosec // description does not need to be secure
-			Description: loremIpsumGenerator.Sentences(rand.Intn(2) + 1),
-			//nolint:gosec // answer does not need to be secure
-			Answer: loremIpsumGenerator.Paragraphs(rand.Intn(3) + 1),
-			//nolint:gosec // cost does not need to be secure
-			Cost: rand.Float64() * 2,
-			//nolint:gosec // cost does not need to be secure
-			WorksheetID: uint(rand.Intn(1000) + 1),
+		books[i-1] = model.Book{
+			// //nolint:gosec // cost does not need to be secure
+			Title: loremIpsumGenerator.Words(helper.RandInt(4, 11)),
+			// //nolint:gosec // cost does not need to be secure
+			Author:          loremIpsumGenerator.Words(helper.RandInt(2, 5)),
+			ISBN:            helper.GenerateISBN13(),
+			Publisher:       loremIpsumGenerator.Words(helper.RandInt(4, 7)),
+			PublicationDate: helper.RandomDate(time.Now().AddDate(-10, 0, 0), time.Now()),
+			Genre:           loremIpsumGenerator.Words(helper.RandInt(1, 3)),
+			Language:        loremIpsumGenerator.Words(helper.RandInt(1, 3)),
 		}
 	}
 
-	return db.Create(&questions).Error
+	return db.Create(&books).Error
 }

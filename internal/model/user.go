@@ -13,11 +13,14 @@ import (
 type User struct {
 	gorm.Model
 
-	Email              string `gorm:"unique;not null"`
-	EncryptedPassword  string `gorm:"not null"`
-	CurrentSignInCount int    `gorm:"not null;default:0"`
-	CurrentSignIn      time.Time
-	LastSignInAt       time.Time
+	Email             string `gorm:"unique;not null"`
+	EncryptedPassword string `gorm:"not null"`
+	SignInCount       int    `gorm:"not null;default:0"`
+	CurrentSignInAt   time.Time
+	LastSignInAt      time.Time
+
+	PersonID uint    `gorm:"not null"`
+	Person   *Person `gorm:"->;<-:create"`
 }
 
 var (
@@ -48,7 +51,36 @@ func (u *User) ensureEmailIsUnique(db *gorm.DB) error {
 	return nil
 }
 
+func (u *User) ensurePersonIsNewOrExists(db *gorm.DB) error {
+	if u.PersonID == 0 {
+		return nil
+	}
+
+	if u.PersonID != u.Person.ID {
+		return fiber.NewError(fiber.StatusBadRequest, "person id does not match person")
+	}
+
+	var exists int64
+
+	result := db.Model(&Person{}).
+		Where("id = ?", u.PersonID).
+		Count(&exists)
+	if result.Error != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "person not found")
+	}
+
+	if exists != 1 {
+		return fiber.NewError(fiber.StatusBadRequest, "person does not exist")
+	}
+
+	return nil
+}
+
 func (u *User) Validate(db *gorm.DB) error {
+	if err := u.ensurePersonIsNewOrExists(db); err != nil {
+		return err
+	}
+
 	if len(u.EncryptedPassword) < MinimumPasswordLength {
 		return fiber.NewError(fiber.StatusBadRequest, "password must be at least 8 characters")
 	}

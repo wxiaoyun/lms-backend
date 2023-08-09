@@ -5,68 +5,49 @@ import (
 	"technical-test/internal/config"
 )
 
-func GormDSNBuilder(config *config.Config) (string, error) {
+func DSNBuilder(cf *config.Config) (string, error) {
 	dsn := strings.Builder{}
 
-	_, err := dsn.WriteString("user=" + config.DBUsername)
-	if err != nil {
-		return "", err
+	if cf.DBUsername != "" {
+		_, err := dsn.WriteString("user=" + cf.DBUsername)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	_, err = dsn.WriteString(" password=" + config.DBPassword)
-	if err != nil {
-		return "", err
+	if cf.DBPassword != "" {
+		_, err := dsn.WriteString(" password=" + cf.DBPassword)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	_, err = dsn.WriteString(" host=" + config.DBHost)
-	if err != nil {
-		return "", err
+	if cf.DBHost != "" {
+		_, err := dsn.WriteString(" host=" + cf.DBHost)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	_, err = dsn.WriteString(" dbname=" + config.DBName)
-	if err != nil {
-		return "", err
+	if cf.DBName != "" {
+		_, err := dsn.WriteString(" dbname=" + cf.DBName)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	_, err = dsn.WriteString(" port=" + config.DBPort)
-	if err != nil {
-		return "", err
+	if cf.DBPort != "" {
+		_, err := dsn.WriteString(" port=" + cf.DBPort)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	_, err = dsn.WriteString(" sslmode=" + config.SSLMode)
-	if err != nil {
-		return "", err
-	}
-
-	return dsn.String(), nil
-}
-
-func DSNBuilder(config *config.Config) (string, error) {
-	dsn := strings.Builder{}
-
-	_, err := dsn.WriteString("user=" + config.DBUsername)
-	if err != nil {
-		return "", err
-	}
-
-	_, err = dsn.WriteString(" password=" + config.DBPassword)
-	if err != nil {
-		return "", err
-	}
-
-	_, err = dsn.WriteString(" host=" + config.DBHost)
-	if err != nil {
-		return "", err
-	}
-
-	_, err = dsn.WriteString(" port=" + config.DBPort)
-	if err != nil {
-		return "", err
-	}
-
-	_, err = dsn.WriteString(" sslmode=" + config.SSLMode)
-	if err != nil {
-		return "", err
+	if cf.SSLMode != "" {
+		_, err := dsn.WriteString(" sslmode=" + cf.SSLMode)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return dsn.String(), nil

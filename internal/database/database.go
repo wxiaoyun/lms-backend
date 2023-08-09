@@ -17,7 +17,7 @@ var DB *gorm.DB
 func OpenDataBase(cf *config.Config) error {
 	var err error
 
-	dsn, err := GormDSNBuilder(cf)
+	dsn, err := DSNBuilder(cf)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func GetDB() *gorm.DB {
 	return DB
 }
 
-func ConnectToDefaultDB(cf *config.Config) (*sql.DB, error) {
+func ConnectToDB(cf *config.Config) (*sql.DB, error) {
 	var err error
 
 	dsn, err := DSNBuilder(cf)
@@ -50,13 +50,32 @@ func ConnectToDefaultDB(cf *config.Config) (*sql.DB, error) {
 	return pgdb, nil
 }
 
+func ConnectToDefaultDB(cf *config.Config) (*sql.DB, error) {
+	var err error
+
+	cf.DBName = "" // connect to default database
+
+	dsn, err := DSNBuilder(cf)
+	if err != nil {
+		return nil, err
+	}
+
+	pgdb, err := sql.Open("postgres", dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	return pgdb, nil
+}
+
 func CreateDB(cf *config.Config) error {
+	dbName := cf.DBName // Note that CREATE DATABASE cannot be executed within a transaction block.
+
 	pgdb, err := ConnectToDefaultDB(cf)
 	if err != nil {
 		return err
 	}
 
-	dbName := cf.DBName // Note that CREATE DATABASE cannot be executed within a transaction block.
 	_, err = pgdb.Exec(fmt.Sprintf("CREATE DATABASE \"%s\"", dbName))
 	if err != nil {
 		//nolint:revive // ignore lint
@@ -68,12 +87,13 @@ func CreateDB(cf *config.Config) error {
 }
 
 func DropDB(cf *config.Config) error {
+	dbName := cf.DBName
+
 	pgdb, err := ConnectToDefaultDB(cf)
 	if err != nil {
 		return err
 	}
 
-	dbName := cf.DBName
 	_, err = pgdb.Exec(fmt.Sprintf("DROP DATABASE \"%s\"", dbName))
 	if err != nil {
 		//nolint:revive // ignore lint

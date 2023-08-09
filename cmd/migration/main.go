@@ -3,10 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"math"
 	"path/filepath"
-	migration "technical-test/cmd/migration/helper"
 	"technical-test/internal/app"
+	"technical-test/internal/config"
+	"technical-test/internal/database"
+	"technical-test/util/ternary"
+
+	migrate "github.com/rubenv/sql-migrate"
 )
 
 func main() {
@@ -15,44 +20,46 @@ func main() {
 	flag.Parse()
 
 	if *dir != "up" && *dir != "down" {
-		panic("Direction must be up or down")
+		log.Fatal("Direction must be up or down")
 	}
 
 	err := app.LoadEnvAndConnectToDB()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	//nolint:revive // ignore error
-	fmt.Println("Retrieving migration Files")
 	absPath, err := filepath.Abs("./migrations/")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	files, err := migration.ListSQLFiles(absPath)
+
+	cf, err := config.LoadEnvAndGetConfig()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	for i := range files {
-		if i >= *step {
-			break
-		}
-
-		var fileName string
-		if *dir == "up" {
-			fileName = files[i]
-		} else {
-			fileName = files[len(files)-1-i]
-		}
-
-		//nolint:revive // ignore error
-		fmt.Printf("Running migration file %d: %s\n", i+1, fileName)
-		err = migration.RunMigration(fileName, *dir)
-		if err != nil {
-			panic(err)
-		}
+	db, err := database.ConnectToDB(cf)
+	if err != nil {
+		log.Fatal(err)
 	}
-	//nolint:revive // ignore error
-	fmt.Println("Database migrated successfully.")
+
+	migrations := &migrate.FileMigrationSource{
+		Dir: absPath,
+	}
+
+	n, err := migrate.ExecMax(
+		db,
+		"postgres",
+		migrations,
+		ternary.If[migrate.MigrationDirection](*dir == "up").
+			Then(migrate.Up).
+			Else(migrate.Down),
+		*step,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//nolint
+	fmt.Printf("Applied %d migrations!\n", n)
 }

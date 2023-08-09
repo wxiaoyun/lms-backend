@@ -26,6 +26,6 @@ rollbackDB:
 seedDB:
 	go run cmd/seed/main.go
 
-setupDB: createDB migrateDB
+setupDB: createDB migrateDB seedDB
 
 resetDB: dropDB setupDB

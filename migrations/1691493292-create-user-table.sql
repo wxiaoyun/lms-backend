@@ -1,6 +1,7 @@
--- +migrate up
+-- +migrate Up
 CREATE TABLE users (
     id                     BIGSERIAL PRIMARY KEY,
+    person_id              BIGINT         NOT NULL REFERENCES people(id),
     email                  VARCHAR UNIQUE NOT NULL,
     encrypted_password     VARCHAR        NOT NULL,
     sign_in_count          integer        NOT NULL DEFAULT 0,
@@ -11,5 +12,5 @@ CREATE TABLE users (
     deleted_at             deleted_at
 );
 
--- +migrate down
+-- +migrate Down
 DROP TABLE users;
