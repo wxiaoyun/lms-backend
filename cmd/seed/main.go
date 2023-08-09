@@ -1,3 +1,4 @@
+// nolint
 package main
 
 import (
@@ -33,24 +34,19 @@ func main() {
 		}
 	}()
 
-	//nolint:revive // ignore error
 	fmt.Println("Seeding database...")
-
-	//nolint:revive // ignore error
 	fmt.Println("Seeding users and people...")
 	err = seedUsersAndPeople(db)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	//nolint:revive // ignore error
 	fmt.Println("Seeding books...")
 	err = seedBooks(db)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	//nolint:revive // ignore error
 	fmt.Println("Seeding complete!")
 }
 
@@ -101,9 +97,7 @@ func seedBooks(db *gorm.DB) error {
 	books := make([]model.Book, 3000)
 	for i := 1; i <= 3000; i++ {
 		books[i-1] = model.Book{
-			// //nolint:gosec // cost does not need to be secure
-			Title: loremIpsumGenerator.Words(helper.RandInt(4, 11)),
-			// //nolint:gosec // cost does not need to be secure
+			Title:           loremIpsumGenerator.Words(helper.RandInt(4, 11)),
 			Author:          loremIpsumGenerator.Words(helper.RandInt(2, 5)),
 			ISBN:            helper.GenerateISBN13(),
 			Publisher:       loremIpsumGenerator.Words(helper.RandInt(4, 7)),
