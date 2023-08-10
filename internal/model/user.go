@@ -35,6 +35,11 @@ const (
 	DefaultCost           = 10
 )
 
+const (
+	UserModelName = "user"
+	UserTableName = "users"
+)
+
 func (u *User) ensureEmailIsUnique(db *gorm.DB) error {
 	var exists int64
 

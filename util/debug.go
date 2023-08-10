@@ -1,3 +1,4 @@
+// nolint
 package util
 
 import (
@@ -9,11 +10,8 @@ import (
 // It surrounds what to be printed with many line breaks to make it easier to find
 //
 //nolint:predeclared // ignore error
-func Debug(any ...any) {
-	//nolint:revive // ignore error
+func Debug(a ...any) {
 	fmt.Print("\n\n\n")
-	//nolint:revive // ignore error
-	fmt.Print(any...)
-	//nolint:revive // ignore error
+	fmt.Print(a...)
 	fmt.Print("\n\n\n")
 }

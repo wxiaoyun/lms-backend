@@ -19,6 +19,11 @@ type Book struct {
 	Language        string    `gorm:"not null"`
 }
 
+const (
+	BookModelName = "book"
+	BookTableName = "books"
+)
+
 func (b *Book) Create(db *gorm.DB) error {
 	return db.Create(b).Error
 }

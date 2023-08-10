@@ -21,7 +21,7 @@ migrateDB:
 	go run cmd/migration/main.go -dir=up
 
 rollbackDB:
-	go run cmd/migration/main.go -step=$(step) -dir=down
+	go run cmd/migration/main.go -dir=down -step=$(step) 
 
 seedDB:
 	go run cmd/seed/main.go
@@ -29,3 +29,7 @@ seedDB:
 setupDB: createDB migrateDB seedDB
 
 resetDB: dropDB setupDB
+
+# macOS
+countlines:
+	git ls-files | xargs wc -l

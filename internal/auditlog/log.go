@@ -20,10 +20,12 @@ func Begin(c *fiber.Ctx, db *gorm.DB, action string) (*gorm.DB, func()) {
 		userID = 1
 	}
 
+	tx := db.Begin()
+
 	var deferedRollBackOrCommit = func() {
 		//nolint
 		if r := recover(); r != nil {
-			db.Rollback()
+			tx.Rollback()
 			return
 		}
 
@@ -32,13 +34,13 @@ func Begin(c *fiber.Ctx, db *gorm.DB, action string) (*gorm.DB, func()) {
 			Action: action,
 		}
 
-		if err := auditLog.Create(db); err != nil {
-			db.Rollback()
+		if err := auditLog.Create(tx); err != nil {
+			tx.Rollback()
 			return
 		}
 
-		db.Commit()
+		tx.Commit()
 	}
 
-	return db.Begin(), deferedRollBackOrCommit
+	return tx, deferedRollBackOrCommit
 }

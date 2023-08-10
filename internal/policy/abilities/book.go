@@ -5,10 +5,6 @@ import (
 )
 
 var (
-	CanManageAll model.Ability = model.Ability{
-		Name:        "canManageAll",
-		Description: "can manage all",
-	}
 	CanCreateBook model.Ability = model.Ability{
 		Name:        "canCreateBook",
 		Description: "can create book",

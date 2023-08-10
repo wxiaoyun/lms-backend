@@ -1,9 +1,8 @@
 package user
 
 import (
-	"errors"
-	"fmt"
 	"lms-backend/internal/model"
+	"lms-backend/internal/orm"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,7 +22,7 @@ func Login(db *gorm.DB, user *model.User) (*model.User, error) {
 		Where("email = ?", user.Email).
 		First(&userInDB)
 	if err := result.Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if orm.IsRecordNotFound(err) {
 			return nil, fiber.NewError(fiber.StatusUnauthorized, "user not found or invalid password")
 		}
 		return nil, err
@@ -48,10 +47,8 @@ func Read(db *gorm.DB, id int64) (*model.User, error) {
 		Where("id = ?", id).
 		First(&user)
 	if err := result.Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fiber.NewError(fiber.StatusNotFound,
-				fmt.Sprintf("user %d not found", id),
-			)
+		if orm.IsRecordNotFound(err) {
+			return nil, orm.RecordNotFound(model.UserModelName)
 		}
 		return nil, err
 	}
@@ -84,10 +81,8 @@ func ReadByEmail(db *gorm.DB, email string) (*model.User, error) {
 		Where("email = ?", email).
 		First(&user)
 	if err := result.Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fiber.NewError(fiber.StatusNotFound,
-				fmt.Sprintf("user %s not found", email),
-			)
+		if orm.IsRecordNotFound(err) {
+			return nil, orm.RecordNotFound(model.UserModelName)
 		}
 		return nil, err
 	}
