@@ -5,6 +5,7 @@ import (
 
 	auditloghandler "lms-backend/internal/handler/auditlog"
 	"lms-backend/internal/handler/auth"
+	bookhandler "lms-backend/internal/handler/book"
 	"lms-backend/internal/handler/health"
 	userhandler "lms-backend/internal/handler/user"
 	worksheethandler "lms-backend/internal/handler/worksheet"
@@ -33,6 +34,9 @@ func SetUpRoutes(app *fiber.App) error {
 	auditlogRoutes := privateRoutes.Group("/audit_log")
 	auditlogRoutes.Get("/", auditloghandler.HandleList)
 	auditlogRoutes.Post("/", auditloghandler.HandleCreate)
+
+	bookRoutes := privateRoutes.Group("/book")
+	bookRoutes.Post("/", bookhandler.HandleCreate)
 
 	return nil
 }

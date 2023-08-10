@@ -12,7 +12,8 @@ import (
 )
 
 func preloadAssociations(db *gorm.DB) *gorm.DB {
-	return db.Preload("Person")
+	return db.
+		Preload("Person")
 }
 
 func Login(db *gorm.DB, user *model.User) (*model.User, error) {
@@ -92,4 +93,41 @@ func ReadByEmail(db *gorm.DB, email string) (*model.User, error) {
 	}
 
 	return &user, nil
+}
+
+func UpdateRoles(db *gorm.DB, userID int64, roleIDs []int64) (*model.User, error) {
+	result := db.
+		Model(&model.UserRoles{}).
+		Delete("user_id = ?", userID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	// Add new roles
+	for _, roleID := range roleIDs {
+		err := db.Exec(
+			"INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)",
+			userID, roleID,
+		).Error
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return Read(db, userID)
+}
+
+func GetAbilities(db *gorm.DB, userID int64) ([]model.Ability, error) {
+	var abilities []model.Ability
+	result := db.
+		Model(&model.Ability{}).
+		Joins("JOIN role_abilities ON role_abilities.ability_id = abilities.id").
+		Joins("JOIN user_roles ON user_roles.role_id = role_abilities.role_id").
+		Where("user_roles.user_id = ?", userID).
+		Find(&abilities)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return abilities, nil
 }

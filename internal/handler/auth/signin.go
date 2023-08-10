@@ -34,6 +34,11 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
+	abilites, err := user.GetAbilities(db, int64(userModel.ID))
+	if err != nil {
+		return err
+	}
+
 	sess, err := session.Store.Get(c)
 	if err != nil {
 		return err
@@ -45,7 +50,7 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := userview.ToView(userModel)
+	view := userview.ToView(userModel, abilites)
 
 	return c.Status(fiber.StatusOK).JSON(api.Response{
 		Data: view,

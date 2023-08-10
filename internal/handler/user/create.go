@@ -8,6 +8,7 @@ import (
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/database"
+	"lms-backend/internal/model"
 	"lms-backend/internal/params/userparams"
 	"lms-backend/internal/view/userview"
 )
@@ -41,7 +42,7 @@ func HandleCreateUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := userview.ToView(user)
+	view := userview.ToView(user, []model.Ability{})
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
 		Data: view,

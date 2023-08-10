@@ -24,7 +24,12 @@ func HandleGetCurrentUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := userview.ToView(user1)
+	abilites, err := user.GetAbilities(db, userID)
+	if err != nil {
+		return err
+	}
+
+	view := userview.ToView(user1, abilites)
 
 	return c.JSON(api.Response{
 		Data: view,

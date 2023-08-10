@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"lms-backend/cmd/seed/helper"
 	"lms-backend/internal/app"
+	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/model"
 	"log"
@@ -43,6 +44,12 @@ func main() {
 
 	fmt.Println("Seeding books...")
 	err = seedBooks(db)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Seeding roles...")
+	err = seedRolesAbilities(db)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -108,4 +115,92 @@ func seedBooks(db *gorm.DB) error {
 	}
 
 	return db.Create(&books).Error
+}
+
+func seedRolesAbilities(db *gorm.DB) error {
+	roles := []model.Role{
+		{
+			Name: "System Admin",
+			Abilities: []model.Ability{
+				{
+					Name:        "canManageAll",
+					Description: "Master permission",
+				},
+			},
+		},
+		{
+			Name: "Library Admin",
+			Abilities: []model.Ability{
+				{
+					Name:        "canReadStaff",
+					Description: "Read Staff",
+				},
+				{
+					Name:        "canCreateStaff",
+					Description: "Create Staff",
+				},
+				{
+					Name:        "canUpdateStaff",
+					Description: "Update Staff",
+				},
+				{
+					Name:        "canDeleteStaff",
+					Description: "Delete Staff",
+				},
+				{
+					Name:        "canReadBook",
+					Description: "Read Book",
+				},
+				{
+					Name:        "canCreateBook",
+					Description: "Create Book",
+				},
+				{
+					Name:        "canUpdateBook",
+					Description: "Update Book",
+				},
+				{
+					Name:        "canDeleteBook",
+					Description: "Delete Book",
+				},
+				{
+					Name:        "canBorrowBook",
+					Description: "Borrow Book",
+				},
+				{
+					Name:        "canReturnBook",
+					Description: "Return Book",
+				},
+				{
+					Name:        "canExtendBook",
+					Description: "Extend Book",
+				},
+				{
+					Name:        "canManageBookRecords",
+					Description: "Manage Book Records",
+				},
+			},
+		},
+		{
+			Name: "Staff",
+		},
+		{
+			Name: "Basic",
+		},
+		{
+			Name: "Guest",
+		},
+	}
+
+	// Create roles and abilities
+	if err := db.Create(&roles).Error; err != nil {
+		return err
+	}
+
+	_, err := user.UpdateRoles(db, 1, []int64{1})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

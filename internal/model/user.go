@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"regexp"
 	"time"
 
@@ -22,6 +21,7 @@ type User struct {
 
 	PersonID uint    `gorm:"not null"`
 	Person   *Person `gorm:"->;<-:create"`
+	Roles    []Role  `gorm:"many2many:user_roles;->"`
 }
 
 var (
@@ -117,7 +117,6 @@ func (u *User) Validate(db *gorm.DB) error {
 }
 
 func (u *User) Create(db *gorm.DB) error {
-	fmt.Println("User.Create", u)
 	return db.Create(u).Error
 }
 
