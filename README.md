@@ -23,12 +23,6 @@ go get -u github.com/swellaby/captain-githook
 captain-githook init
 ```
 
-### Running Tests
-
-```bash
-make test
-```
-
 ### Running the Server
 
 ```bash
