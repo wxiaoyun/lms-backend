@@ -30,6 +30,5 @@ setupDB: createDB migrateDB seedDB
 
 resetDB: dropDB setupDB
 
-# macOS
 countlines:
 	git ls-files | xargs wc -l

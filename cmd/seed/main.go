@@ -8,6 +8,7 @@ import (
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/model"
+	"lms-backend/internal/policy/abilities"
 	"log"
 	"time"
 
@@ -37,19 +38,19 @@ func main() {
 
 	fmt.Println("Seeding database...")
 	fmt.Println("Seeding users and people...")
-	err = seedUsersAndPeople(db)
+	err = seedUsersAndPeople(tx)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	fmt.Println("Seeding books...")
-	err = seedBooks(db)
+	err = seedBooks(tx)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	fmt.Println("Seeding roles...")
-	err = seedRolesAbilities(db)
+	err = seedRolesAbilities(tx)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -72,8 +73,8 @@ func seedUsersAndPeople(db *gorm.DB) error {
 	loremIpsumGenerator := loremipsum.New()
 
 	// Generate 100 users
-	users := make([]model.User, 100)
-	for i := 1; i <= 100; i++ {
+	users := make([]model.User, 10)
+	for i := 1; i <= 10; i++ {
 		users[i-1] = model.User{
 			Email:             fmt.Sprintf("user%d@gmail.com", i),
 			EncryptedPassword: "P4ssw0rd!",
@@ -121,65 +122,9 @@ func seedRolesAbilities(db *gorm.DB) error {
 	roles := []model.Role{
 		{
 			Name: "System Admin",
-			Abilities: []model.Ability{
-				{
-					Name:        "canManageAll",
-					Description: "Master permission",
-				},
-			},
 		},
 		{
 			Name: "Library Admin",
-			Abilities: []model.Ability{
-				{
-					Name:        "canReadStaff",
-					Description: "Read Staff",
-				},
-				{
-					Name:        "canCreateStaff",
-					Description: "Create Staff",
-				},
-				{
-					Name:        "canUpdateStaff",
-					Description: "Update Staff",
-				},
-				{
-					Name:        "canDeleteStaff",
-					Description: "Delete Staff",
-				},
-				{
-					Name:        "canReadBook",
-					Description: "Read Book",
-				},
-				{
-					Name:        "canCreateBook",
-					Description: "Create Book",
-				},
-				{
-					Name:        "canUpdateBook",
-					Description: "Update Book",
-				},
-				{
-					Name:        "canDeleteBook",
-					Description: "Delete Book",
-				},
-				{
-					Name:        "canBorrowBook",
-					Description: "Borrow Book",
-				},
-				{
-					Name:        "canReturnBook",
-					Description: "Return Book",
-				},
-				{
-					Name:        "canExtendBook",
-					Description: "Extend Book",
-				},
-				{
-					Name:        "canManageBookRecords",
-					Description: "Manage Book Records",
-				},
-			},
 		},
 		{
 			Name: "Staff",
@@ -187,19 +132,97 @@ func seedRolesAbilities(db *gorm.DB) error {
 		{
 			Name: "Basic",
 		},
-		{
-			Name: "Guest",
-		},
 	}
 
-	// Create roles and abilities
+	// Create roles
 	if err := db.Create(&roles).Error; err != nil {
 		return err
 	}
 
-	_, err := user.UpdateRoles(db, 1, []int64{1})
-	if err != nil {
+	abilities := []model.Ability{
+		abilities.CanManageAll,
+
+		abilities.CanReadAuditLog,
+		abilities.CanCreateAuditLog,
+
+		abilities.CanUpdateUser,
+		abilities.CanUpdateRole,
+
+		abilities.CanCreatePerson,
+		abilities.CanUpdatePerson,
+
+		abilities.CanReadBook,
+		abilities.CanCreateBook,
+		abilities.CanUpdateBook,
+		abilities.CanDeleteBook,
+		abilities.CanBorrowBook,
+		abilities.CanReturnBook,
+		abilities.CanRenewBook,
+		abilities.CanManageBookRecords,
+	}
+
+	// Create abilities
+	if err := db.Create(&abilities).Error; err != nil {
 		return err
+	}
+
+	const (
+		T = true
+		F = false
+	)
+
+	var (
+		rolesAbilitiesMap = [][4]bool{
+			{T, F, F, F}, // Manage all
+
+			{T, T, F, F}, // Read audit log
+			{T, T, F, F}, // Create audit log
+
+			{T, T, T, F}, // Update user
+			{T, T, F, F}, // Update role
+
+			{T, T, T, F}, // Create person
+			{T, T, T, F}, // Update person
+
+			{T, T, T, T}, // Read book
+			{T, T, F, F}, // Create book
+			{T, T, F, F}, // Update book
+			{T, T, F, F}, // Delete book
+
+			{T, T, T, T}, // Borrow book
+			{T, T, T, T}, // Return book
+			{T, T, T, T}, // Renew book
+			{T, T, T, F}, // Manage book records
+		}
+	)
+
+	// Assign abilities to roles
+	for _, role := range roles {
+		for i, ability := range abilities {
+			if !rolesAbilitiesMap[i][role.ID-1] {
+				continue
+			}
+
+			if err := db.Exec(
+				fmt.Sprintf("%s %s %s %s",
+					"INSERT INTO role_abilities (role_id, ability_id)",
+					"SELECT",
+					"(SELECT id FROM roles WHERE name = ?),",
+					"(SELECT id FROM abilities WHERE name = ?)",
+				),
+				role.Name, ability.Name,
+			).Error; err != nil {
+				return err
+			}
+		}
+	}
+
+	// Assign roles to users
+	for i := int64(1); i <= 4; i++ {
+		_, err := user.UpdateRoles(db, i, []int64{i})
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
