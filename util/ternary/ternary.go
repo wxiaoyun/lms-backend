@@ -30,22 +30,22 @@ type LazyTernaryThen[T any] struct {
 	trueVal   func() T
 }
 
-func If[T any](condition bool) TernaryIf[T] {
-	return TernaryIf[T]{condition: condition}
+func If[T any](condition bool) *TernaryIf[T] {
+	return &TernaryIf[T]{condition: condition}
 }
 
-func (i TernaryIf[T]) Then(trueVal T) TernaryThen[T] {
-	return TernaryThen[T]{condition: i.condition, trueVal: trueVal}
+func (i *TernaryIf[T]) Then(trueVal T) *TernaryThen[T] {
+	return &TernaryThen[T]{condition: i.condition, trueVal: trueVal}
 }
 
-func (t TernaryThen[T]) Else(falseVal T) T {
+func (t *TernaryThen[T]) Else(falseVal T) T {
 	return TernaryOperater[T](t.condition, t.trueVal, falseVal)
 }
 
-func (i TernaryIf[T]) LazyThen(trueVal func() T) LazyTernaryThen[T] {
-	return LazyTernaryThen[T]{condition: i.condition, trueVal: trueVal}
+func (i *TernaryIf[T]) LazyThen(trueVal func() T) *LazyTernaryThen[T] {
+	return &LazyTernaryThen[T]{condition: i.condition, trueVal: trueVal}
 }
 
-func (t LazyTernaryThen[T]) LazyElse(falseVal func() T) T {
+func (t *LazyTernaryThen[T]) LazyElse(falseVal func() T) T {
 	return LazyTernaryOperator[T](t.condition, t.trueVal, falseVal)
 }
