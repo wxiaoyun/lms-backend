@@ -3,9 +3,9 @@ package worksheet
 import (
 	"errors"
 	"fmt"
-	"technical-test/internal/model"
-	viewmodel "technical-test/internal/viewmodel/worksheet"
-	collection "technical-test/pkg/collectionquery"
+	"lms-backend/internal/model"
+	viewmodel "lms-backend/internal/viewmodel/worksheet"
+	collection "lms-backend/pkg/collectionquery"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"

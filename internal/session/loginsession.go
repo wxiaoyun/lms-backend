@@ -1,7 +1,7 @@
 package session
 
 import (
-	"technical-test/internal/api"
+	"lms-backend/internal/api"
 
 	"github.com/gofiber/fiber/v2"
 )

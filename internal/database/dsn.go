@@ -1,8 +1,8 @@
 package database
 
 import (
+	"lms-backend/internal/config"
 	"strings"
-	"technical-test/internal/config"
 )
 
 func DSNBuilder(cf *config.Config) (string, error) {

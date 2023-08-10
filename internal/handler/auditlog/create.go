@@ -2,12 +2,12 @@ package auditloghandler
 
 import (
 	"fmt"
-	"technical-test/internal/api"
-	audit "technical-test/internal/auditlog"
-	audlog "technical-test/internal/dataaccess/auditlog"
-	"technical-test/internal/database"
-	"technical-test/internal/params/auditlogparams"
-	"technical-test/internal/session"
+	"lms-backend/internal/api"
+	audit "lms-backend/internal/auditlog"
+	audlog "lms-backend/internal/dataaccess/auditlog"
+	"lms-backend/internal/database"
+	"lms-backend/internal/params/auditlogparams"
+	"lms-backend/internal/session"
 
 	"github.com/gofiber/fiber/v2"
 )

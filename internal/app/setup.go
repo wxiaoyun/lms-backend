@@ -5,11 +5,11 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"technical-test/internal/api"
-	"technical-test/internal/config"
-	"technical-test/internal/database"
-	"technical-test/internal/middleware"
-	"technical-test/internal/router"
+	"lms-backend/internal/api"
+	"lms-backend/internal/config"
+	"lms-backend/internal/database"
+	"lms-backend/internal/middleware"
+	"lms-backend/internal/router"
 )
 
 func SetupAndRunApp() error {

@@ -1,7 +1,7 @@
 package peopleparams
 
 import (
-	"technical-test/internal/model"
+	"lms-backend/internal/model"
 
 	"github.com/gofiber/fiber/v2"
 )

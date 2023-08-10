@@ -2,8 +2,8 @@ package userparams
 
 import (
 	"fmt"
-	"technical-test/internal/model"
-	"technical-test/internal/params/peopleparams"
+	"lms-backend/internal/model"
+	"lms-backend/internal/params/peopleparams"
 )
 
 type CreateUserParams struct {

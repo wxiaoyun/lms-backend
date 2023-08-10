@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"technical-test/internal/api"
-	"technical-test/internal/session"
+	"lms-backend/internal/api"
+	"lms-backend/internal/session"
 
 	"github.com/gofiber/fiber/v2"
 )

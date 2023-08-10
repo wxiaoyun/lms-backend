@@ -1,9 +1,9 @@
 package sessionmiddleware
 
 import (
+	"lms-backend/internal/api"
+	"lms-backend/internal/session"
 	"strings"
-	"technical-test/internal/api"
-	"technical-test/internal/session"
 
 	"github.com/gofiber/fiber/v2"
 )

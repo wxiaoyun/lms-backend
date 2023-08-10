@@ -1,6 +1,6 @@
-module technical-test
+module lms-backend
 
-go 1.20
+go 1.21
 
 require (
 	github.com/dlclark/regexp2 v1.10.0

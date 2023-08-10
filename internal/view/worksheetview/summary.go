@@ -1,7 +1,7 @@
 package worksheetview
 
 import (
-	viewmodel "technical-test/internal/viewmodel/worksheet"
+	viewmodel "lms-backend/internal/viewmodel/worksheet"
 )
 
 type WorksheetSummaryView struct {

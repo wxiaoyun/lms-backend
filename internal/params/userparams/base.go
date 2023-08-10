@@ -1,8 +1,8 @@
 package userparams
 
 import (
+	"lms-backend/internal/model"
 	"regexp"
-	"technical-test/internal/model"
 
 	"github.com/gofiber/fiber/v2"
 )

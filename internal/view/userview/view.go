@@ -1,8 +1,8 @@
 package userview
 
 import (
-	"technical-test/internal/model"
-	"technical-test/internal/view/personview"
+	"lms-backend/internal/model"
+	"lms-backend/internal/view/personview"
 )
 
 type View struct {

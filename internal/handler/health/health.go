@@ -1,7 +1,7 @@
 package health
 
 import (
-	"technical-test/internal/api"
+	"lms-backend/internal/api"
 
 	"github.com/gofiber/fiber/v2"
 )

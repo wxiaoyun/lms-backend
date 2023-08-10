@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"technical-test/internal/config"
-	"technical-test/internal/database"
+	"lms-backend/internal/config"
+	"lms-backend/internal/database"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package user
 import (
 	"errors"
 	"fmt"
-	"technical-test/internal/model"
+	"lms-backend/internal/model"
 	"time"
 
 	"github.com/gofiber/fiber/v2"

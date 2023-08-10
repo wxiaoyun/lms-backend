@@ -2,10 +2,10 @@ package worksheethandler
 
 import (
 	"fmt"
-	"technical-test/internal/api"
-	"technical-test/internal/dataaccess/worksheet"
-	"technical-test/internal/database"
-	"technical-test/internal/view/worksheetview"
+	"lms-backend/internal/api"
+	"lms-backend/internal/dataaccess/worksheet"
+	"lms-backend/internal/database"
+	"lms-backend/internal/view/worksheetview"
 
 	"github.com/gofiber/fiber/v2"
 )

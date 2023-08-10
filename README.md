@@ -10,10 +10,17 @@
 
 - Edit the variables in .env.development accordingly
 
-### Setting up DB
+### Setting up Backend
 
 ```bash
 make setupDB
+```
+
+### Additional Setup for development
+
+```bash
+go get -u github.com/swellaby/captain-githook
+captain-githook init
 ```
 
 ### Running Tests

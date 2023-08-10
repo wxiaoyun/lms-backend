@@ -3,11 +3,11 @@ package router
 import (
 	"github.com/gofiber/fiber/v2"
 
-	auditloghandler "technical-test/internal/handler/auditlog"
-	"technical-test/internal/handler/auth"
-	"technical-test/internal/handler/health"
-	userhandler "technical-test/internal/handler/user"
-	worksheethandler "technical-test/internal/handler/worksheet"
+	auditloghandler "lms-backend/internal/handler/auditlog"
+	"lms-backend/internal/handler/auth"
+	"lms-backend/internal/handler/health"
+	userhandler "lms-backend/internal/handler/user"
+	worksheethandler "lms-backend/internal/handler/worksheet"
 )
 
 func SetUpRoutes(app *fiber.App) error {

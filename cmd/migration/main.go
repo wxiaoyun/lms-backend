@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	"lms-backend/internal/app"
+	"lms-backend/internal/config"
+	"lms-backend/internal/database"
+	"lms-backend/util/ternary"
 	"log"
 	"math"
 	"path/filepath"
-	"technical-test/internal/app"
-	"technical-test/internal/config"
-	"technical-test/internal/database"
-	"technical-test/util/ternary"
 
 	migrate "github.com/rubenv/sql-migrate"
 )

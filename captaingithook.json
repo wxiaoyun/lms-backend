@@ -1,6 +1,6 @@
 {
 	"hooks": {
-		"pre-push": "golangci-lint run && make swagger",
+		"pre-push": "golangci-lint run",
 		"pre-commit": "make clean && gofmt -s -w . && go vet ./..."
 	}
 }

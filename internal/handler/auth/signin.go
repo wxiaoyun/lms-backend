@@ -2,12 +2,12 @@ package auth
 
 import (
 	"fmt"
-	"technical-test/internal/api"
-	"technical-test/internal/dataaccess/user"
-	"technical-test/internal/database"
-	"technical-test/internal/params/userparams"
-	"technical-test/internal/session"
-	"technical-test/internal/view/userview"
+	"lms-backend/internal/api"
+	"lms-backend/internal/dataaccess/user"
+	"lms-backend/internal/database"
+	"lms-backend/internal/params/userparams"
+	"lms-backend/internal/session"
+	"lms-backend/internal/view/userview"
 
 	"github.com/gofiber/fiber/v2"
 )

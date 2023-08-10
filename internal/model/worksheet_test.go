@@ -1,7 +1,7 @@
 package model
 
 import (
-	"technical-test/internal/testutil"
+	"lms-backend/internal/testutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

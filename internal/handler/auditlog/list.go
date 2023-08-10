@@ -1,11 +1,11 @@
 package auditloghandler
 
 import (
-	"technical-test/internal/api"
-	"technical-test/internal/dataaccess/auditlog"
-	"technical-test/internal/database"
-	"technical-test/internal/view/auditlogview"
-	collection "technical-test/pkg/collectionquery"
+	"lms-backend/internal/api"
+	"lms-backend/internal/dataaccess/auditlog"
+	"lms-backend/internal/database"
+	"lms-backend/internal/view/auditlogview"
+	collection "lms-backend/pkg/collectionquery"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -3,11 +3,11 @@ package main
 
 import (
 	"fmt"
+	"lms-backend/cmd/seed/helper"
+	"lms-backend/internal/app"
+	"lms-backend/internal/database"
+	"lms-backend/internal/model"
 	"log"
-	"technical-test/cmd/seed/helper"
-	"technical-test/internal/app"
-	"technical-test/internal/database"
-	"technical-test/internal/model"
 	"time"
 
 	"github.com/go-loremipsum/loremipsum"

@@ -1,8 +1,8 @@
 package worksheetview
 
 import (
-	"technical-test/internal/model"
-	"technical-test/internal/view/questionview"
+	"lms-backend/internal/model"
+	"lms-backend/internal/view/questionview"
 )
 
 type WorkSheetView struct {

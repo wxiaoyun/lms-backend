@@ -3,8 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"lms-backend/internal/config"
 	"log"
-	"technical-test/internal/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

@@ -1,8 +1,8 @@
 package audit
 
 import (
-	"technical-test/internal/model"
-	"technical-test/internal/session"
+	"lms-backend/internal/model"
+	"lms-backend/internal/session"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"

@@ -1,8 +1,8 @@
 package auditlog
 
 import (
-	"technical-test/internal/model"
-	collection "technical-test/pkg/collectionquery"
+	"lms-backend/internal/model"
+	collection "lms-backend/pkg/collectionquery"
 
 	"gorm.io/gorm"
 )

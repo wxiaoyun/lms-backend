@@ -5,11 +5,11 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"technical-test/internal/api"
-	audit "technical-test/internal/auditlog"
-	"technical-test/internal/database"
-	"technical-test/internal/params/userparams"
-	"technical-test/internal/view/userview"
+	"lms-backend/internal/api"
+	audit "lms-backend/internal/auditlog"
+	"lms-backend/internal/database"
+	"lms-backend/internal/params/userparams"
+	"lms-backend/internal/view/userview"
 )
 
 // @Summary Create a user

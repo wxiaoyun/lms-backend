@@ -1,7 +1,7 @@
 package worksheetview
 
 import (
-	"technical-test/internal/model"
+	"lms-backend/internal/model"
 )
 
 type FindView struct {
