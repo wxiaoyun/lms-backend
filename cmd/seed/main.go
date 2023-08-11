@@ -138,7 +138,7 @@ func seedRolesAbilities(db *gorm.DB) error {
 		return err
 	}
 
-	abilities := []model.Ability{
+	abts := []model.Ability{
 		abilities.CanManageAll,
 
 		abilities.CanReadAuditLog,
@@ -161,11 +161,12 @@ func seedRolesAbilities(db *gorm.DB) error {
 	}
 
 	// Create abilities
-	if err := db.Create(&abilities).Error; err != nil {
+	if err := db.Create(&abts).Error; err != nil {
 		return err
 	}
 
 	const (
+		//nolint
 		T = true
 		F = false
 	)
@@ -197,7 +198,7 @@ func seedRolesAbilities(db *gorm.DB) error {
 
 	// Assign abilities to roles
 	for _, role := range roles {
-		for i, ability := range abilities {
+		for i, ability := range abts {
 			if !rolesAbilitiesMap[i][role.ID-1] {
 				continue
 			}
