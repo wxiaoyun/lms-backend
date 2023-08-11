@@ -7,24 +7,22 @@ import (
 )
 
 type BaseParams struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FullName           string `json:"full_name"`
+	PreferredName      string `json:"preferred_name"`
+	LanguagePreference string `json:"language_preference"`
 }
 
 func (b *BaseParams) ToModel() *model.Person {
 	return &model.Person{
-		FirstName: b.FirstName,
-		LastName:  b.LastName,
+		FullName:           b.FullName,
+		PreferredName:      b.PreferredName,
+		LanguagePreference: b.LanguagePreference,
 	}
 }
 
 func (b *BaseParams) Validate() error {
-	if b.FirstName == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "first_name is required")
-	}
-
-	if b.LastName == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "last_name is required")
+	if b.FullName == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "full_name is required")
 	}
 
 	return nil

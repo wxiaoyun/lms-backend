@@ -34,7 +34,7 @@ func HandleCreateUser(c *fiber.Ctx) error {
 
 	user := params.ToModel()
 	db := database.GetDB()
-	tx, rollBackOrCommit := audit.Begin(c, db, fmt.Sprintf("create new user %s", user.Email))
+	tx, rollBackOrCommit := audit.Begin(c, db, fmt.Sprintf("create new user %s", user.Username))
 	defer rollBackOrCommit()
 
 	err = user.Create(tx)
@@ -48,7 +48,7 @@ func HandleCreateUser(c *fiber.Ctx) error {
 		Data: view,
 		Messages: []api.Message{
 			api.SuccessMessage(fmt.Sprintf(
-				"User %s created successfully", user.Email,
+				"User %s created successfully", user.Username,
 			))},
 	})
 }

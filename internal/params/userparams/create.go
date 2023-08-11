@@ -1,7 +1,6 @@
 package userparams
 
 import (
-	"fmt"
 	"lms-backend/internal/model"
 	"lms-backend/internal/params/peopleparams"
 )
@@ -14,7 +13,6 @@ type CreateUserParams struct {
 func (c *CreateUserParams) ToModel() *model.User {
 	usr := c.BaseUserParams.ToModel()
 	usr.Person = c.PersonParams.ToModel()
-	fmt.Println(usr)
 	return usr
 }
 

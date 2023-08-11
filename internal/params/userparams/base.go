@@ -12,12 +12,14 @@ var (
 )
 
 type BaseUserParams struct {
+	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 func (b *BaseUserParams) ToModel() *model.User {
 	return &model.User{
+		Username:          b.Username,
 		Email:             b.Email,
 		EncryptedPassword: b.Password,
 	}
@@ -25,7 +27,7 @@ func (b *BaseUserParams) ToModel() *model.User {
 
 func (b *BaseUserParams) Validate() error {
 	if !emailReg.MatchString(b.Email) {
-		return fiber.NewError(fiber.StatusBadRequest, "invalid email")
+		return fiber.NewError(fiber.StatusBadRequest, "invalid email format")
 	}
 
 	return nil

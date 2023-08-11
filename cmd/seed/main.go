@@ -1,4 +1,3 @@
-// nolint
 package main
 
 import (
@@ -7,12 +6,12 @@ import (
 	"lms-backend/internal/app"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
+	logger "lms-backend/internal/log"
 	"lms-backend/internal/model"
 	"lms-backend/internal/policy/abilities"
 	"log"
 	"time"
 
-	"github.com/go-loremipsum/loremipsum"
 	"gorm.io/gorm"
 )
 
@@ -36,26 +35,28 @@ func main() {
 		}
 	}()
 
-	fmt.Println("Seeding database...")
-	fmt.Println("Seeding users and people...")
+	lgr := logger.StdoutLogger()
+
+	lgr.Println("Seeding database...")
+	lgr.Println("Seeding users and people...")
 	err = seedUsersAndPeople(tx)
 	if err != nil {
-		fmt.Println(err)
+		lgr.Println(err)
 	}
 
-	fmt.Println("Seeding books...")
+	lgr.Println("Seeding books...")
 	err = seedBooks(tx)
 	if err != nil {
-		fmt.Println(err)
+		lgr.Println(err)
 	}
 
-	fmt.Println("Seeding roles...")
+	lgr.Println("Seeding roles...")
 	err = seedRolesAbilities(tx)
 	if err != nil {
-		fmt.Println(err)
+		lgr.Println(err)
 	}
 
-	fmt.Println("Seeding complete!")
+	lgr.Println("Seeding complete!")
 }
 
 func seedUsersAndPeople(db *gorm.DB) error {
@@ -70,17 +71,17 @@ func seedUsersAndPeople(db *gorm.DB) error {
 		return nil
 	}
 
-	loremIpsumGenerator := loremipsum.New()
-
 	// Generate 100 users
 	users := make([]model.User, 10)
 	for i := 1; i <= 10; i++ {
 		users[i-1] = model.User{
+			Username:          fmt.Sprintf("user%d", i),
 			Email:             fmt.Sprintf("user%d@gmail.com", i),
 			EncryptedPassword: "P4ssw0rd!",
 			Person: &model.Person{
-				FirstName: loremIpsumGenerator.Word(),
-				LastName:  loremIpsumGenerator.Word(),
+				FullName:           helper.RandWords(helper.RandInt(2, 10)),
+				PreferredName:      helper.RandWords(helper.RandInt(2, 10)),
+				LanguagePreference: helper.RandWords(helper.RandInt(1, 3)),
 			},
 		}
 	}
@@ -100,18 +101,16 @@ func seedBooks(db *gorm.DB) error {
 		return nil
 	}
 
-	loremIpsumGenerator := loremipsum.New()
-
 	books := make([]model.Book, 3000)
 	for i := 1; i <= 3000; i++ {
 		books[i-1] = model.Book{
-			Title:           loremIpsumGenerator.Words(helper.RandInt(4, 11)),
-			Author:          loremIpsumGenerator.Words(helper.RandInt(2, 5)),
+			Title:           helper.RandWords(helper.RandInt(4, 11)),
+			Author:          helper.RandWords(helper.RandInt(2, 5)),
 			ISBN:            helper.GenerateISBN13(),
-			Publisher:       loremIpsumGenerator.Words(helper.RandInt(4, 7)),
+			Publisher:       helper.RandWords(helper.RandInt(4, 7)),
 			PublicationDate: helper.RandomDate(time.Now().AddDate(-10, 0, 0), time.Now()),
-			Genre:           loremIpsumGenerator.Words(helper.RandInt(1, 3)),
-			Language:        loremIpsumGenerator.Words(helper.RandInt(1, 3)),
+			Genre:           helper.RandWords(helper.RandInt(1, 3)),
+			Language:        helper.RandWords(helper.RandInt(1, 3)),
 		}
 	}
 
