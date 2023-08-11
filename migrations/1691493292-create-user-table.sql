@@ -3,7 +3,8 @@ CREATE TABLE
   users (
     id BIGSERIAL PRIMARY KEY,
     person_id BIGINT NOT NULL REFERENCES people (id),
-    email VARCHAR UNIQUE NOT NULL,
+    username VARCHAR UNIQUE NOT NULL,
+    email VARCHAR UNIQUE,
     encrypted_password VARCHAR NOT NULL,
     sign_in_count INTEGER NOT NULL DEFAULT 0,
     current_sign_in_at timestamptz,

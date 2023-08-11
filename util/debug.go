@@ -1,9 +1,10 @@
-// nolint
 package util
 
 import (
-	"fmt"
+	logger "lms-backend/internal/log"
 )
+
+var lgr = logger.StdoutLogger()
 
 // Debug is a wrapper around fmt.Print() to make it easier to find all debug statements
 //
@@ -11,7 +12,7 @@ import (
 //
 //nolint:predeclared // ignore error
 func Debug(a ...any) {
-	fmt.Print("\n\n\n")
-	fmt.Print(a...)
-	fmt.Print("\n\n\n")
+	lgr.Print("\n\n\n")
+	lgr.Print(a...)
+	lgr.Print("\n\n\n")
 }

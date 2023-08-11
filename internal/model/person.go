@@ -1,6 +1,8 @@
 package model
 
 import (
+	"unicode/utf8"
+
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -8,12 +10,18 @@ import (
 type Person struct {
 	gorm.Model
 
-	FirstName string `gorm:"not null"`
-	LastName  string `gorm:"not null"`
+	FullName           string `gorm:"not null"`
+	PreferredName      string
+	LanguagePreference string `gorm:"not null"`
 }
 
 const (
 	PersonTableName = "people"
+)
+
+const (
+	MaximumNameLength = 255
+	MinimumNameLength = 2
 )
 
 func (Person) TableName() string {
@@ -32,22 +40,26 @@ func (p *Person) Delete(db *gorm.DB) error {
 	return db.Delete(p).Error
 }
 
-func (p *Person) Validate(_ *gorm.DB) error {
-	if p.FirstName == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "first name is required")
+func (p *Person) ValidateName() error {
+	if p.FullName == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "last name is required")
 	}
 
-	if p.LastName == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "last name is required")
+	if utf8.RuneCountInString(p.FullName) > MaximumNameLength {
+		return fiber.NewError(fiber.StatusBadRequest, "fullname is too long")
+	}
+
+	if utf8.RuneCountInString(p.FullName) < MinimumNameLength {
+		return fiber.NewError(fiber.StatusBadRequest, "fullname is too short")
 	}
 
 	return nil
 }
 
 func (p *Person) BeforeCreate(_ *gorm.DB) error {
-	return p.Validate(nil)
+	return p.ValidateName()
 }
 
 func (p *Person) BeforeUpdate(_ *gorm.DB) error {
-	return p.Validate(nil)
+	return p.ValidateName()
 }
