@@ -12,6 +12,9 @@ func IsRecordNotFound(err error) bool {
 	return errors.Is(err, gorm.ErrRecordNotFound)
 }
 
-func RecordNotFound(modelName string) error {
-	return fiber.NewError(fiber.StatusBadRequest, fmt.Sprintf("%s not found", modelName))
+func ErrRecordNotFound(modelName string) error {
+	return fiber.NewError(
+		fiber.StatusBadRequest,
+		fmt.Sprintf("%s not found", modelName),
+	)
 }

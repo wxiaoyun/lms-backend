@@ -7,8 +7,9 @@ import (
 )
 
 type Ability struct {
-	ID          uint `gorm:"primarykey"`
-	CreatedAt   time.Time
+	ID        uint `gorm:"primarykey"`
+	CreatedAt time.Time
+
 	Name        string `gorm:"not null"`
 	Description string `gorm:"not null"`
 }

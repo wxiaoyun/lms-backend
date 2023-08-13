@@ -1,9 +1,9 @@
 package model
 
 import (
+	"lms-backend/pkg/error/externalerrors"
 	"unicode/utf8"
 
-	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
@@ -42,15 +42,15 @@ func (p *Person) Delete(db *gorm.DB) error {
 
 func (p *Person) ValidateName() error {
 	if p.FullName == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "last name is required")
+		return externalerrors.BadRequest("last name is required")
 	}
 
 	if utf8.RuneCountInString(p.FullName) > MaximumNameLength {
-		return fiber.NewError(fiber.StatusBadRequest, "fullname is too long")
+		return externalerrors.BadRequest("fullname is too long")
 	}
 
 	if utf8.RuneCountInString(p.FullName) < MinimumNameLength {
-		return fiber.NewError(fiber.StatusBadRequest, "fullname is too short")
+		return externalerrors.BadRequest("fullname is too short")
 	}
 
 	return nil

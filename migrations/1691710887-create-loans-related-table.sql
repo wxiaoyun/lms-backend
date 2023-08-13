@@ -8,7 +8,8 @@ CREATE TABLE
     borrow_date DATE NOT NULL,
     due_date DATE NOT NULL,
     return_date DATE,
-    created_at created_at
+    created_at created_at,
+    updated_at updated_at
   );
 
 CREATE TABLE
@@ -26,7 +27,8 @@ CREATE TABLE
     book_id BIGINT NOT NULL REFERENCES books (id),
     status VARCHAR NOT NULL,
     reservation_date DATE NOT NULL,
-    created_at created_at
+    created_at created_at,
+    updated_at updated_at
   );
 
 CREATE TABLE
@@ -36,7 +38,8 @@ CREATE TABLE
     loan_id BIGINT NOT NULL REFERENCES loans (id),
     status VARCHAR NOT NULL,
     amount DECIMAL NOT NULL,
-    created_at created_at
+    created_at created_at,
+    updated_at updated_at
   );
 
 -- +migrate Down

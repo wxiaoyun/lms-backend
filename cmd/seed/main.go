@@ -154,7 +154,7 @@ func seedRolesAbilities(db *gorm.DB) error {
 		abilities.CanCreateBook,
 		abilities.CanUpdateBook,
 		abilities.CanDeleteBook,
-		abilities.CanBorrowBook,
+		abilities.CanLoanBook,
 		abilities.CanReturnBook,
 		abilities.CanRenewBook,
 		abilities.CanManageBookRecords,

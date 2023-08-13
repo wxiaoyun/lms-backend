@@ -9,6 +9,7 @@ import (
 type Role struct {
 	ID        uint `gorm:"primarykey"`
 	CreatedAt time.Time
+
 	Name      string    `gorm:"not null"`
 	Abilities []Ability `gorm:"many2many:role_abilities;->;<-:create"`
 }

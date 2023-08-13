@@ -2,12 +2,12 @@ package model
 
 import (
 	"lms-backend/internal/orm"
+	"lms-backend/pkg/error/externalerrors"
 	"regexp"
 	"time"
 	"unicode/utf8"
 
 	"github.com/dlclark/regexp2"
-	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -21,10 +21,10 @@ type User struct {
 	SignInCount       int    `gorm:"not null;default:0"`
 	CurrentSignInAt   time.Time
 	LastSignInAt      time.Time
-
-	PersonID uint    `gorm:"not null"`
-	Person   *Person `gorm:"->;<-:create"`
-	Roles    []Role  `gorm:"many2many:user_roles;->"`
+	PersonID          uint    `gorm:"not null"`
+	Person            *Person `gorm:"->;<-:create"`
+	Roles             []Role  `gorm:"many2many:user_roles;->"`
+	Loans             []Loan  `gorm:"->"`
 }
 
 var (
@@ -45,9 +45,9 @@ const (
 	UserTableName = "users"
 )
 
-func (u *User) ensureUsernameIsUniqueAndPresent(db *gorm.DB) error {
+func (u *User) ensureUsernameIsNew(db *gorm.DB) error {
 	if u.Username == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "username is required")
+		return externalerrors.BadRequest("username is required")
 	}
 
 	var exists int64
@@ -62,7 +62,7 @@ func (u *User) ensureUsernameIsUniqueAndPresent(db *gorm.DB) error {
 	}
 
 	if exists > 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "username already exists")
+		return externalerrors.BadRequest("username already exists")
 	}
 
 	return nil
@@ -85,7 +85,7 @@ func (u *User) ensureEmailIsUniqueIfPresent(db *gorm.DB) error {
 	}
 
 	if exists > 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "email already exists")
+		return externalerrors.BadRequest("email already exists")
 	}
 
 	return nil
@@ -97,7 +97,7 @@ func (u *User) ensurePersonIsNewOrExists(db *gorm.DB) error {
 	}
 
 	if u.PersonID != u.Person.ID {
-		return fiber.NewError(fiber.StatusBadRequest, "person id does not match person")
+		return externalerrors.BadRequest("person id does not match person")
 	}
 
 	var exists int64
@@ -106,11 +106,11 @@ func (u *User) ensurePersonIsNewOrExists(db *gorm.DB) error {
 		Where("id = ?", u.PersonID).
 		Count(&exists)
 	if result.Error != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "person not found")
+		return externalerrors.BadRequest("person not found")
 	}
 
 	if exists != 1 {
-		return fiber.NewError(fiber.StatusBadRequest, "person does not exist")
+		return externalerrors.BadRequest("person does not exist")
 	}
 
 	return nil
@@ -118,16 +118,16 @@ func (u *User) ensurePersonIsNewOrExists(db *gorm.DB) error {
 
 func (u *User) ValidateUnencryptedPassword() error {
 	if len(u.EncryptedPassword) < MinimumPasswordLength {
-		return fiber.NewError(fiber.StatusBadRequest, "password must be at least 8 characters")
+		return externalerrors.BadRequest("password must be at least 8 characters")
 	}
 
 	if len(u.EncryptedPassword) > MaximumPasswordLength {
-		return fiber.NewError(fiber.StatusBadRequest, "password must be at most 32 characters")
+		return externalerrors.BadRequest("password must be at most 32 characters")
 	}
 
 	if ok, err := passwordReg.MatchString(u.EncryptedPassword); !ok || err != nil {
-		return fiber.NewError(fiber.StatusBadRequest,
-			"password must contain at least one lowercase letter, "+
+		return externalerrors.BadRequest(
+			"password must contain at least one lowercase letter, " +
 				"one uppercase letter, one digit, and one special character",
 		)
 	}
@@ -138,23 +138,63 @@ func (u *User) ValidateUnencryptedPassword() error {
 func (u *User) ValidateUsername(db *gorm.DB) error {
 	// counting the utf8 character length instead of byte length
 	if utf8.RuneCountInString(u.Username) < MinimumUsernameLength {
-		return fiber.NewError(fiber.StatusBadRequest, "username must be at least 5 characters")
+		return externalerrors.BadRequest("username must be at least 5 characters")
 	}
 
 	// counting the utf8 character length instead of byte length
 	if utf8.RuneCountInString(u.Username) > MaximumUsernameLength {
-		return fiber.NewError(fiber.StatusBadRequest, "username must be at most 30 characters")
+		return externalerrors.BadRequest("username must be at most 30 characters")
 	}
 
-	return u.ensureUsernameIsUniqueAndPresent(db)
+	// New user
+	if u.ID == 0 {
+		return u.ensureUsernameIsNew(db)
+	}
+
+	// Updating user
+	var originalUser User
+	result := db.Model(&User{}).
+		Where("id = ?", u.ID).
+		First(&originalUser)
+	if err := result.Error; err != nil {
+		return err
+	}
+
+	if u.Username != originalUser.Username {
+		if err := u.ensureUsernameIsNew(db); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (u *User) ValidateEmail(db *gorm.DB) error {
 	if u.Email != "" && !emailReg.MatchString(u.Email) {
-		return fiber.NewError(fiber.StatusBadRequest, "invalid email")
+		return externalerrors.BadRequest("invalid email")
 	}
 
-	return u.ensureEmailIsUniqueIfPresent(db)
+	// New user
+	if u.ID == 0 {
+		return u.ensureEmailIsUniqueIfPresent(db)
+	}
+
+	// Updating user
+	var originalUser User
+	result := db.Model(&User{}).
+		Where("id = ?", u.ID).
+		First(&originalUser)
+	if err := result.Error; err != nil {
+		return err
+	}
+
+	if u.Email != originalUser.Email {
+		if err := u.ensureEmailIsUniqueIfPresent(db); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (u *User) Validate(db *gorm.DB) error {

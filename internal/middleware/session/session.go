@@ -26,7 +26,7 @@ func SessionMiddleware(c *fiber.Ctx) error {
 
 	token := sess.Get(session.CookieKey)
 	if token == nil {
-		err := c.Status(fiber.StatusUnauthorized).JSON(api.Response{
+		err := c.JSON(api.Response{
 			Messages: []api.Message{api.InfoMessage("User is not logged in")},
 		})
 		if err != nil {

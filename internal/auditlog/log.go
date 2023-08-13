@@ -13,7 +13,7 @@ import (
 // The function will commit the transaction if no panic occurs, otherwise it will rollback.
 //
 // The function will also create an audit log entry with the provided action message.
-func Begin(c *fiber.Ctx, db *gorm.DB, action string) (*gorm.DB, func()) {
+func Begin(c *fiber.Ctx, db *gorm.DB, action string) (*gorm.DB, func(error)) {
 	userID, err := session.GetLoginSession(c)
 	if err != nil {
 		// Default to system admin
@@ -22,9 +22,9 @@ func Begin(c *fiber.Ctx, db *gorm.DB, action string) (*gorm.DB, func()) {
 
 	tx := db.Begin()
 
-	var deferedRollBackOrCommit = func() {
+	var deferedRollBackOrCommit = func(err error) {
 		//nolint
-		if r := recover(); r != nil {
+		if r := recover(); r != nil || err != nil {
 			tx.Rollback()
 			return
 		}

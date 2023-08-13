@@ -1,17 +1,18 @@
 package model
 
 import (
+	"lms-backend/pkg/error/externalerrors"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
 type AuditLog struct {
 	ID        uint `gorm:"primarykey"`
 	CreatedAt time.Time
-	UserID    uint   `gorm:"not null"`
-	Action    string `gorm:"not null"`
+
+	UserID uint   `gorm:"not null"`
+	Action string `gorm:"not null"`
 }
 
 func (a *AuditLog) Create(db *gorm.DB) error {
@@ -27,7 +28,7 @@ func (a *AuditLog) ensureUserExists(db *gorm.DB) error {
 	}
 
 	if exists == 0 {
-		return fiber.NewError(fiber.StatusNotFound, "user not found")
+		return externalerrors.BadRequest("user not found")
 	}
 
 	return nil
@@ -35,7 +36,7 @@ func (a *AuditLog) ensureUserExists(db *gorm.DB) error {
 
 func (a *AuditLog) Validate(db *gorm.DB) error {
 	if a.Action == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "action is required")
+		return externalerrors.BadRequest("action is required")
 	}
 
 	return a.ensureUserExists(db)

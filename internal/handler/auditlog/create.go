@@ -39,7 +39,7 @@ func HandleCreate(c *fiber.Ctx) error {
 	log := params.ToModel(userID)
 	db := database.GetDB()
 	tx, rollBackOrCommit := audit.Begin(c, db, log.Action)
-	defer rollBackOrCommit()
+	defer func() { rollBackOrCommit(err) }()
 
 	log, err = audlog.Create(tx, log)
 	if err != nil {

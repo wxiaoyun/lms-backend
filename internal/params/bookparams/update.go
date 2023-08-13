@@ -2,8 +2,7 @@ package bookparams
 
 import (
 	"lms-backend/internal/model"
-
-	"github.com/gofiber/fiber/v2"
+	"lms-backend/pkg/error/externalerrors"
 )
 
 type UpdateParams struct {
@@ -11,9 +10,13 @@ type UpdateParams struct {
 	BaseParams
 }
 
-func (p *UpdateParams) Validate() error {
+func (p *UpdateParams) Validate(bookID int64) error {
 	if p.ID == 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "id is required")
+		return externalerrors.BadRequest("id is required")
+	}
+
+	if p.ID != uint(bookID) {
+		return externalerrors.BadRequest("book ID is inconsistent with url")
 	}
 
 	return p.BaseParams.Validate()
