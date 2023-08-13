@@ -8,10 +8,9 @@ import (
 	bookhandler "lms-backend/internal/handler/book"
 	"lms-backend/internal/handler/health"
 	userhandler "lms-backend/internal/handler/user"
-	worksheethandler "lms-backend/internal/handler/worksheet"
 )
 
-func SetUpRoutes(app *fiber.App) error {
+func SetUpRoutes(app *fiber.App) {
 	v1Routes := app.Group("/api/v1")
 
 	publicRoutes := v1Routes.Group("")
@@ -25,18 +24,21 @@ func SetUpRoutes(app *fiber.App) error {
 
 	privateRoutes := v1Routes.Group("")
 
-	worksheetRoutes := privateRoutes.Group("/worksheet")
-	worksheetRoutes.Get("/summary", worksheethandler.HandleWorksheetSummary)
-	worksheetRoutes.Get("/find", worksheethandler.HandleFind)
-	worksheetRoutes.Get("/", worksheethandler.HandleList)
-	worksheetRoutes.Get("/:id", worksheethandler.HandleRead)
-
 	auditlogRoutes := privateRoutes.Group("/audit_log")
 	auditlogRoutes.Get("/", auditloghandler.HandleList)
 	auditlogRoutes.Post("/", auditloghandler.HandleCreate)
 
 	bookRoutes := privateRoutes.Group("/book")
 	bookRoutes.Post("/", bookhandler.HandleCreate)
+	bookRoutes.Get("/", bookhandler.HandleList)
 
-	return nil
+	bookSpecificRoutes := bookRoutes.Group("/:id")
+	bookSpecificRoutes.Get("/", bookhandler.HandleRead)
+	bookSpecificRoutes.Patch("/", bookhandler.HandleUpdate)
+	bookSpecificRoutes.Delete("/", bookhandler.HandleDelete)
+
+	bookSpecificRoutes.Post("/loan", bookhandler.HandleLoan)
+	bookSpecificRoutes.Post("/return", bookhandler.HandleReturn)
+	bookSpecificRoutes.Post("/renew", bookhandler.HandleRenew)
+	bookSpecificRoutes.Post("/reserve", bookhandler.HandleReserve)
 }

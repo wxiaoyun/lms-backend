@@ -1,11 +1,14 @@
 package model
 
 import (
+	"lms-backend/pkg/error/externalerrors"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
+
+type BookStatus = string
+type UserStatus = string
 
 type Book struct {
 	gorm.Model
@@ -17,11 +20,19 @@ type Book struct {
 	PublicationDate time.Time `gorm:"not null"`
 	Genre           string    `gorm:"not null"`
 	Language        string    `gorm:"not null"`
+	Loans           []Loan    `gorm:"->"`
 }
 
 const (
 	BookModelName = "book"
 	BookTableName = "books"
+)
+
+const (
+	BookStatusAvailable   BookStatus = "available"
+	BookStatusUnavailable BookStatus = "unavailable"
+	BookStatusOnLoan      BookStatus = "on loan"
+	BookStatusOnReserve   BookStatus = "on reserve"
 )
 
 func (b *Book) Create(db *gorm.DB) error {
@@ -38,31 +49,31 @@ func (b *Book) Delete(db *gorm.DB) error {
 
 func (b *Book) Validate(_ *gorm.DB) error {
 	if b.Title == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "title is required")
+		return externalerrors.BadRequest("title is required")
 	}
 
 	if b.Author == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "author is required")
+		return externalerrors.BadRequest("author is required")
 	}
 
 	if b.ISBN == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "isbn is required")
+		return externalerrors.BadRequest("isbn is required")
 	}
 
 	if b.Publisher == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "publisher is required")
+		return externalerrors.BadRequest("publisher is required")
 	}
 
 	if (time.Time{}).Equal(b.PublicationDate) {
-		return fiber.NewError(fiber.StatusBadRequest, "publication date is required")
+		return externalerrors.BadRequest("publication date is required")
 	}
 
 	if b.Genre == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "genre is required")
+		return externalerrors.BadRequest("genre is required")
 	}
 
 	if b.Language == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "language is required")
+		return externalerrors.BadRequest("language is required")
 	}
 
 	return nil

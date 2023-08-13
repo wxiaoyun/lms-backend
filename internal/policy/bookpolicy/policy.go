@@ -29,3 +29,27 @@ func DeletePolicy() policy.Policy {
 		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanDeleteBook.Name),
 	)
 }
+
+func LoanPolicy() policy.Policy {
+	return commonpolicy.Any(
+		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanLoanBook.Name),
+	)
+}
+
+func ReturnPolicy() policy.Policy {
+	return commonpolicy.Any(
+		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanReturnBook.Name),
+	)
+}
+
+func RenewPolicy() policy.Policy {
+	return commonpolicy.Any(
+		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanRenewBook.Name),
+	)
+}
+
+func ManageBookRecordPolicy() policy.Policy {
+	return commonpolicy.Any(
+		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanManageBookRecords.Name),
+	)
+}

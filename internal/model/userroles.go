@@ -7,6 +7,7 @@ import (
 type UserRoles struct {
 	ID        uint `gorm:"primarykey"`
 	CreatedAt time.Time
-	UserID    uint `gorm:"not null"`
-	RoleID    uint `gorm:"not null"`
+
+	UserID uint `gorm:"not null"`
+	RoleID uint `gorm:"not null"`
 }

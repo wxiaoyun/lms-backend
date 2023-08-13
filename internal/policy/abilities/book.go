@@ -21,7 +21,7 @@ var (
 		Name:        "canDeleteBook",
 		Description: "can delete book",
 	}
-	CanBorrowBook model.Ability = model.Ability{
+	CanLoanBook model.Ability = model.Ability{
 		Name:        "canBorrowBook",
 		Description: "can borrow book",
 	}

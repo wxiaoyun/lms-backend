@@ -34,8 +34,10 @@ func HandleCreateUser(c *fiber.Ctx) error {
 
 	user := params.ToModel()
 	db := database.GetDB()
-	tx, rollBackOrCommit := audit.Begin(c, db, fmt.Sprintf("create new user %s", user.Username))
-	defer rollBackOrCommit()
+	tx, rollBackOrCommit := audit.Begin(
+		c, db, fmt.Sprintf("create new user %s", user.Username),
+	)
+	defer func() { rollBackOrCommit(err) }()
 
 	err = user.Create(tx)
 	if err != nil {
@@ -47,7 +49,7 @@ func HandleCreateUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
 		Data: view,
 		Messages: []api.Message{
-			api.SuccessMessage(fmt.Sprintf(
+			api.SilentMessage(fmt.Sprintf(
 				"User %s created successfully", user.Username,
 			))},
 	})

@@ -10,37 +10,41 @@ import (
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/bookpolicy"
 	"lms-backend/internal/view/bookview"
+	"lms-backend/pkg/error/externalerrors"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-const (
-	createBookAction = "create book"
-)
-
-func HandleCreate(c *fiber.Ctx) error {
-	err := policy.Authorize(c, createBookAction, bookpolicy.CreatePolicy())
+func HandleUpdate(c *fiber.Ctx) error {
+	err := policy.Authorize(c, createBookAction, bookpolicy.UpdatePolicy())
 	if err != nil {
 		return err
 	}
 
-	var bookParams bookparams.CreateParams
+	param := c.Params("id")
+	bookID, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
+	}
+
+	var bookParams bookparams.UpdateParams
 	if err := c.BodyParser(&bookParams); err != nil {
 		return err
 	}
 
-	if err := bookParams.Validate(); err != nil {
+	if err := bookParams.Validate(bookID); err != nil {
 		return err
 	}
 
 	db := database.GetDB()
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("Adding a new book to library: %s.", bookParams.Title),
+		c, db, fmt.Sprintf("Updating existing book in library: %s.", bookParams.Title),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
 	bookModel := bookParams.ToModel()
-	bookModel, err = book.Create(tx, bookModel)
+	bookModel, err = book.Update(tx, bookModel)
 	if err != nil {
 		return err
 	}
@@ -51,7 +55,7 @@ func HandleCreate(c *fiber.Ctx) error {
 		Data: view,
 		Messages: []api.Message{
 			api.SuccessMessage(fmt.Sprintf(
-				"\"%s\" added to library.", bookModel.Title,
+				"\"%s\" modified successfully.", bookModel.Title,
 			))},
 	})
 }
