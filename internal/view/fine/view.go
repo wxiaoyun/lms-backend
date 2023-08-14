@@ -15,8 +15,8 @@ type View struct {
 func ToView(fine *model.Fine) *View {
 	return &View{
 		ID:     int64(fine.ID),
-		UserID: fine.UserID,
-		LoanID: fine.LoanID,
+		UserID: int64(fine.UserID),
+		LoanID: int64(fine.LoanID),
 		Status: fine.Status,
 		Amount: fine.Amount,
 	}

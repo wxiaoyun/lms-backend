@@ -12,8 +12,8 @@ type FineStatus = string
 type Fine struct {
 	gorm.Model
 
-	UserID int64      `gorm:"not null"`
-	LoanID int64      `gorm:"not null"`
+	UserID uint       `gorm:"not null"`
+	LoanID uint       `gorm:"not null"`
 	Status FineStatus `gorm:"not null"`
 	Amount float64    `gorm:"not null"`
 }
@@ -26,6 +26,10 @@ const (
 const (
 	FineStatusOutstanding FineStatus = "outstanding"
 	FineStatusPaid        FineStatus = "paid"
+)
+
+const (
+	OverdueFine = 1000
 )
 
 func (f *Fine) Create(db *gorm.DB) error {

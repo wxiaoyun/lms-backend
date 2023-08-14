@@ -9,6 +9,7 @@ require (
 	github.com/gofiber/swagger v0.1.12
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.9
+	github.com/robfig/cron/v3 v3.0.0
 	github.com/rubenv/sql-migrate v1.5.2
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/swag v1.16.1

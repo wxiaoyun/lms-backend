@@ -6,6 +6,16 @@ import (
 	"lms-backend/internal/policy/commonpolicy"
 )
 
+func ReadPolicy() policy.Policy {
+	return commonpolicy.Any(
+		commonpolicy.HasAnyAbility(
+			abilities.CanManageAll.Name,
+			abilities.CanManageBookRecords.Name,
+			abilities.CanReadReservation.Name,
+		),
+	)
+}
+
 func DeletePolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
