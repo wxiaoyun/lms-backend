@@ -154,10 +154,15 @@ func seedRolesAbilities(db *gorm.DB) error {
 		abilities.CanCreateBook,
 		abilities.CanUpdateBook,
 		abilities.CanDeleteBook,
+		abilities.CanManageBookRecords,
+
 		abilities.CanLoanBook,
 		abilities.CanReturnBook,
 		abilities.CanRenewBook,
-		abilities.CanManageBookRecords,
+
+		abilities.CanCreateReservation,
+		abilities.CanCancelReservation,
+		abilities.CanCheckoutReservation,
 	}
 
 	// Create abilities
@@ -188,11 +193,15 @@ func seedRolesAbilities(db *gorm.DB) error {
 			{T, T, F, F}, // Create book
 			{T, T, F, F}, // Update book
 			{T, T, F, F}, // Delete book
+			{T, T, T, F}, // Manage book records
 
 			{T, T, T, T}, // Borrow book
 			{T, T, T, T}, // Return book
 			{T, T, T, T}, // Renew book
-			{T, T, T, F}, // Manage book records
+
+			{T, T, T, T}, // Create reservation
+			{T, T, T, T}, // Cancel reservation
+			{T, T, T, T}, // Checkout reservation
 		}
 	)
 
