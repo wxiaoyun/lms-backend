@@ -49,9 +49,9 @@ func HandleCreate(c *fiber.Ctx) error {
 
 	return c.JSON(api.Response{
 		Data: view,
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" added to library.", bookModel.Title,
-			))},
+			))),
 	})
 }

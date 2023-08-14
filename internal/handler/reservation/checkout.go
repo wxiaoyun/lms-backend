@@ -1,4 +1,4 @@
-package bookhandler
+package reservationhandler
 
 import (
 	"fmt"
@@ -8,17 +8,20 @@ import (
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
-	"lms-backend/internal/policy/bookpolicy"
+	"lms-backend/internal/policy/reservationpolicy"
 	"lms-backend/internal/session"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func HandleLoan(c *fiber.Ctx) error {
-	err := policy.Authorize(c, readBookAction, bookpolicy.LoanPolicy())
+const (
+	checkoutBookAction = "checkout book"
+)
+
+func HandleCheckout(c *fiber.Ctx) error {
+	err := policy.Authorize(c, checkoutBookAction, reservationpolicy.CheckoutPolicy())
 	if err != nil {
 		return err
 	}
@@ -47,20 +50,19 @@ func HandleLoan(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s loaning \"%s\"", username, bookTitle),
+		c, db, fmt.Sprintf("%s checking out reservation for \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	bookModel, loanModel, err := book.LoanBook(tx, userID, bookID)
+	_, err = book.CheckOutReservation(tx, userID, bookID)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(api.Response{
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"\"%s\" is loaned until %s.", bookModel.Title,
-				loanModel.DueDate.Format(time.RFC3339),
-			))},
+				"%s has checked out \"%s\".", username, bookTitle,
+			))),
 	})
 }

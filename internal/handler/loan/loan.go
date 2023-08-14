@@ -1,4 +1,4 @@
-package bookhandler
+package loanhandler
 
 import (
 	"fmt"
@@ -12,12 +12,17 @@ import (
 	"lms-backend/internal/session"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func HandleReturn(c *fiber.Ctx) error {
-	err := policy.Authorize(c, readBookAction, bookpolicy.RenewPolicy())
+const (
+	loanBookAction = "loan book"
+)
+
+func HandleLoan(c *fiber.Ctx) error {
+	err := policy.Authorize(c, loanBookAction, bookpolicy.LoanPolicy())
 	if err != nil {
 		return err
 	}
@@ -46,19 +51,20 @@ func HandleReturn(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s returning \"%s\"", username, bookTitle),
+		c, db, fmt.Sprintf("%s loaning \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	bookModel, _, err := book.ReturnBook(tx, userID, bookID)
+	loanModel, err := book.LoanBook(tx, userID, bookID)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(api.Response{
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"Book \"%s\" has been returned.", bookModel.Title,
-			))},
+				"\"%s\" is loaned until %s.", bookTitle,
+				loanModel.DueDate.Format(time.RFC3339),
+			))),
 	})
 }

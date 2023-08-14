@@ -48,8 +48,8 @@ func HandleList(c *fiber.Ctx) error {
 			TotalCount:    totalCount,
 			FilteredCount: filteredCount,
 		},
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SilentMessage("books listed successfully"),
-		},
+		),
 	})
 }

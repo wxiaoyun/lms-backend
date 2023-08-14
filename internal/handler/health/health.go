@@ -15,8 +15,8 @@ import (
 // @Router /api/v1/health [get]
 func HandleHealth(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(api.Response{
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SilentMessage("server is running"),
-		},
+		),
 	})
 }
