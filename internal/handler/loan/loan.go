@@ -56,19 +56,26 @@ func HandleLoan(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	loanModel, err := book.LoanBook(tx, userID, bookID)
+	ln, err := book.LoanBook(tx, userID, bookID)
 	if err != nil {
 		return err
 	}
 
-	view := loanview.ToView(loanModel)
+	if ln.BookID != uint(bookID) {
+		err = externalerrors.BadRequest(fmt.Sprintf(
+			"Loan with id %d does not belong to %s.", ln.ID, bookTitle,
+		))
+		return err
+	}
+
+	view := loanview.ToView(ln)
 
 	return c.JSON(api.Response{
 		Data: view,
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" is loaned until %s.", bookTitle,
-				loanModel.DueDate.Format(time.RFC3339),
+				ln.DueDate.Format(time.RFC3339),
 			))),
 	})
 }
