@@ -8,8 +8,9 @@ import (
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
-	"lms-backend/internal/policy/bookpolicy"
+	"lms-backend/internal/policy/loanpolicy"
 	"lms-backend/internal/session"
+	"lms-backend/internal/view/loanview"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
 
@@ -21,7 +22,7 @@ const (
 )
 
 func HandleReturn(c *fiber.Ctx) error {
-	err := policy.Authorize(c, returnBookAction, bookpolicy.ReturnPolicy())
+	err := policy.Authorize(c, returnBookAction, loanpolicy.ReturnPolicy())
 	if err != nil {
 		return err
 	}
@@ -35,6 +36,11 @@ func HandleReturn(c *fiber.Ctx) error {
 	bookID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
+	}
+	param2 := c.Params("loan_id")
+	loanID, err := strconv.ParseInt(param2, 10, 64)
+	if err != nil {
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param))
 	}
 
 	db := database.GetDB()
@@ -54,12 +60,15 @@ func HandleReturn(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	_, err = book.ReturnBook(tx, userID, bookID)
+	loanModel, err := book.ReturnBook(tx, loanID)
 	if err != nil {
 		return err
 	}
 
+	view := loanview.ToView(loanModel)
+
 	return c.JSON(api.Response{
+		Data: view,
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Book \"%s\" has been returned.", bookTitle,

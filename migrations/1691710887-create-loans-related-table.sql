@@ -9,7 +9,8 @@ CREATE TABLE
     due_date DATE NOT NULL,
     return_date DATE,
     created_at created_at,
-    updated_at updated_at
+    updated_at updated_at,
+    deleted_at deleted_at
   );
 
 CREATE TABLE
@@ -17,7 +18,9 @@ CREATE TABLE
     id bigserial PRIMARY KEY,
     loan_id BIGINT NOT NULL REFERENCES loans (id),
     ACTION VARCHAR NOT NULL,
-    created_at created_at
+    created_at created_at,
+    updated_at updated_at,
+    deleted_at deleted_at
   );
 
 CREATE TABLE
@@ -28,7 +31,8 @@ CREATE TABLE
     status VARCHAR NOT NULL,
     reservation_date DATE NOT NULL,
     created_at created_at,
-    updated_at updated_at
+    updated_at updated_at,
+    deleted_at deleted_at
   );
 
 CREATE TABLE
@@ -39,7 +43,8 @@ CREATE TABLE
     status VARCHAR NOT NULL,
     amount DECIMAL NOT NULL,
     created_at created_at,
-    updated_at updated_at
+    updated_at updated_at,
+    deleted_at deleted_at
   );
 
 -- +migrate Down

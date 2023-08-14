@@ -1,4 +1,4 @@
-package reservationpolicy
+package loanpolicy
 
 import (
 	"lms-backend/internal/policy"
@@ -11,37 +11,37 @@ func DeletePolicy() policy.Policy {
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
-			abilities.CanDeleteReservation.Name,
+			abilities.CanDeleteLoan.Name,
 		),
 	)
 }
 
-func ReservePolicy() policy.Policy {
+func LoanPolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
-			abilities.CanCreateReservation.Name,
+			abilities.CanLoanBook.Name,
 		),
 	)
 }
 
-func CheckoutPolicy() policy.Policy {
+func ReturnPolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
-			abilities.CanCheckoutReservation.Name,
+			abilities.CanReturnBook.Name,
 		),
 	)
 }
 
-func CancelPolicy() policy.Policy {
+func RenewPolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
-			abilities.CanCancelReservation.Name,
+			abilities.CanRenewBook.Name,
 		),
 	)
 }

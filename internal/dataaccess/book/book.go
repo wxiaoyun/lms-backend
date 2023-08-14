@@ -12,13 +12,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func preloadLoans(db *gorm.DB) *gorm.DB {
-	return db.Preload("Loans")
-}
-
-func preloadLoanHistories(db *gorm.DB) *gorm.DB {
-	return preloadLoans(db).
-		Preload("Loans.LoanHistories")
+func preloadAssociations(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("Loans").
+		Preload("Loans.LoanHistories").
+		Preload("Loans.Fines").
+		Preload("Reservations")
 }
 
 func Read(db *gorm.DB, bookID int64) (*model.Book, error) {
@@ -39,7 +38,7 @@ func Read(db *gorm.DB, bookID int64) (*model.Book, error) {
 func ReadDetailed(db *gorm.DB, bookID int64) (*model.Book, error) {
 	var book model.Book
 	result := db.Model(&model.Book{}).
-		Scopes(preloadLoanHistories).
+		Scopes(preloadAssociations).
 		Where("id = ?", bookID).
 		First(&book)
 	if err := result.Error; err != nil {
@@ -86,7 +85,7 @@ func Update(db *gorm.DB, book *model.Book) (*model.Book, error) {
 }
 
 func Delete(db *gorm.DB, bookID int64) (*model.Book, error) {
-	book, err := Read(db, bookID)
+	book, err := ReadDetailed(db, bookID)
 	if err != nil {
 		return nil, err
 	}
@@ -198,23 +197,8 @@ func LoanBook(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
 	return ln, nil
 }
 
-func ReturnBook(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
-	var ln model.Loan
-	result := db.Model(&model.Loan{}).
-		Where("user_id = ?", userID).
-		Where("book_id = ?", bookID).
-		Where("return_date IS NULL").
-		Order("created_at DESC"). // Get the most recent loan
-		First(&ln)
-
-	if err := result.Error; err != nil {
-		if orm.IsRecordNotFound(err) {
-			return nil, externalerrors.BadRequest("You do not have this book on loan")
-		}
-		return nil, err
-	}
-
-	returnedLn, err := loan.ReturnBook(db, int64(ln.ID))
+func ReturnBook(db *gorm.DB, loanID int64) (*model.Loan, error) {
+	returnedLn, err := loan.ReturnBook(db, loanID)
 	if err != nil {
 		return nil, err
 	}
@@ -222,23 +206,13 @@ func ReturnBook(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
 	return returnedLn, nil
 }
 
-func RenewLoan(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
-	var ln model.Loan
-	result := db.Model(&model.Loan{}).
-		Where("user_id = ?", userID).
-		Where("book_id = ?", bookID).
-		Where("return_date IS NULL").
-		Order("created_at DESC"). // Get the most recent loan
-		First(&ln)
-
-	if err := result.Error; err != nil {
-		if orm.IsRecordNotFound(err) {
-			return nil, externalerrors.BadRequest("You do not have this book on loan")
-		}
+func RenewLoan(db *gorm.DB, loanID int64) (*model.Loan, error) {
+	ln, err := loan.Read(db, loanID)
+	if err != nil {
 		return nil, err
 	}
 
-	reservations, err := reservation.ReadOutstandingReservationsByBookID(db, bookID)
+	reservations, err := reservation.ReadOutstandingReservationsByBookID(db, int64(ln.BookID))
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +222,7 @@ func RenewLoan(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
 		return nil, externalerrors.BadRequest("You cannot renew the loan because the book is reserved")
 	}
 
-	renewedLn, err := loan.RenewLoan(db, int64(ln.ID))
+	renewedLn, err := loan.RenewLoan(db, loanID)
 	if err != nil {
 		return nil, err
 	}
@@ -282,34 +256,17 @@ func ReserveBook(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) 
 	return res, nil
 }
 
-// Sets the status of the reservation to fulfilled and fullfils the reservation
-func CancelReservation(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) {
-	var res model.Reservation
-	result := db.Model(&model.Reservation{}).
-		Where("user_id = ?", userID).
-		Where("book_id = ?", bookID).
-		Where("status = ?", model.ReservationStatusPending).
-		Order("created_at DESC"). // Get the most recent reservation
-		First(&res)
-
-	if err := result.Error; err != nil {
-		if orm.IsRecordNotFound(err) {
-			return nil, externalerrors.BadRequest("You do not have this book on reserve")
-		}
-		return nil, err
-	}
-
-	err := reservation.FullfilReservation(db, int64(res.ID))
+func CheckOutReservation(db *gorm.DB, userID, bookID, resID int64) (*model.Reservation, error) {
+	isOnLoan, err := IsOnLoan(db, bookID)
 	if err != nil {
 		return nil, err
 	}
+	if isOnLoan {
+		return nil, externalerrors.BadRequest("Book is currently on loan")
+	}
 
-	return &res, nil
-}
-
-func CheckOutReservation(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) {
 	// Fulfill the reservation
-	res, err := CancelReservation(db, userID, bookID)
+	res, err := reservation.FullfilReservation(db, resID)
 	if err != nil {
 		return nil, err
 	}

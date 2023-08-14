@@ -1,17 +1,17 @@
-package reservationhandler
+package loanhandler
 
 import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/dataaccess/book"
-	"lms-backend/internal/dataaccess/reservation"
+	"lms-backend/internal/dataaccess/loan"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
-	"lms-backend/internal/policy/reservationpolicy"
+	"lms-backend/internal/policy/loanpolicy"
 	"lms-backend/internal/session"
-	"lms-backend/internal/view/reservationview"
+	"lms-backend/internal/view/loanview"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
 
@@ -19,11 +19,11 @@ import (
 )
 
 const (
-	cancelReservationAction = "cancel reservation"
+	deleteLoanAction = "delete loan"
 )
 
-func HandleCancel(c *fiber.Ctx) error {
-	err := policy.Authorize(c, cancelReservationAction, reservationpolicy.CancelPolicy())
+func HandleDelete(c *fiber.Ctx) error {
+	err := policy.Authorize(c, deleteLoanAction, loanpolicy.DeletePolicy())
 	if err != nil {
 		return err
 	}
@@ -38,10 +38,10 @@ func HandleCancel(c *fiber.Ctx) error {
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
 	}
-	param2 := c.Params("reservation_id")
-	resID, err := strconv.ParseInt(param2, 10, 64)
+	param2 := c.Params("loan_id")
+	loanID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid reservation id.", param2))
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param))
 	}
 
 	db := database.GetDB()
@@ -57,22 +57,22 @@ func HandleCancel(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s canceling reservation for \"%s\"", username, bookTitle),
+		c, db, fmt.Sprintf("%s deleting loan of id - %d belonging to \"%s\"", username, loanID, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	res, err := reservation.FullfilReservation(tx, resID)
+	loanModel, err := loan.Delete(tx, loanID)
 	if err != nil {
 		return err
 	}
 
-	view := reservationview.ToView(res)
+	view := loanview.ToView(loanModel)
 
 	return c.JSON(api.Response{
 		Data: view,
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"Reservation for \"%s\" is canceled.", bookTitle,
+				"Loan for \"%s\" has been deleted", bookTitle,
 			))),
 	})
 }

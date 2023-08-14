@@ -12,9 +12,7 @@ import (
 type LoanStatus = string
 
 type Loan struct {
-	ID        uint `gorm:"primarykey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	gorm.Model
 
 	UserID        uint          `gorm:"not null"`
 	BookID        uint          `gorm:"not null"`
@@ -23,6 +21,7 @@ type Loan struct {
 	DueDate       time.Time     `gorm:"not null"` // Date when the book is due
 	ReturnDate    sql.NullTime  // Date when the book is returned
 	LoanHistories []LoanHistory `gorm:"->;<-:create"`
+	Fines         []Fine        `gorm:"->;<-:create"`
 }
 
 const (
@@ -54,6 +53,23 @@ func (l *Loan) Update(db *gorm.DB) error {
 	}
 
 	return db.Updates(l).Error
+}
+
+// Need to call preloadAssociations	before calling this method.
+func (l *Loan) Delete(db *gorm.DB) error {
+	for _, hist := range l.LoanHistories {
+		if err := hist.Delete(db); err != nil {
+			return err
+		}
+	}
+
+	for _, fine := range l.Fines {
+		if err := fine.Delete(db); err != nil {
+			return err
+		}
+	}
+
+	return db.Delete(l).Error
 }
 
 func (l *Loan) ensureUserExistsAndPresent(db *gorm.DB) error {
