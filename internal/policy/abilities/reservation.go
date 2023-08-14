@@ -5,6 +5,10 @@ import (
 )
 
 var (
+	CanDeleteReservation model.Ability = model.Ability{
+		Name:        "canDeleteReservation",
+		Description: "can delete reservation",
+	}
 	CanCreateReservation model.Ability = model.Ability{
 		Name:        "canCreateReservation",
 		Description: "can create reservation",

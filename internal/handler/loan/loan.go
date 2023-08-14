@@ -8,8 +8,9 @@ import (
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
-	"lms-backend/internal/policy/bookpolicy"
+	"lms-backend/internal/policy/loanpolicy"
 	"lms-backend/internal/session"
+	"lms-backend/internal/view/loanview"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
 	"time"
@@ -22,7 +23,7 @@ const (
 )
 
 func HandleLoan(c *fiber.Ctx) error {
-	err := policy.Authorize(c, loanBookAction, bookpolicy.LoanPolicy())
+	err := policy.Authorize(c, loanBookAction, loanpolicy.LoanPolicy())
 	if err != nil {
 		return err
 	}
@@ -60,7 +61,10 @@ func HandleLoan(c *fiber.Ctx) error {
 		return err
 	}
 
+	view := loanview.ToView(loanModel)
+
 	return c.JSON(api.Response{
+		Data: view,
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" is loaned until %s.", bookTitle,

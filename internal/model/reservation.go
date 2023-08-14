@@ -11,9 +11,7 @@ import (
 type ReservationStatus = string
 
 type Reservation struct {
-	ID        uint `gorm:"primarykey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	gorm.Model
 
 	UserID          uint              `gorm:"not null"`
 	BookID          uint              `gorm:"not null"`
@@ -42,6 +40,10 @@ func (r *Reservation) Create(db *gorm.DB) error {
 
 func (r *Reservation) Update(db *gorm.DB) error {
 	return db.Updates(r).Error
+}
+
+func (r *Reservation) Delete(db *gorm.DB) error {
+	return db.Delete(r).Error
 }
 
 func (r *Reservation) ensureUserExistsAndPresent(db *gorm.DB) error {

@@ -28,6 +28,19 @@ func Read(db *gorm.DB, reservationID int64) (*model.Reservation, error) {
 	return &reservation, nil
 }
 
+func Delete(db *gorm.DB, reservationID int64) (*model.Reservation, error) {
+	reservation, err := Read(db, reservationID)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := reservation.Delete(db); err != nil {
+		return nil, err
+	}
+
+	return reservation, nil
+}
+
 // Returns slice of reservations that is pending and reservation date is after now
 func ReadOutstandingReservationsByBookID(db *gorm.DB, bookID int64) ([]model.Reservation, error) {
 	var reservations []model.Reservation
@@ -93,16 +106,20 @@ func ReserveBook(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) 
 // Sets the status of the reservation to fulfilled.
 //
 // This can either be the user retrieving the book or canceling the reservation.
-func FullfilReservation(db *gorm.DB, reservationID int64) error {
+func FullfilReservation(db *gorm.DB, reservationID int64) (*model.Reservation, error) {
 	reservation, err := Read(db, reservationID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if reservation.Status != model.ReservationStatusPending {
-		return externalerrors.BadRequest("reservation is not pending")
+		return nil, externalerrors.BadRequest("reservation is not pending")
 	}
 
 	reservation.Status = model.ReservationStatusFulfilled
-	return reservation.Update(db)
+	if err := reservation.Update(db); err != nil {
+		return nil, err
+	}
+
+	return reservation, nil
 }

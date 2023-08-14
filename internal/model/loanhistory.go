@@ -2,7 +2,6 @@ package model
 
 import (
 	"slices"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -11,8 +10,7 @@ import (
 type LoanHistoryAction = string
 
 type LoanHistory struct {
-	ID        uint `gorm:"primarykey"`
-	CreatedAt time.Time
+	gorm.Model
 
 	LoanID uint              `gorm:"not null"`
 	Action LoanHistoryAction `gorm:"not null"`
@@ -32,6 +30,10 @@ const (
 
 func (l *LoanHistory) Create(db *gorm.DB) error {
 	return db.Create(l).Error
+}
+
+func (l *LoanHistory) Delete(db *gorm.DB) error {
+	return db.Delete(l).Error
 }
 
 func (l *LoanHistory) ensureLoanExistsAndPresent(db *gorm.DB) error {

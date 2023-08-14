@@ -10,6 +10,7 @@ import (
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/reservationpolicy"
 	"lms-backend/internal/session"
+	"lms-backend/internal/view/reservationview"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
 
@@ -36,6 +37,11 @@ func HandleCheckout(c *fiber.Ctx) error {
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
 	}
+	param2 := c.Params("reservation_id")
+	resID, err := strconv.ParseInt(param2, 10, 64)
+	if err != nil {
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid reservation id.", param2))
+	}
 
 	db := database.GetDB()
 
@@ -54,12 +60,15 @@ func HandleCheckout(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	_, err = book.CheckOutReservation(tx, userID, bookID)
+	res, err := book.CheckOutReservation(tx, userID, bookID, resID)
 	if err != nil {
 		return err
 	}
 
+	view := reservationview.ToView(res)
+
 	return c.JSON(api.Response{
+		Data: view,
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"%s has checked out \"%s\".", username, bookTitle,

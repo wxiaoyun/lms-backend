@@ -10,9 +10,11 @@ import (
 	"gorm.io/gorm"
 )
 
-// func preloadHistories(db *gorm.DB) *gorm.DB {
-// 	return db.Preload("LoanHistories")
-// }
+func preloadAssociations(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("LoanHistories").
+		Preload("Fines")
+}
 
 func Read(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	var loan model.Loan
@@ -29,6 +31,37 @@ func Read(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	}
 
 	return &loan, nil
+}
+
+func ReadDetailed(db *gorm.DB, loanID int64) (*model.Loan, error) {
+	var loan model.Loan
+
+	result := db.Model(&model.Loan{}).
+		Scopes(preloadAssociations).
+		Where("id = ?", loanID).
+		First(&loan)
+
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, orm.ErrRecordNotFound(model.LoanModelName)
+		}
+		return nil, result.Error
+	}
+
+	return &loan, nil
+}
+
+func Delete(db *gorm.DB, loanID int64) (*model.Loan, error) {
+	ln, err := ReadDetailed(db, loanID)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := ln.Delete(db); err != nil {
+		return nil, err
+	}
+
+	return ln, nil
 }
 
 // Returns the outstanding loan for the given book, sorted by create date.
@@ -133,7 +166,7 @@ func LoanBook(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
 }
 
 func ReturnBook(db *gorm.DB, loanID int64) (*model.Loan, error) {
-	ln, err := Read(db, loanID)
+	ln, err := ReadDetailed(db, loanID)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +193,7 @@ func ReturnBook(db *gorm.DB, loanID int64) (*model.Loan, error) {
 }
 
 func RenewLoan(db *gorm.DB, loanID int64) (*model.Loan, error) {
-	ln, err := Read(db, loanID)
+	ln, err := ReadDetailed(db, loanID)
 	if err != nil {
 		return nil, err
 	}

@@ -10,6 +10,7 @@ import (
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/reservationpolicy"
 	"lms-backend/internal/session"
+	"lms-backend/internal/view/reservationview"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
 	"time"
@@ -55,16 +56,19 @@ func HandleReserve(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	reservationModel, err := book.ReserveBook(tx, userID, bookID)
+	res, err := book.ReserveBook(tx, userID, bookID)
 	if err != nil {
 		return err
 	}
 
+	view := reservationview.ToView(res)
+
 	return c.JSON(api.Response{
+		Data: view,
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" has been reserved until %s.", bookTitle,
-				reservationModel.ReservationDate.Format(time.RFC3339),
+				res.ReservationDate.Format(time.RFC3339),
 			))),
 	})
 }

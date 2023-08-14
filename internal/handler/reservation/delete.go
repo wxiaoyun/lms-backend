@@ -19,11 +19,11 @@ import (
 )
 
 const (
-	cancelReservationAction = "cancel reservation"
+	deleteReservationAction = "delete reservation"
 )
 
-func HandleCancel(c *fiber.Ctx) error {
-	err := policy.Authorize(c, cancelReservationAction, reservationpolicy.CancelPolicy())
+func HandleDelete(c *fiber.Ctx) error {
+	err := policy.Authorize(c, deleteReservationAction, reservationpolicy.DeletePolicy())
 	if err != nil {
 		return err
 	}
@@ -57,11 +57,11 @@ func HandleCancel(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s canceling reservation for \"%s\"", username, bookTitle),
+		c, db, fmt.Sprintf("%s deleting reservation ID - %d belonging to \"%s\"", username, resID, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	res, err := reservation.FullfilReservation(tx, resID)
+	res, err := reservation.Delete(tx, resID)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func HandleCancel(c *fiber.Ctx) error {
 		Data: view,
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"Reservation for \"%s\" is canceled.", bookTitle,
+				"Reservation for \"%s\" is deleted.", bookTitle,
 			))),
 	})
 }
