@@ -128,18 +128,6 @@ func (l *Loan) ValidateStatus() error {
 }
 
 func (l *Loan) Validate(db *gorm.DB) error {
-	if err := l.ensureUserExistsAndPresent(db); err != nil {
-		return err
-	}
-
-	if err := l.ensureBookExistsAndPresent(db); err != nil {
-		return err
-	}
-
-	if err := l.ValidateStatus(); err != nil {
-		return err
-	}
-
 	if l.BorrowDate.IsZero() {
 		return externalerrors.BadRequest("borrow date is required")
 	}
@@ -148,7 +136,23 @@ func (l *Loan) Validate(db *gorm.DB) error {
 		return externalerrors.BadRequest("due date is required")
 	}
 
-	return nil
+	if l.DueDate.Before(l.BorrowDate) {
+		return externalerrors.BadRequest("due date must be after borrow date")
+	}
+
+	if l.ReturnDate.Valid && l.ReturnDate.Time.Before(l.BorrowDate) {
+		return externalerrors.BadRequest("return date must be after borrow date")
+	}
+
+	if err := l.ensureUserExistsAndPresent(db); err != nil {
+		return err
+	}
+
+	if err := l.ensureBookExistsAndPresent(db); err != nil {
+		return err
+	}
+
+	return l.ValidateStatus()
 }
 
 func (l *Loan) BeforeCreate(db *gorm.DB) error {
