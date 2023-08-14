@@ -1,4 +1,4 @@
-package bookhandler
+package loanhandler
 
 import (
 	"fmt"
@@ -17,8 +17,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func HandleReserve(c *fiber.Ctx) error {
-	err := policy.Authorize(c, readBookAction, bookpolicy.ReturnPolicy())
+const (
+	renewLoanAction = "renew loan"
+)
+
+func HandleRenew(c *fiber.Ctx) error {
+	err := policy.Authorize(c, renewLoanAction, bookpolicy.RenewPolicy())
 	if err != nil {
 		return err
 	}
@@ -47,20 +51,20 @@ func HandleReserve(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s reserving \"%s\"", username, bookTitle),
+		c, db, fmt.Sprintf("%s renewing loan for \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	bookModel, reservationModel, err := book.ReserveBook(tx, userID, bookID)
+	loanModel, err := book.RenewLoan(tx, userID, bookID)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(api.Response{
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"\"%s\" has been reserved until %s.", bookModel.Title,
-				reservationModel.ReservationDate.Format(time.RFC3339),
-			))},
+				"Loan for \"%s\" has been extended to %s.", bookTitle,
+				loanModel.DueDate.Format(time.RFC3339),
+			))),
 	})
 }

@@ -48,9 +48,9 @@ func HandleCreateUser(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
 		Data: view,
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"User %s created successfully", user.Username,
-			))},
+			))),
 	})
 }

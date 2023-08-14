@@ -38,9 +38,9 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" removed from library.", bookModel.Title,
-			))},
+			))),
 	})
 }

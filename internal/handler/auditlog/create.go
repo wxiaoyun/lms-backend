@@ -47,9 +47,9 @@ func HandleCreate(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Entry in audit log created successfully: %s", log.Action,
-			))},
+			))),
 	})
 }

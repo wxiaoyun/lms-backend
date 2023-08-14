@@ -28,6 +28,8 @@ func HandleSignOut(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(api.Response{
-		Messages: []api.Message{api.SilentMessage("User is logged out successfully")},
+		Messages: api.Messages(
+			api.SilentMessage("User is logged out successfully"),
+		),
 	})
 }

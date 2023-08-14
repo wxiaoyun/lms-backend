@@ -164,47 +164,42 @@ func IsOnReserve(db *gorm.DB, bookID int64) (bool, error) {
 	return count > 0, nil
 }
 
-func LoanBook(db *gorm.DB, userID, bookID int64) (*model.Book, *model.Loan, error) {
+func LoanBook(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
 	isOnLoan, err := IsOnLoan(db, bookID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if isOnLoan {
-		return nil, nil, externalerrors.BadRequest("Book is already on loan")
+		return nil, externalerrors.BadRequest("Book is already on loan")
 	}
 
 	isOnReserve, err := IsOnReserve(db, bookID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if isOnReserve {
-		return nil, nil, externalerrors.BadRequest("Book is already on reserve")
+		return nil, externalerrors.BadRequest("Book is already on reserve")
 	}
 
 	hasExceededMaxLoan, err := user.HasExceededMaxLoan(db, userID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if hasExceededMaxLoan {
-		return nil, nil, externalerrors.BadRequest("You have reached the maximum number of loans")
+		return nil, externalerrors.BadRequest("You have reached the maximum number of loans")
 	}
 
 	// Create loan
 	ln, err := loan.LoanBook(db, userID, bookID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	book, err := Read(db, bookID)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return book, ln, nil
+	return ln, nil
 }
 
-func ReturnBook(db *gorm.DB, userID, bookID int64) (*model.Book, *model.Loan, error) {
-	var ln *model.Loan
+func ReturnBook(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
+	var ln model.Loan
 	result := db.Model(&model.Loan{}).
 		Where("user_id = ?", userID).
 		Where("book_id = ?", bookID).
@@ -214,26 +209,21 @@ func ReturnBook(db *gorm.DB, userID, bookID int64) (*model.Book, *model.Loan, er
 
 	if err := result.Error; err != nil {
 		if orm.IsRecordNotFound(err) {
-			return nil, nil, externalerrors.BadRequest("You do not have this book on loan")
+			return nil, externalerrors.BadRequest("You do not have this book on loan")
 		}
-		return nil, nil, err
+		return nil, err
 	}
 
-	ln, err := loan.ReturnBook(db, int64(ln.ID))
+	returnedLn, err := loan.ReturnBook(db, int64(ln.ID))
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	book, err := Read(db, bookID)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return book, ln, nil
+	return returnedLn, nil
 }
 
-func RenewLoan(db *gorm.DB, userID, bookID int64) (*model.Book, *model.Loan, error) {
-	var ln *model.Loan
+func RenewLoan(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
+	var ln model.Loan
 	result := db.Model(&model.Loan{}).
 		Where("user_id = ?", userID).
 		Where("book_id = ?", bookID).
@@ -243,61 +233,92 @@ func RenewLoan(db *gorm.DB, userID, bookID int64) (*model.Book, *model.Loan, err
 
 	if err := result.Error; err != nil {
 		if orm.IsRecordNotFound(err) {
-			return nil, nil, externalerrors.BadRequest("You do not have this book on loan")
+			return nil, externalerrors.BadRequest("You do not have this book on loan")
 		}
-		return nil, nil, err
+		return nil, err
 	}
 
 	reservations, err := reservation.ReadOutstandingReservationsByBookID(db, bookID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	if len(reservations) > 0 {
 		// check if the book is reserved by another user
-		return nil, nil, externalerrors.BadRequest("You cannot renew the loan because the book is reserved")
+		return nil, externalerrors.BadRequest("You cannot renew the loan because the book is reserved")
 	}
 
-	ln, err = loan.RenewLoan(db, int64(ln.ID))
+	renewedLn, err := loan.RenewLoan(db, int64(ln.ID))
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	book, err := Read(db, bookID)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return book, ln, nil
+	return renewedLn, nil
 }
 
-func ReserveBook(db *gorm.DB, userID, bookID int64) (*model.Book, *model.Reservation, error) {
+func ReserveBook(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) {
 	isOnReserve, err := IsOnReserve(db, bookID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if isOnReserve {
-		return nil, nil, externalerrors.BadRequest("Book is already on reserve")
+		return nil, externalerrors.BadRequest("Book is already on reserve")
 	}
 
 	hasExceededMaxReservation, err := user.HasExceededMaxReservation(db, userID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if hasExceededMaxReservation {
-		return nil, nil, externalerrors.BadRequest("You have reached the maximum number of reservations")
+		return nil, externalerrors.BadRequest("You have reached the maximum number of reservations")
 	}
 
 	// Create reservation
 	res, err := reservation.ReserveBook(db, userID, bookID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	book, err := Read(db, bookID)
+	return res, nil
+}
+
+// Sets the status of the reservation to fulfilled and fullfils the reservation
+func CancelReservation(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) {
+	var res model.Reservation
+	result := db.Model(&model.Reservation{}).
+		Where("user_id = ?", userID).
+		Where("book_id = ?", bookID).
+		Where("status = ?", model.ReservationStatusPending).
+		Order("created_at DESC"). // Get the most recent reservation
+		First(&res)
+
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, externalerrors.BadRequest("You do not have this book on reserve")
+		}
+		return nil, err
+	}
+
+	err := reservation.FullfilReservation(db, int64(res.ID))
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return book, res, nil
+	return &res, nil
+}
+
+func CheckOutReservation(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) {
+	// Fulfill the reservation
+	res, err := CancelReservation(db, userID, bookID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Loan the book to the user
+	_, err = LoanBook(db, userID, bookID)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }

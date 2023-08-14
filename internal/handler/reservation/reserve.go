@@ -1,4 +1,4 @@
-package bookhandler
+package reservationhandler
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
-	"lms-backend/internal/policy/bookpolicy"
+	"lms-backend/internal/policy/reservationpolicy"
 	"lms-backend/internal/session"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
@@ -17,8 +17,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func HandleRenew(c *fiber.Ctx) error {
-	err := policy.Authorize(c, readBookAction, bookpolicy.ReturnPolicy())
+const (
+	reserveBookAction = "reserve book"
+)
+
+func HandleReserve(c *fiber.Ctx) error {
+	err := policy.Authorize(c, reserveBookAction, reservationpolicy.ReservePolicy())
 	if err != nil {
 		return err
 	}
@@ -47,20 +51,20 @@ func HandleRenew(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s renewing loan for \"%s\"", username, bookTitle),
+		c, db, fmt.Sprintf("%s reserving \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	bookModel, loanModel, err := book.RenewLoan(tx, userID, bookID)
+	reservationModel, err := book.ReserveBook(tx, userID, bookID)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(api.Response{
-		Messages: []api.Message{
+		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"Loan for \"%s\" has been extended to %s.", bookModel.Title,
-				loanModel.DueDate.Format(time.RFC3339),
-			))},
+				"\"%s\" has been reserved until %s.", bookTitle,
+				reservationModel.ReservationDate.Format(time.RFC3339),
+			))),
 	})
 }

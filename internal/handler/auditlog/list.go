@@ -49,8 +49,8 @@ func HandleList(c *fiber.Ctx) error {
 			TotalCount:    totalCount,
 			FilteredCount: filteredCount,
 		},
-		Messages: []api.Message{
-			api.SuccessMessage("auditlog listed successfully"),
-		},
+		Messages: api.Messages(
+			api.SilentMessage("auditlog listed successfully"),
+		),
 	})
 }

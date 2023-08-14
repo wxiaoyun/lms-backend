@@ -7,6 +7,8 @@ import (
 	"lms-backend/internal/handler/auth"
 	bookhandler "lms-backend/internal/handler/book"
 	"lms-backend/internal/handler/health"
+	loanhandler "lms-backend/internal/handler/loan"
+	reservationhandler "lms-backend/internal/handler/reservation"
 	userhandler "lms-backend/internal/handler/user"
 )
 
@@ -37,8 +39,11 @@ func SetUpRoutes(app *fiber.App) {
 	bookSpecificRoutes.Patch("/", bookhandler.HandleUpdate)
 	bookSpecificRoutes.Delete("/", bookhandler.HandleDelete)
 
-	bookSpecificRoutes.Post("/loan", bookhandler.HandleLoan)
-	bookSpecificRoutes.Post("/return", bookhandler.HandleReturn)
-	bookSpecificRoutes.Post("/renew", bookhandler.HandleRenew)
-	bookSpecificRoutes.Post("/reserve", bookhandler.HandleReserve)
+	bookSpecificRoutes.Post("/loan", loanhandler.HandleLoan)
+	bookSpecificRoutes.Post("/return", loanhandler.HandleReturn)
+	bookSpecificRoutes.Post("/renew", loanhandler.HandleRenew)
+
+	bookSpecificRoutes.Post("/reserve", reservationhandler.HandleReserve)
+	bookSpecificRoutes.Post("/cancel", reservationhandler.HandleCancel)
+	bookSpecificRoutes.Post("/checkout", reservationhandler.HandleCheckout)
 }

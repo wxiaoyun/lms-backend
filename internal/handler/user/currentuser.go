@@ -19,7 +19,7 @@ func HandleGetCurrentUser(c *fiber.Ctx) error {
 
 	db := database.GetDB()
 
-	user1, err := user.Read(db, userID)
+	usr, err := user.Read(db, userID)
 	if err != nil {
 		return err
 	}
@@ -29,12 +29,12 @@ func HandleGetCurrentUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := userview.ToView(user1, abilites)
+	view := userview.ToView(usr, abilites)
 
 	return c.JSON(api.Response{
 		Data: view,
-		Messages: []api.Message{
-			api.SuccessMessage(fmt.Sprintf("Welcome back, user %s!", user1.Username)),
-		},
+		Messages: api.Messages(
+			api.SuccessMessage(fmt.Sprintf("Welcome back, %s!", usr.Username)),
+		),
 	})
 }
