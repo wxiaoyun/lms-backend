@@ -14,10 +14,12 @@ import (
 //
 // The function will also create an audit log entry with the provided action message.
 func Begin(c *fiber.Ctx, db *gorm.DB, action string) (*gorm.DB, func(error)) {
-	userID, err := session.GetLoginSession(c)
-	if err != nil {
-		// Default to system admin
-		userID = 1
+	var userID int64 = 1 // Default to 1 (admin)
+	if c != nil {
+		usrID, err := session.GetLoginSession(c)
+		if err == nil {
+			userID = usrID
+		}
 	}
 
 	tx := db.Begin()

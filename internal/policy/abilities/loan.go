@@ -5,6 +5,10 @@ import (
 )
 
 var (
+	CanReadLoan model.Ability = model.Ability{
+		Name:        "canReadLoan",
+		Description: "can read loan",
+	}
 	CanDeleteLoan model.Ability = model.Ability{
 		Name:        "canDeleteLoan",
 		Description: "can delete loan",

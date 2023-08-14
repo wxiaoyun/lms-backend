@@ -24,8 +24,8 @@ func Read(db *gorm.DB, fineID int64) (*model.Fine, error) {
 
 func Create(db *gorm.DB, userID, loanID int64, amount float64) (*model.Fine, error) {
 	fine := &model.Fine{
-		UserID: userID,
-		LoanID: loanID,
+		UserID: uint(userID),
+		LoanID: uint(loanID),
 		Amount: amount,
 		Status: model.FineStatusOutstanding,
 	}

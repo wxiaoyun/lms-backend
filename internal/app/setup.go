@@ -7,16 +7,15 @@ import (
 
 	"lms-backend/internal/api"
 	"lms-backend/internal/config"
+	"lms-backend/internal/cron"
 	"lms-backend/internal/database"
 	"lms-backend/internal/middleware"
 	"lms-backend/internal/router"
 )
 
 func SetupAndRunApp() error {
-	var err error
-
 	// load ENV
-	err = LoadEnvAndConnectToDB()
+	err := LoadEnvAndConnectToDB()
 	if err != nil {
 		return err
 	}
@@ -35,6 +34,9 @@ func SetupAndRunApp() error {
 
 	// attach swagger
 	AddSwaggerRoutes(app)
+
+	c := cron.RunJobs()
+	defer c.Stop()
 
 	// get the port and start
 	port := os.Getenv("PORT")
