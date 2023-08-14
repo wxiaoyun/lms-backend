@@ -41,7 +41,7 @@ func HandleRenew(c *fiber.Ctx) error {
 	param2 := c.Params("loan_id")
 	loanID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param))
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param2))
 	}
 
 	db := database.GetDB()

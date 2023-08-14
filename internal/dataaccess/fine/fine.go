@@ -45,7 +45,20 @@ func Update(db *gorm.DB, fine *model.Fine) (*model.Fine, error) {
 	return Read(db, int64(fine.ID))
 }
 
-func SettleFine(db *gorm.DB, fineID int64) (*model.Fine, error) {
+func Delete(db *gorm.DB, fineID int64) (*model.Fine, error) {
+	fn, err := Read(db, fineID)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := fn.Delete(db); err != nil {
+		return nil, err
+	}
+
+	return fn, nil
+}
+
+func Settle(db *gorm.DB, fineID int64) (*model.Fine, error) {
 	fn, err := Read(db, fineID)
 	if err != nil {
 		return nil, err

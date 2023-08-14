@@ -1,17 +1,17 @@
-package loanhandler
+package finehandler
 
 import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/dataaccess/book"
-	"lms-backend/internal/dataaccess/loan"
+	"lms-backend/internal/dataaccess/fine"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
-	"lms-backend/internal/policy/loanpolicy"
+	"lms-backend/internal/policy/finepolicy"
 	"lms-backend/internal/session"
-	"lms-backend/internal/view/loanview"
+	"lms-backend/internal/view/fineview"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
 
@@ -19,11 +19,11 @@ import (
 )
 
 const (
-	deleteLoanAction = "delete loan"
+	settleFineAction = "settle Fine"
 )
 
-func HandleDelete(c *fiber.Ctx) error {
-	err := policy.Authorize(c, deleteLoanAction, loanpolicy.DeletePolicy())
+func HandleSettle(c *fiber.Ctx) error {
+	err := policy.Authorize(c, settleFineAction, finepolicy.SettlePolicy())
 	if err != nil {
 		return err
 	}
@@ -43,6 +43,11 @@ func HandleDelete(c *fiber.Ctx) error {
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param2))
 	}
+	param3 := c.Params("fine_id")
+	fineID, err := strconv.ParseInt(param3, 10, 64)
+	if err != nil {
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid fine id.", param3))
+	}
 
 	db := database.GetDB()
 
@@ -57,29 +62,29 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s deleting loan of id - %d belonging to \"%s\"", username, loanID, bookTitle),
+		c, db, fmt.Sprintf("%s settling fine for \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	ln, err := loan.Delete(tx, loanID)
+	fn, err := fine.Settle(tx, fineID)
 	if err != nil {
 		return err
 	}
 
-	if ln.BookID != uint(bookID) {
+	if fn.LoanID != uint(loanID) {
 		err = externalerrors.BadRequest(fmt.Sprintf(
-			"Loan with id %d does not belong to %s.", ln.ID, bookTitle,
+			"Fine with id %d does not belong to loan with id %d.", fn.ID, loanID,
 		))
 		return err
 	}
 
-	view := loanview.ToView(ln)
+	view := fineview.ToView(fn)
 
 	return c.JSON(api.Response{
 		Data: view,
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"Loan for \"%s\" has been deleted", bookTitle,
+				"Fine for \"%s\" is settled.", bookTitle,
 			))),
 	})
 }

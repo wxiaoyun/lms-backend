@@ -2,6 +2,7 @@ package router
 
 import (
 	bookhandler "lms-backend/internal/handler/book"
+	finehandler "lms-backend/internal/handler/fine"
 	loanhandler "lms-backend/internal/handler/loan"
 	reservationhandler "lms-backend/internal/handler/reservation"
 
@@ -30,6 +31,8 @@ func LoanRoutes(r fiber.Router) {
 		r.Delete("/", loanhandler.HandleDelete)
 		r.Patch("/return", loanhandler.HandleReturn)
 		r.Patch("/renew", loanhandler.HandleRenew)
+
+		Route(r, "/fine", FineRoutes)
 	})
 }
 
@@ -41,5 +44,14 @@ func ReservationRoutes(r fiber.Router) {
 		r.Delete("/", reservationhandler.HandleDelete)
 		r.Patch("/cancel", reservationhandler.HandleCancel)
 		r.Patch("/checkout", reservationhandler.HandleCheckout)
+	})
+}
+
+func FineRoutes(r fiber.Router) {
+	r.Get("/", finehandler.HandleList)
+
+	Route(r, "/:fine_id", func(r fiber.Router) {
+		r.Patch("/settle", finehandler.HandleSettle)
+		r.Delete("/", finehandler.HandleDelete)
 	})
 }
