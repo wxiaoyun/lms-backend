@@ -29,11 +29,11 @@ func HandleRead(c *fiber.Ctx) error {
 	// 	return err
 	// }
 
-	// param := c.Params("id")
-	// bookID, err := strconv.ParseInt(param, 10, 64)
-	// if err != nil {
-	// 	return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
-	// }
+	param := c.Params("id")
+	bookID, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
+	}
 	param2 := c.Params("reservation_id")
 	resID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {
@@ -45,6 +45,12 @@ func HandleRead(c *fiber.Ctx) error {
 	res, err := reservation.Read(db, resID)
 	if err != nil {
 		return err
+	}
+
+	if res.BookID != uint(bookID) {
+		return externalerrors.BadRequest(fmt.Sprintf(
+			"Reservation with id %d is not for book with id %d.", resID, bookID,
+		))
 	}
 
 	view := reservationview.ToView(res)

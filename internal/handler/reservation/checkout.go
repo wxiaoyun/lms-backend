@@ -65,6 +65,13 @@ func HandleCheckout(c *fiber.Ctx) error {
 		return err
 	}
 
+	if res.BookID != uint(bookID) {
+		err = externalerrors.BadRequest(fmt.Sprintf(
+			"Reservation with id %d is not for book with id %d.", resID, bookID,
+		))
+		return err
+	}
+
 	view := reservationview.ToView(res)
 
 	return c.JSON(api.Response{
