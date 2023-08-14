@@ -2,7 +2,7 @@ package loanview
 
 import (
 	"lms-backend/internal/model"
-	fineview "lms-backend/internal/view/fine"
+	"lms-backend/internal/view/fineview"
 	loanhistoryview "lms-backend/internal/view/loanhistory"
 	"lms-backend/util/ternary"
 	"time"
