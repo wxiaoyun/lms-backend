@@ -22,16 +22,6 @@ const (
 )
 
 func HandleReturn(c *fiber.Ctx) error {
-	err := policy.Authorize(c, returnBookAction, loanpolicy.ReturnPolicy())
-	if err != nil {
-		return err
-	}
-
-	userID, err := session.GetLoginSession(c)
-	if err != nil {
-		return err
-	}
-
 	param := c.Params("id")
 	bookID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
@@ -41,6 +31,16 @@ func HandleReturn(c *fiber.Ctx) error {
 	loanID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param2))
+	}
+
+	err = policy.Authorize(c, returnBookAction, loanpolicy.ReturnPolicy(loanID, bookID))
+	if err != nil {
+		return err
+	}
+
+	userID, err := session.GetLoginSession(c)
+	if err != nil {
+		return err
 	}
 
 	db := database.GetDB()
