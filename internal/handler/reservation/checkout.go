@@ -21,6 +21,14 @@ const (
 	checkoutBookAction = "checkout book"
 )
 
+// @Summary Checkout a book
+// @Description Checks out a book for a given reservation
+// @Tags reservation
+// @Accept */*
+// @Produce application/json
+// @Success 200 {object} api.SwgResponse[reservationview.View]
+// @Failure 400 {object} api.SwgErrResponse
+// @Router /api/v1/book/{book_id}/reservation/{reservation_id}/checkout [patch]
 func HandleCheckout(c *fiber.Ctx) error {
 	param := c.Params("id")
 	bookID, err := strconv.ParseInt(param, 10, 64)

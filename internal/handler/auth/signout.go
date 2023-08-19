@@ -9,10 +9,11 @@ import (
 
 // @Summary SignOut
 // @Description signs out the user and revoke their session
-// @Tags user
-// @Accept */*
-// @Produce plain
-// @Success 200 "OK"
+// @Tags auth
+// @Accept application/json
+// @Produce application/json
+// @Success 200 {object} api.SwgMsgResponse
+// @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/auth/logout [get]
 func HandleSignOut(c *fiber.Ctx) error {
 	sess, err := session.Store.Get(c)

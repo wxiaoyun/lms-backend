@@ -1,9 +1,313 @@
 definitions:
-  model.User:
+  api.Message:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  api.Meta:
+    properties:
+      filtered_count:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  api.SwgErrResponse:
+    properties:
+      error:
+        type: string
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+    type: object
+  api.SwgMsgResponse:
+    properties:
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+    type: object
+  api.SwgResponse-array_auditlogview_View:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/auditlogview.View'
+        type: array
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-array_bookview_View:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/bookview.View'
+        type: array
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-array_fineview_View:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/fineview.View'
+        type: array
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-bookview_View:
+    properties:
+      data:
+        $ref: '#/definitions/bookview.View'
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-fineview_View:
+    properties:
+      data:
+        $ref: '#/definitions/fineview.View'
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-loanview_View:
+    properties:
+      data:
+        $ref: '#/definitions/loanview.View'
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-reservationview_View:
+    properties:
+      data:
+        $ref: '#/definitions/reservationview.View'
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-userview_View:
+    properties:
+      data:
+        $ref: '#/definitions/userview.View'
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  auditlogparams.BaseParams:
+    properties:
+      action:
+        type: string
+    type: object
+  auditlogview.View:
+    properties:
+      action:
+        type: string
+      id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  bookparams.CreateParams:
+    properties:
+      author:
+        type: string
+      genre:
+        type: string
+      isbn:
+        type: string
+      language:
+        type: string
+      publication_date:
+        type: string
+      publisher:
+        type: string
+      title:
+        type: string
+    type: object
+  bookparams.UpdateParams:
+    properties:
+      author:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      isbn:
+        type: string
+      language:
+        type: string
+      publication_date:
+        type: string
+      publisher:
+        type: string
+      title:
+        type: string
+    type: object
+  bookview.View:
+    properties:
+      author:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      isbn:
+        type: string
+      language:
+        type: string
+      publication_date:
+        type: string
+      publisher:
+        type: string
+      title:
+        type: string
+    type: object
+  fineview.View:
+    properties:
+      amount:
+        type: number
+      id:
+        type: integer
+      loan_id:
+        type: integer
+      status:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  loanhistoryview.View:
+    properties:
+      action:
+        type: string
+      id:
+        type: integer
+      loan_id:
+        type: integer
+    type: object
+  loanview.View:
+    properties:
+      book_id:
+        type: integer
+      borrow_date:
+        type: string
+      due_date:
+        type: string
+      fines:
+        items:
+          $ref: '#/definitions/fineview.View'
+        type: array
+      id:
+        type: integer
+      loan_histories:
+        items:
+          $ref: '#/definitions/loanhistoryview.View'
+        type: array
+      return_date:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  peopleparams.BaseParams:
+    properties:
+      full_name:
+        type: string
+      language_preference:
+        type: string
+      preferred_name:
+        type: string
+    type: object
+  personview.View:
+    properties:
+      full_name:
+        type: string
+      id:
+        type: integer
+      language_preference:
+        type: string
+      preferred_name:
+        type: string
+    type: object
+  reservationview.View:
+    properties:
+      book_id:
+        type: integer
+      id:
+        type: integer
+      reservation_date:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  userparams.BaseUserParams:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  userparams.CreateUserParams:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      person_attributes:
+        $ref: '#/definitions/peopleparams.BaseParams'
+      username:
+        type: string
+    type: object
+  userview.View:
+    properties:
+      abilities:
+        items:
+          type: string
+        type: array
+      email:
+        type: string
+      id:
+        type: integer
+      person_attributes:
+        $ref: '#/definitions/personview.View'
     type: object
 info:
   contact: {}
-  title: technical test API
+  title: Library Mangement System API
 paths:
   /api/v1/audit_log/:
     get:
@@ -15,79 +319,496 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-array_auditlogview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
       summary: list audit logs
       tags:
       - audit log
     post:
       consumes:
-      - '*/*'
-      description: create an entry in the audit log
+      - application/json
+      description: list relevang audit logs
+      parameters:
+      - description: Audit log creation request
+        in: body
+        name: audit_log
+        required: true
+        schema:
+          $ref: '#/definitions/auditlogparams.BaseParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
-      summary: post audit logs
+          schema:
+            $ref: '#/definitions/api.SwgMsgResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: list audit logs
       tags:
       - audit log
   /api/v1/auth/login:
     post:
       consumes:
-      - '*/*'
+      - application/json
       description: signs in a user and creates a session
       parameters:
-      - description: User JSON
+      - description: User creation request
         in: body
-        name: userjson
+        name: user
+        required: true
         schema:
-          $ref: '#/definitions/model.User'
+          $ref: '#/definitions/userparams.BaseUserParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-userview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
       summary: sign in a user
       tags:
-      - user
+      - auth
   /api/v1/auth/logout:
     get:
       consumes:
-      - '*/*'
+      - application/json
       description: signs out the user and revoke their session
-      produces:
-      - text/plain
-      responses:
-        "200":
-          description: OK
-      summary: SignOut
-      tags:
-      - user
-  /api/v1/auth/signup:
-    post:
-      consumes:
-      - '*/*'
-      description: create an instance of user in the database
       produces:
       - application/json
       responses:
         "200":
           description: OK
-      summary: Create a user
+          schema:
+            $ref: '#/definitions/api.SwgMsgResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: SignOut
       tags:
-      - user
+      - auth
+  /api/v1/auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user in the system
+      parameters:
+      - description: User creation request
+        in: body
+        name: createuserparam
+        required: true
+        schema:
+          $ref: '#/definitions/userparams.CreateUserParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-userview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Create a new user
+      tags:
+      - auth
+  /api/v1/book/:
+    get:
+      consumes:
+      - '*/*'
+      description: lists books in the library
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-array_bookview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: List books
+      tags:
+      - book
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing book in the library
+      parameters:
+      - description: Book update request
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/bookparams.UpdateParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-bookview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Update a book
+      tags:
+      - book
+    post:
+      consumes:
+      - application/json
+      description: creates a new book in the library
+      parameters:
+      - description: Book creation request
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/bookparams.CreateParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-bookview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Create a book
+      tags:
+      - book
+  /api/v1/book/{book_id}:
+    delete:
+      consumes:
+      - '*/*'
+      description: deletes a book from the library
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgMsgResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Delete a book
+      tags:
+      - book
+    get:
+      consumes:
+      - '*/*'
+      description: reads a book in the library
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-bookview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Read book
+      tags:
+      - book
+  /api/v1/book/{book_id}/loan/:
+    post:
+      consumes:
+      - '*/*'
+      description: Loans a book from the library
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Loan a book
+      tags:
+      - loan
+  /api/v1/book/{book_id}/loan/{loan_id}/:
+    delete:
+      consumes:
+      - '*/*'
+      description: Deletes an existing loan in the library
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Delete a loan
+      tags:
+      - loan
+    get:
+      consumes:
+      - '*/*'
+      description: Retrieves a loan from the library
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Read a loan
+      tags:
+      - loan
+  /api/v1/book/{book_id}/loan/{loan_id}/fine/:
+    get:
+      consumes:
+      - '*/*'
+      description: List fines belonging to a loan
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-array_fineview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: List fine
+      tags:
+      - fine
+  /api/v1/book/{book_id}/loan/{loan_id}/fine/{fine_id}:
+    delete:
+      consumes:
+      - '*/*'
+      description: deletes a fine belonging to a loan
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-fineview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Delete fine
+      tags:
+      - fine
+  /api/v1/book/{book_id}/loan/{loan_id}/fine/{fine_id}/settle:
+    patch:
+      consumes:
+      - '*/*'
+      description: settles a fine belonging to a loan
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-fineview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Settle fine
+      tags:
+      - fine
+  /api/v1/book/{book_id}/loan/{loan_id}/renew:
+    patch:
+      consumes:
+      - '*/*'
+      description: Renews a loan from the library
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Renew a loan
+      tags:
+      - loan
+  /api/v1/book/{book_id}/loan/{loan_id}/return:
+    patch:
+      consumes:
+      - '*/*'
+      description: Returns a book to the library
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Return a book
+      tags:
+      - loan
+  /api/v1/book/{book_id}/reservation/:
+    post:
+      consumes:
+      - '*/*'
+      description: Creates a reservation for a book
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Create a reservation
+      tags:
+      - reservation
+  /api/v1/book/{book_id}/reservation/{reservation_id}/:
+    delete:
+      consumes:
+      - '*/*'
+      description: Deletes a reservation for a book
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Delete a reservation
+      tags:
+      - reservation
+    get:
+      consumes:
+      - '*/*'
+      description: Reads a reservation for a book
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Read a reservation
+      tags:
+      - reservation
+  /api/v1/book/{book_id}/reservation/{reservation_id}/cancel:
+    patch:
+      consumes:
+      - '*/*'
+      description: Cancels a reservation for a book
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Cancel a reservation
+      tags:
+      - reservation
+  /api/v1/book/{book_id}/reservation/{reservation_id}/checkout:
+    patch:
+      consumes:
+      - '*/*'
+      description: Checks out a book for a given reservation
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Checkout a book
+      tags:
+      - reservation
   /api/v1/health:
     get:
       consumes:
       - '*/*'
       description: get the status of server.
       produces:
-      - text/plain
+      - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/api.SwgMsgResponse'
       summary: Show the status of server.
       tags:
       - health
+  /api/v1/user/currentuser:
+    get:
+      consumes:
+      - '*/*'
+      description: Retrieves the current user if logged in
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-userview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Retrieve current user
+      tags:
+      - user
   /api/v1/worksheet/:
     get:
       consumes:

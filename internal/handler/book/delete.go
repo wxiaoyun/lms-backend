@@ -14,6 +14,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Summary Delete a book
+// @Description deletes a book from the library
+// @Tags book
+// @Accept */*
+// @Produce application/json
+// @Success 200 {object} api.SwgMsgResponse
+// @Failure 400 {object} api.SwgErrResponse
+// @Router /api/v1/book/{book_id} [delete]
 func HandleDelete(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createBookAction, bookpolicy.DeletePolicy())
 	if err != nil {

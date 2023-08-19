@@ -15,7 +15,8 @@ import (
 // @Tags audit log
 // @Accept */*
 // @Produce application/json
-// @Success 200 "OK"
+// @Success 200 {object} api.SwgResponse[[]auditlogview.View]
+// @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/audit_log/ [get]
 func HandleList(c *fiber.Ctx) error {
 	db := database.GetDB()

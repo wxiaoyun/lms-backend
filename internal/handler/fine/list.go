@@ -16,6 +16,14 @@ const (
 	readFineAction = "read fine"
 )
 
+// @Summary List fine
+// @Description List fines belonging to a loan
+// @Tags fine
+// @Accept */*
+// @Produce application/json
+// @Success 200 {object} api.SwgResponse[[]fineview.View]
+// @Failure 400 {object} api.SwgErrResponse
+// @Router /api/v1/book/{book_id}/loan/{loan_id}/fine/ [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readFineAction, finepolicy.ReadPolicy())
 	if err != nil {

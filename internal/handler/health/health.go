@@ -10,8 +10,8 @@ import (
 // @Description get the status of server.
 // @Tags health
 // @Accept */*
-// @Produce plain
-// @Success 200 "OK"
+// @Produce application/json
+// @Success 200 {object} api.SwgMsgResponse
 // @Router /api/v1/health [get]
 func HandleHealth(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(api.Response{

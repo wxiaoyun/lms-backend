@@ -21,6 +21,14 @@ const (
 	returnBookAction = "return book"
 )
 
+// @Summary Return a book
+// @Description Returns a book to the library
+// @Tags loan
+// @Accept */*
+// @Produce application/json
+// @Success 200 {object} api.SwgResponse[loanview.View]
+// @Failure 400 {object} api.SwgErrResponse
+// @Router /api/v1/book/{book_id}/loan/{loan_id}/return [patch]
 func HandleReturn(c *fiber.Ctx) error {
 	param := c.Params("id")
 	bookID, err := strconv.ParseInt(param, 10, 64)

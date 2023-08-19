@@ -3,19 +3,21 @@ package sessionmiddleware
 import (
 	"lms-backend/internal/api"
 	"lms-backend/internal/session"
+	"slices"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func SessionMiddleware(c *fiber.Ctx) error {
-	// skip auth routes - /api/v1/auth/*
 	paths := strings.Split(c.Path(), "/")
-	if len(paths) >= 1 && paths[1] == "swagger" {
+	if slices.Contains(paths, "swagger") {
 		return c.Next()
 	}
-
-	if len(paths) >= 3 && paths[3] == "auth" || paths[3] == "health" {
+	if slices.Contains(paths, "signup") {
+		return c.Next()
+	}
+	if slices.Contains(paths, "health") {
 		return c.Next()
 	}
 
@@ -27,7 +29,7 @@ func SessionMiddleware(c *fiber.Ctx) error {
 	token := sess.Get(session.CookieKey)
 	if token == nil {
 		err := c.JSON(api.Response{
-			Messages: []api.Message{api.InfoMessage("User is not logged in")},
+			Messages: api.Messages(api.InfoMessage("User is not logged in")),
 		})
 		if err != nil {
 			return err

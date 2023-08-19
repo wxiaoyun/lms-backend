@@ -22,6 +22,14 @@ const (
 	cancelReservationAction = "cancel reservation"
 )
 
+// @Summary Cancel a reservation
+// @Description Cancels a reservation for a book
+// @Tags reservation
+// @Accept */*
+// @Produce application/json
+// @Success 200 {object} api.SwgResponse[reservationview.View]
+// @Failure 400 {object} api.SwgErrResponse
+// @Router /api/v1/book/{book_id}/reservation/{reservation_id}/cancel [patch]
 func HandleCancel(c *fiber.Ctx) error {
 	param := c.Params("id")
 	bookID, err := strconv.ParseInt(param, 10, 64)

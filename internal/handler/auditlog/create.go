@@ -12,12 +12,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary post audit logs
-// @Description create an entry in the audit log
+// @Summary list audit logs
+// @Description list relevang audit logs
 // @Tags audit log
-// @Accept */*
+// @Accept application/json
+// @Param audit_log body auditlogparams.BaseParams true "Audit log creation request"
 // @Produce application/json
-// @Success 200 "OK"
+// @Success 200 {object} api.SwgMsgResponse
+// @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/audit_log/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	var params auditlogparams.BaseParams

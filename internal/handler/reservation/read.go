@@ -18,6 +18,14 @@ const (
 	readReservationAction = "read reservation"
 )
 
+// @Summary Read a reservation
+// @Description Reads a reservation for a book
+// @Tags reservation
+// @Accept */*
+// @Produce application/json
+// @Success 200 {object} api.SwgResponse[reservationview.View]
+// @Failure 400 {object} api.SwgErrResponse
+// @Router /api/v1/book/{book_id}/reservation/{reservation_id}/ [get]
 func HandleRead(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readReservationAction, reservationpolicy.DeletePolicy())
 	if err != nil {
