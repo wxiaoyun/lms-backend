@@ -9,6 +9,6 @@ import (
 
 func AuthRoutes(r fiber.Router) {
 	r.Post("/signup", userhandler.HandleCreateUser)
-	r.Post("/login", auth.HandleSignIn)
-	r.Get("/logout", auth.HandleSignOut)
+	r.Post("/signin", auth.HandleSignIn)
+	r.Get("/signout", auth.HandleSignOut)
 }

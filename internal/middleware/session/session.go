@@ -14,6 +14,9 @@ func SessionMiddleware(c *fiber.Ctx) error {
 	if slices.Contains(paths, "swagger") {
 		return c.Next()
 	}
+	if slices.Contains(paths, "signin") {
+		return c.Next()
+	}
 	if slices.Contains(paths, "signup") {
 		return c.Next()
 	}
