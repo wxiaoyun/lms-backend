@@ -23,16 +23,6 @@ const (
 )
 
 func HandleCancel(c *fiber.Ctx) error {
-	err := policy.Authorize(c, cancelReservationAction, reservationpolicy.CancelPolicy())
-	if err != nil {
-		return err
-	}
-
-	userID, err := session.GetLoginSession(c)
-	if err != nil {
-		return err
-	}
-
 	param := c.Params("id")
 	bookID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
@@ -42,6 +32,16 @@ func HandleCancel(c *fiber.Ctx) error {
 	resID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid reservation id.", param2))
+	}
+
+	err = policy.Authorize(c, cancelReservationAction, reservationpolicy.CancelPolicy(resID, bookID))
+	if err != nil {
+		return err
+	}
+
+	userID, err := session.GetLoginSession(c)
+	if err != nil {
+		return err
 	}
 
 	db := database.GetDB()

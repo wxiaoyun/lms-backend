@@ -2,7 +2,6 @@ package policy
 
 import (
 	"fmt"
-	"lms-backend/internal/api"
 	"lms-backend/util/ternary"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,16 +21,10 @@ type Policy interface {
 func Authorize(c *fiber.Ctx, action string, policy Policy) error {
 	decision, err := policy.Validate(c)
 	if err != nil || decision == Deny {
-		//nolint
-		c.Status(fiber.StatusForbidden).JSON(api.Response{
-			Messages: []api.Message{
-				api.ErrorMessage(fmt.Sprintf("You are not allowed to %s.", action)),
-			},
-		})
 		return fiber.NewError(fiber.StatusForbidden,
 			ternary.If[string](err != nil).
 				LazyThen(func() string { return err.Error() }).
-				LazyElse(func() string { return "Unauthorized" }),
+				LazyElse(func() string { return fmt.Sprintf("You are not authorized to %s.", action) }),
 		)
 	}
 

@@ -59,22 +59,19 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 
 				abilities.CanReadBook.Name,
 
-				abilities.CanReadLoan.Name,
-				abilities.CanLoanBook.Name,
-				abilities.CanReturnBook.Name,
-				abilities.CanRenewBook.Name,
-
-				abilities.CanReadFine.Name,
-				abilities.CanSettleFine.Name,
-
-				abilities.CanReadReservation.Name,
-				abilities.CanCreateReservation.Name,
-				abilities.CanCancelReservation.Name,
-				abilities.CanCheckoutReservation.Name,
+				abilities.CanManageBookRecords.Name,
 			},
 
 			roles.Basic.Name: {
 				abilities.CanReadBook.Name,
+
+				abilities.CanReadLoan.Name,
+				abilities.CanLoanBook.Name,
+
+				abilities.CanReadFine.Name,
+
+				abilities.CanReadReservation.Name,
+				abilities.CanCreateReservation.Name,
 			},
 		}
 	)
