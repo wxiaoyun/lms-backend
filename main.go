@@ -5,7 +5,7 @@ import (
 	"lms-backend/internal/app"
 )
 
-// @title technical test API
+// @title Library Mangement System API
 func main() {
 	// Setup and run the app
 	err := app.SetupAndRunApp()

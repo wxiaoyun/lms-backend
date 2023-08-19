@@ -12,6 +12,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Summary List books
+// @Description lists books in the library
+// @Tags book
+// @Accept */*
+// @Produce application/json
+// @Success 200 {object} api.SwgResponse[[]bookview.View]
+// @Failure 400 {object} api.SwgErrResponse
+// @Router /api/v1/book/ [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readBookAction, bookpolicy.ReadPolicy())
 	if err != nil {

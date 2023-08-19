@@ -9,6 +9,7 @@ func SetUpRoutes(app *fiber.App) {
 
 	Route(v1Routes, "/health", HealthRoutes)
 	Route(v1Routes, "/auth", AuthRoutes)
+	Route(v1Routes, "/user", UserRoutes)
 	Route(v1Routes, "/audit_log", AuditLogRoutes)
 	Route(v1Routes, "/book", BookRoutes)
 }

@@ -14,11 +14,12 @@ import (
 
 // @Summary sign in a user
 // @Description signs in a user and creates a session
-// @Tags user
-// @Accept */*
-// @Param   userjson  body     model.User     false  "User JSON"       default({ "email": "user@example", "password": "password" })
+// @Tags auth
+// @Accept application/json
+// @Param user body userparams.BaseUserParams true "User creation request"
 // @Produce application/json
-// @Success 200 "OK"
+// @Success 200 {object} api.SwgResponse[userview.View]
+// @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
 	var params userparams.BaseUserParams

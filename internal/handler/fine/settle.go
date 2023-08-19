@@ -22,6 +22,14 @@ const (
 	settleFineAction = "settle Fine"
 )
 
+// @Summary Settle fine
+// @Description settles a fine belonging to a loan
+// @Tags fine
+// @Accept */*
+// @Produce application/json
+// @Success 200 {object} api.SwgResponse[fineview.View]
+// @Failure 400 {object} api.SwgErrResponse
+// @Router /api/v1/book/{book_id}/loan/{loan_id}/fine/{fine_id}/settle [patch]
 func HandleSettle(c *fiber.Ctx) error {
 	param := c.Params("id")
 	bookID, err := strconv.ParseInt(param, 10, 64)
