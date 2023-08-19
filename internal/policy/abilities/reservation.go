@@ -9,10 +9,6 @@ var (
 		Name:        "canReadReservation",
 		Description: "can read reservation",
 	}
-	CanDeleteReservation model.Ability = model.Ability{
-		Name:        "canDeleteReservation",
-		Description: "can delete reservation",
-	}
 	CanCreateReservation model.Ability = model.Ability{
 		Name:        "canCreateReservation",
 		Description: "can create reservation",
@@ -24,5 +20,9 @@ var (
 	CanCancelReservation model.Ability = model.Ability{
 		Name:        "canCancelReservation",
 		Description: "can cancel reservation",
+	}
+	CanDeleteReservation model.Ability = model.Ability{
+		Name:        "canDeleteReservation",
+		Description: "can delete reservation",
 	}
 )

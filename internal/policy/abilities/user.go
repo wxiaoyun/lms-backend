@@ -9,7 +9,7 @@ var (
 		Name:        "canUpdateUser",
 		Description: "can update user",
 	}
-	CanUpdateRole model.Ability = model.Ability{
+	CanUpdateUserRole model.Ability = model.Ability{
 		Name:        "canUpdateRole",
 		Description: "can update role",
 	}

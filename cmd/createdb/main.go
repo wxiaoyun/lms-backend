@@ -1,23 +1,24 @@
 package main
 
 import (
-	"fmt"
+	cdbhelper "lms-backend/cmd/createdb/helper"
 	"lms-backend/internal/config"
-	"lms-backend/internal/database"
+	logger "lms-backend/internal/log"
 )
+
+var lgr = logger.StdoutLogger()
 
 func main() {
 	cf, err := config.LoadEnvAndGetConfig()
 	if err != nil {
+		lgr.Println(err)
 		panic(err)
 	}
 
-	//nolint:revive // ignore error
-	fmt.Println("Creating database...")
-	err = database.CreateDB(cf)
-	if err != nil {
+	if err := cdbhelper.CreateDB(cf); err != nil {
+		lgr.Println(err)
 		panic(err)
 	}
-	//nolint:revive // ignore error
-	fmt.Println("Successfully created database.")
+
+	lgr.Println("Successfully created database.")
 }
