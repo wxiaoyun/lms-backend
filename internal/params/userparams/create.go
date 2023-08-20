@@ -5,21 +5,21 @@ import (
 	"lms-backend/internal/params/peopleparams"
 )
 
-type CreateUserParams struct {
+type CreateParams struct {
 	BaseUserParams
 	PersonParams peopleparams.BaseParams `json:"person_attributes"`
 }
 
-func (c *CreateUserParams) ToModel() *model.User {
-	usr := c.BaseUserParams.ToModel()
-	usr.Person = c.PersonParams.ToModel()
+func (p *CreateParams) ToModel() *model.User {
+	usr := p.BaseUserParams.ToModel()
+	usr.Person = p.PersonParams.ToModel()
 	return usr
 }
 
-func (c *CreateUserParams) Validate() error {
-	if err := c.BaseUserParams.Validate(); err != nil {
+func (p *CreateParams) Validate() error {
+	if err := p.BaseUserParams.Validate(); err != nil {
 		return err
 	}
 
-	return c.PersonParams.Validate()
+	return p.PersonParams.Validate()
 }

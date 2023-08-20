@@ -60,7 +60,7 @@ func HandleReserve(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s reserving \"%s\"", username, bookTitle),
+		c, fmt.Sprintf("%s reserving \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

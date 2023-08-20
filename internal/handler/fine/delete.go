@@ -58,7 +58,6 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	db := database.GetDB()
-
 	username, err := user.GetUserName(db, userID)
 	if err != nil {
 		return err
@@ -70,7 +69,7 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s deleting fine of id - %d belonging to \"%s\"", username, fineID, bookTitle),
+		c, fmt.Sprintf("%s deleting fine of id - %d belonging to \"%s\"", username, fineID, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

@@ -64,24 +64,16 @@ func ReadByEmail(db *gorm.DB, email string) (*model.User, error) {
 	return &user, nil
 }
 
-func GetUserName(db *gorm.DB, id int64) (string, error) {
-	var name string
-	result := db.Model(&model.User{}).
-		Select("username").
-		Where("id = ?", id).
-		First(&name)
-	if err := result.Error; err != nil {
-		if orm.IsRecordNotFound(err) {
-			return "", orm.ErrRecordNotFound(model.UserModelName)
-		}
-		return "", err
+func Create(db *gorm.DB, user *model.User) (*model.User, error) {
+	if err := user.Create(db); err != nil {
+		return nil, err
 	}
 
-	return name, nil
+	return user, nil
 }
 
 func Update(db *gorm.DB, user *model.User) (*model.User, error) {
-	if user.PersonID != 0 {
+	if user.Person != nil && user.Person.ID != 0 {
 		if err := user.Person.Update(db); err != nil {
 			return nil, err
 		}
@@ -95,7 +87,20 @@ func Update(db *gorm.DB, user *model.User) (*model.User, error) {
 		return nil, err
 	}
 
-	return Read(db, int64(user.ID))
+	return user, nil
+}
+
+func Delete(db *gorm.DB, id int64) (*model.User, error) {
+	usr, err := Read(db, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := usr.Delete(db); err != nil {
+		return nil, err
+	}
+
+	return usr, nil
 }
 
 func Login(db *gorm.DB, user *model.User) (*model.User, error) {
@@ -121,6 +126,22 @@ func Login(db *gorm.DB, user *model.User) (*model.User, error) {
 	userInDB.SignInCount++
 
 	return Update(db, &userInDB)
+}
+
+func GetUserName(db *gorm.DB, id int64) (string, error) {
+	var name string
+	result := db.Model(&model.User{}).
+		Select("username").
+		Where("id = ?", id).
+		First(&name)
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return "", orm.ErrRecordNotFound(model.UserModelName)
+		}
+		return "", err
+	}
+
+	return name, nil
 }
 
 func UpdateRoles(db *gorm.DB, userID int64, roleIDs []int64) (*model.User, error) {

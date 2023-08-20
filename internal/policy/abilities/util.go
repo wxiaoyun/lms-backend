@@ -11,7 +11,9 @@ func GetAllAbilities() []model.Ability {
 		CanReadAuditLog,
 		CanCreateAuditLog,
 
+		CanReadUser,
 		CanUpdateUser,
+		CanDeleteUser,
 		CanUpdateUserRole,
 
 		CanCreatePerson,

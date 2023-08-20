@@ -5,7 +5,6 @@ import (
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/dataaccess/book"
-	"lms-backend/internal/database"
 	"lms-backend/internal/params/bookparams"
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/bookpolicy"
@@ -31,7 +30,7 @@ func HandleUpdate(c *fiber.Ctx) error {
 		return err
 	}
 
-	param := c.Params("id")
+	param := c.Params("book_id")
 	bookID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
@@ -46,9 +45,8 @@ func HandleUpdate(c *fiber.Ctx) error {
 		return err
 	}
 
-	db := database.GetDB()
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("Updating existing book in library: %s.", bookParams.Title),
+		c, fmt.Sprintf("Updating existing book in library: %s.", bookParams.Title),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

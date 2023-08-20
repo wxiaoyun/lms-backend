@@ -1,6 +1,7 @@
 package commonpolicy
 
 import (
+	"fmt"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/model"
@@ -12,6 +13,7 @@ import (
 
 type AllAbilities struct {
 	Abilities []string
+	ReasonStr string
 }
 
 func HasAllAbilities(abilities ...string) *AllAbilities {
@@ -39,11 +41,16 @@ func (a *AllAbilities) Validate(c *fiber.Ctx) (policy.Decision, error) {
 	for _, ability := range a.Abilities {
 		// If user does not have the ability or the ability does not exist
 		if exist, ok := abilitesMap[ability]; !ok || !exist {
+			a.ReasonStr = fmt.Sprintf("Missing ability: %s.", ability)
 			return policy.Deny, nil
 		}
 	}
 
 	return policy.Allow, nil
+}
+
+func (a *AllAbilities) Reason() string {
+	return "You don't have all abilities. " + a.ReasonStr
 }
 
 func ToAbilitiesMap(abilities []model.Ability) map[string]bool {

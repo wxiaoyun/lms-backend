@@ -7,7 +7,7 @@ import (
 
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/database"
+	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/model"
 	"lms-backend/internal/params/userparams"
 	"lms-backend/internal/view/userview"
@@ -17,42 +17,40 @@ import (
 // @Description Creates a new user in the system
 // @Tags auth
 // @Accept application/json
-// @Param createuserparam body userparams.CreateUserParams true "User creation request"
+// @Param createuserparam body userparams.CreateParams true "User creation request"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[userview.View]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/auth/signup [post]
-func HandleCreateUser(c *fiber.Ctx) error {
-	var params userparams.CreateUserParams
+func HandleCreate(c *fiber.Ctx) error {
+	var params userparams.CreateParams
 	err := c.BodyParser(&params)
 	if err != nil {
 		return err
 	}
 
-	err = params.Validate()
-	if err != nil {
+	if err := params.Validate(); err != nil {
 		return err
 	}
 
-	user := params.ToModel()
-	db := database.GetDB()
+	usr := params.ToModel()
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("create new user %s", user.Username),
+		c, fmt.Sprintf("create new user %s", usr.Username),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	err = user.Create(tx)
+	usr, err = user.Create(tx, usr)
 	if err != nil {
 		return err
 	}
 
-	view := userview.ToView(user, []model.Ability{})
+	view := userview.ToView(usr, []model.Ability{})
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
 		Data: view,
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
-				"User %s created successfully", user.Username,
+				"User %s created successfully", usr.Username,
 			))),
 	})
 }

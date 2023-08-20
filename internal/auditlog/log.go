@@ -1,6 +1,7 @@
 package audit
 
 import (
+	"lms-backend/internal/database"
 	"lms-backend/internal/model"
 	"lms-backend/internal/session"
 
@@ -13,7 +14,7 @@ import (
 // The function will commit the transaction if no panic occurs, otherwise it will rollback.
 //
 // The function will also create an audit log entry with the provided action message.
-func Begin(c *fiber.Ctx, db *gorm.DB, action string) (*gorm.DB, func(error)) {
+func Begin(c *fiber.Ctx, action string) (*gorm.DB, func(error)) {
 	var userID int64 = 1 // Default to 1 (admin)
 	if c != nil {
 		usrID, err := session.GetLoginSession(c)
@@ -22,6 +23,7 @@ func Begin(c *fiber.Ctx, db *gorm.DB, action string) (*gorm.DB, func(error)) {
 		}
 	}
 
+	db := database.GetDB()
 	tx := db.Begin()
 
 	var deferedRollBackOrCommit = func(err error) {

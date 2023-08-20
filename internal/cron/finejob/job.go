@@ -2,19 +2,17 @@ package finejob
 
 import (
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/database"
 	"lms-backend/internal/model"
 )
 
 func DetectOverdueLoansAndCreateFine() {
 	var err error
 
-	db := database.GetDB()
-	tx, rollBackOrCommit := audit.Begin(nil, db, "CRON Job: Detecting overdue loans and creating fines")
+	tx, rollBackOrCommit := audit.Begin(nil, "CRON Job: Detecting overdue loans and creating fines")
 	defer func() { rollBackOrCommit(err) }()
 
 	var overdueLoansWithoutFines []model.Loan
-	result := db.Model(&model.Loan{}).
+	result := tx.Model(&model.Loan{}).
 		Joins("LEFT JOIN fines ON loans.id = fines.loan_id").
 		Where("fines.id IS NULL AND loans.due_date < NOW()").
 		Where("loans.status = ?", model.LoanStatusBorrowed).

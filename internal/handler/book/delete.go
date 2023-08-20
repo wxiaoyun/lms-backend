@@ -5,7 +5,6 @@ import (
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/dataaccess/book"
-	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/bookpolicy"
 	"lms-backend/pkg/error/externalerrors"
@@ -28,15 +27,14 @@ func HandleDelete(c *fiber.Ctx) error {
 		return err
 	}
 
-	param := c.Params("id")
+	param := c.Params("book_id")
 	bookID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
 	}
 
-	db := database.GetDB()
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("Deleting a book in library - ID: %d", bookID),
+		c, fmt.Sprintf("Deleting a book in library - ID: %d", bookID),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

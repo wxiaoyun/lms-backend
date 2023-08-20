@@ -90,7 +90,11 @@ func Delete(db *gorm.DB, bookID int64) (*model.Book, error) {
 		return nil, err
 	}
 
-	return book, book.Delete(db)
+	if err := book.Delete(db); err != nil {
+		return nil, err
+	}
+
+	return book, nil
 }
 
 func Count(db *gorm.DB) (int64, error) {
