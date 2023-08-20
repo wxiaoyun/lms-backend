@@ -8,4 +8,9 @@ import (
 
 func UserRoutes(r fiber.Router) {
 	r.Get("/currentuser", userhandler.HandleGetCurrentUser)
+	Route(r, "/:user_id", func(r fiber.Router) {
+		r.Get("/", userhandler.HandleRead)
+		r.Patch("/", userhandler.HandleUpdate)
+		r.Delete("/", userhandler.HandleDelete)
+	})
 }

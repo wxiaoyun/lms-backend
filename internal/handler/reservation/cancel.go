@@ -65,7 +65,7 @@ func HandleCancel(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s canceling reservation for \"%s\"", username, bookTitle),
+		c, fmt.Sprintf("%s canceling reservation for \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

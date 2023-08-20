@@ -7,7 +7,8 @@ import (
 )
 
 type AllOf struct {
-	Policies []policy.Policy
+	Policies  []policy.Policy
+	ReasonStr string
 }
 
 func All(polices ...policy.Policy) *AllOf {
@@ -24,9 +25,14 @@ func (a *AllOf) Validate(c *fiber.Ctx) (policy.Decision, error) {
 		}
 
 		if decision == policy.Deny {
+			a.ReasonStr = p.Reason()
 			return policy.Deny, nil
 		}
 	}
 
 	return policy.Allow, nil
+}
+
+func (a *AllOf) Reason() string {
+	return "All of the policies must be satisfied. You can't do this because: " + a.ReasonStr
 }

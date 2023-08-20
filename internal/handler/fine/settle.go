@@ -70,7 +70,7 @@ func HandleSettle(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s settling fine for \"%s\"", username, bookTitle),
+		c, fmt.Sprintf("%s settling fine for \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

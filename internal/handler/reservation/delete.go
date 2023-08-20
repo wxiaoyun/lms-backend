@@ -65,7 +65,7 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s deleting reservation ID - %d belonging to \"%s\"", username, resID, bookTitle),
+		c, fmt.Sprintf("%s deleting reservation ID - %d belonging to \"%s\"", username, resID, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

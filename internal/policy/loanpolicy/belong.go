@@ -1,6 +1,7 @@
 package loanpolicy
 
 import (
+	"fmt"
 	"lms-backend/internal/database"
 	"lms-backend/internal/model"
 	"lms-backend/internal/policy"
@@ -42,4 +43,8 @@ func (p *LoanBelongsToUser) Validate(c *fiber.Ctx) (policy.Decision, error) {
 	}
 
 	return policy.Allow, nil
+}
+
+func (p *LoanBelongsToUser) Reason() string {
+	return fmt.Sprintf("Loan with ID %d does not belong to you.", p.LoanID)
 }

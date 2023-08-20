@@ -38,7 +38,9 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 				abilities.CanReadAuditLog.Name,
 				abilities.CanCreateAuditLog.Name,
 
+				abilities.CanReadUser.Name,
 				abilities.CanUpdateUser.Name,
+				abilities.CanDeleteUser.Name,
 				abilities.CanUpdateUserRole.Name,
 
 				abilities.CanCreatePerson.Name,
@@ -55,6 +57,7 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 			roles.Staff.Name: {
 				abilities.CanReadAuditLog.Name,
 
+				abilities.CanReadUser.Name,
 				abilities.CanCreatePerson.Name,
 
 				abilities.CanReadBook.Name,

@@ -1,6 +1,7 @@
 package finepolicy
 
 import (
+	"fmt"
 	"lms-backend/internal/database"
 	"lms-backend/internal/model"
 	"lms-backend/internal/policy"
@@ -43,4 +44,8 @@ func (p *FineBelongsToUser) Validate(c *fiber.Ctx) (policy.Decision, error) {
 	}
 
 	return policy.Allow, nil
+}
+
+func (p *FineBelongsToUser) Reason() string {
+	return fmt.Sprintf("Fine with ID %d does not belong to you.", p.FineID)
 }

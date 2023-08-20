@@ -23,14 +23,13 @@ import (
 // @Router /api/v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
 	var params userparams.BaseUserParams
-	err := c.BodyParser(&params)
-	if err != nil {
+	if err := c.BodyParser(&params); err != nil {
 		return err
 	}
 
 	userModel := params.ToModel()
 	db := database.GetDB()
-	userModel, err = user.Login(db, userModel)
+	userModel, err := user.Login(db, userModel)
 	if err != nil {
 		return err
 	}

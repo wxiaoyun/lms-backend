@@ -64,7 +64,7 @@ func HandleCheckout(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, db, fmt.Sprintf("%s checking out reservation for \"%s\"", username, bookTitle),
+		c, fmt.Sprintf("%s checking out reservation for \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

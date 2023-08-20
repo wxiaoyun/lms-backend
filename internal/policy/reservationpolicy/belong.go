@@ -1,6 +1,7 @@
 package reservationpolicy
 
 import (
+	"fmt"
 	"lms-backend/internal/database"
 	"lms-backend/internal/model"
 	"lms-backend/internal/policy"
@@ -42,4 +43,8 @@ func (p *ReservationBelongsToUser) Validate(c *fiber.Ctx) (policy.Decision, erro
 	}
 
 	return policy.Allow, nil
+}
+
+func (p *ReservationBelongsToUser) Reason() string {
+	return fmt.Sprintf("Reservation with ID %d does not belong to you.", p.ReservationID)
 }

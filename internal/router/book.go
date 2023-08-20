@@ -13,7 +13,7 @@ func BookRoutes(r fiber.Router) {
 	r.Post("/", bookhandler.HandleCreate)
 	r.Get("/", bookhandler.HandleList)
 
-	Route(r, "/:id", func(r fiber.Router) {
+	Route(r, "/:book_id", func(r fiber.Router) {
 		r.Get("/", bookhandler.HandleRead)
 		r.Patch("/", bookhandler.HandleUpdate)
 		r.Delete("/", bookhandler.HandleDelete)

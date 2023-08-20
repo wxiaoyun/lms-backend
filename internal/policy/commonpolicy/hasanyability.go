@@ -1,16 +1,19 @@
 package commonpolicy
 
 import (
+	"fmt"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
 	"lms-backend/internal/session"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type AnyAbility struct {
 	Abilities []string
+	ReasonStr string
 }
 
 func HasAnyAbility(abilities ...string) *AnyAbility {
@@ -33,14 +36,31 @@ func (a *AnyAbility) Validate(c *fiber.Ctx) (policy.Decision, error) {
 	}
 
 	abilitesMap := ToAbilitiesMap(abilites)
+	builder := strings.Builder{}
+	//nolint
+	builder.WriteString("Missing abilities: ")
 
 	// Check if user has any abilities
-	for _, ability := range a.Abilities {
+	for i, ability := range a.Abilities {
 		// If user has the ability
 		if exist, ok := abilitesMap[ability]; ok && exist {
 			return policy.Allow, nil
 		}
+
+		if i == len(a.Abilities)-1 {
+			//nolint
+			builder.WriteString(fmt.Sprintf("%s.", ability))
+			continue
+		}
+
+		//nolint
+		builder.WriteString(fmt.Sprintf("%s, ", ability))
 	}
 
+	a.ReasonStr = builder.String()
 	return policy.Deny, nil
+}
+
+func (a *AnyAbility) Reason() string {
+	return "You don't have any of the required abilities. " + a.ReasonStr
 }

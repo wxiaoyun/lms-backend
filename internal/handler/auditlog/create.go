@@ -5,7 +5,6 @@ import (
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	audlog "lms-backend/internal/dataaccess/auditlog"
-	"lms-backend/internal/database"
 	"lms-backend/internal/params/auditlogparams"
 	"lms-backend/internal/session"
 
@@ -23,13 +22,11 @@ import (
 // @Router /api/v1/audit_log/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	var params auditlogparams.BaseParams
-	err := c.BodyParser(&params)
-	if err != nil {
+	if err := c.BodyParser(&params); err != nil {
 		return err
 	}
 
-	err = params.Validate()
-	if err != nil {
+	if err := params.Validate(); err != nil {
 		return err
 	}
 
@@ -39,8 +36,7 @@ func HandleCreate(c *fiber.Ctx) error {
 	}
 
 	log := params.ToModel(userID)
-	db := database.GetDB()
-	tx, rollBackOrCommit := audit.Begin(c, db, log.Action)
+	tx, rollBackOrCommit := audit.Begin(c, log.Action)
 	defer func() { rollBackOrCommit(err) }()
 
 	log, err = audlog.Create(tx, log)
