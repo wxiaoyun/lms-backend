@@ -172,7 +172,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/userparams.CreateUserParams"
+                            "$ref": "#/definitions/userparams.CreateParams"
                         }
                     }
                 ],
@@ -778,6 +778,100 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/user/{user_id}": {
+            "get": {
+                "description": "Updates an existing user in the system",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Read an existing user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-userview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes an existing user in the system",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete an existing user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-userview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates an existing user in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update an existing user",
+                "parameters": [
+                    {
+                        "description": "User update request",
+                        "name": "createuserparam",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userparams.UpdateParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-userview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/worksheet/": {
             "get": {
                 "description": "list all the existing worksheets",
@@ -1244,6 +1338,23 @@ const docTemplate = `{
                 }
             }
         },
+        "peopleparams.UpdateParams": {
+            "type": "object",
+            "properties": {
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "language_preference": {
+                    "type": "string"
+                },
+                "preferred_name": {
+                    "type": "string"
+                }
+            }
+        },
         "personview.View": {
             "type": "object",
             "properties": {
@@ -1295,7 +1406,7 @@ const docTemplate = `{
                 }
             }
         },
-        "userparams.CreateUserParams": {
+        "userparams.CreateParams": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1306,6 +1417,26 @@ const docTemplate = `{
                 },
                 "person_attributes": {
                     "$ref": "#/definitions/peopleparams.BaseParams"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "userparams.UpdateParams": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "person_attributes": {
+                    "$ref": "#/definitions/peopleparams.UpdateParams"
                 },
                 "username": {
                     "type": "string"

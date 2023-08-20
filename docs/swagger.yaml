@@ -248,6 +248,17 @@ definitions:
       preferred_name:
         type: string
     type: object
+  peopleparams.UpdateParams:
+    properties:
+      full_name:
+        type: string
+      id:
+        type: integer
+      language_preference:
+        type: string
+      preferred_name:
+        type: string
+    type: object
   personview.View:
     properties:
       full_name:
@@ -281,7 +292,7 @@ definitions:
       username:
         type: string
     type: object
-  userparams.CreateUserParams:
+  userparams.CreateParams:
     properties:
       email:
         type: string
@@ -289,6 +300,19 @@ definitions:
         type: string
       person_attributes:
         $ref: '#/definitions/peopleparams.BaseParams'
+      username:
+        type: string
+    type: object
+  userparams.UpdateParams:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      person_attributes:
+        $ref: '#/definitions/peopleparams.UpdateParams'
       username:
         type: string
     type: object
@@ -409,7 +433,7 @@ paths:
         name: createuserparam
         required: true
         schema:
-          $ref: '#/definitions/userparams.CreateUserParams'
+          $ref: '#/definitions/userparams.CreateParams'
       produces:
       - application/json
       responses:
@@ -790,6 +814,68 @@ paths:
       summary: Show the status of server.
       tags:
       - health
+  /api/v1/user/{user_id}:
+    delete:
+      consumes:
+      - '*/*'
+      description: Deletes an existing user in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-userview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Delete an existing user
+      tags:
+      - user
+    get:
+      consumes:
+      - '*/*'
+      description: Updates an existing user in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-userview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Read an existing user
+      tags:
+      - user
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing user in the system
+      parameters:
+      - description: User update request
+        in: body
+        name: createuserparam
+        required: true
+        schema:
+          $ref: '#/definitions/userparams.UpdateParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-userview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Update an existing user
+      tags:
+      - user
   /api/v1/user/currentuser:
     get:
       consumes:
