@@ -103,7 +103,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/userparams.BaseUserParams"
+                            "$ref": "#/definitions/userparams.SignInParams"
                         }
                     }
                 ],
@@ -341,7 +341,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgMsgResponse"
+                            "$ref": "#/definitions/api.SwgResponse-bookview_View"
                         }
                     },
                     "400": {
@@ -834,7 +834,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Updates an existing user in the system",
+                "description": "Updates an existing user in the system. This only includes username, first name, last name, preferred name, language",
                 "consumes": [
                     "application/json"
                 ],
@@ -853,6 +853,46 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/userparams.UpdateParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-userview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/{user_id}/role": {
+            "patch": {
+                "description": "Update user role of a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update user role",
+                "parameters": [
+                    {
+                        "description": "User update role request",
+                        "name": "updateroleparam",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userparams.UpdateRoleParams"
                         }
                     }
                 ],
@@ -1392,20 +1432,6 @@ const docTemplate = `{
                 }
             }
         },
-        "userparams.BaseUserParams": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
         "userparams.CreateParams": {
             "type": "object",
             "properties": {
@@ -1417,6 +1443,20 @@ const docTemplate = `{
                 },
                 "person_attributes": {
                     "$ref": "#/definitions/peopleparams.BaseParams"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "userparams.SignInParams": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
@@ -1443,6 +1483,14 @@ const docTemplate = `{
                 }
             }
         },
+        "userparams.UpdateRoleParams": {
+            "type": "object",
+            "properties": {
+                "role_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "userview.View": {
             "type": "object",
             "properties": {
@@ -1460,6 +1508,9 @@ const docTemplate = `{
                 },
                 "person_attributes": {
                     "$ref": "#/definitions/personview.View"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }

@@ -17,10 +17,9 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[[]auditlogview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/audit_log/ [get]
+// @Router /api/v1/audit_log?offset=&limit=&filter[action]=<action>&sortBy=<col_name>&orderBy=<asc|desc> [get]
 func HandleList(c *fiber.Ctx) error {
 	db := database.GetDB()
-
 	cq := collection.GetCollectionQueryFromParam(c)
 
 	totalCount, err := auditlog.Count(db)
@@ -28,12 +27,16 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	logs, err := auditlog.List(db, cq)
+	dbFiltered := cq.Filter(db, auditlog.Filters())
+
+	filteredCount, err := auditlog.Count(dbFiltered)
 	if err != nil {
 		return err
 	}
 
-	filteredCount, err := auditlog.CountFiltered(db, cq)
+	dbSorted := cq.Sort(dbFiltered)
+	dbPaginated := cq.Paginate(dbSorted)
+	logs, err := auditlog.List(dbPaginated)
 	if err != nil {
 		return err
 	}
