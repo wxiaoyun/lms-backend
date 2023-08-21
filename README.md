@@ -8,6 +8,7 @@
 
 ### Updating Environment Variables
 
+- Make a copy of .env.example and rename to .env.development
 - Edit the variables in .env.development accordingly
 
 ### Setting up Backend
