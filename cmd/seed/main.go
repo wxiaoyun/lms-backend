@@ -32,18 +32,6 @@ func main() {
 
 	lgr.Println("Seeding database...")
 
-	lgr.Println("Seeding users and people...")
-	err = shelper.SeedUsersAndPeople(tx)
-	if err != nil {
-		panic(err)
-	}
-
-	lgr.Println("Seeding books...")
-	err = shelper.SeedBooks(tx)
-	if err != nil {
-		panic(err)
-	}
-
 	lgr.Println("Seeding roles and abilities...")
 	err = shelper.SeedRoleAndAbility(tx)
 	if err != nil {
@@ -52,6 +40,18 @@ func main() {
 
 	lgr.Println("Linking roles with abilities...")
 	err = shelper.LinkRoleAndAbility(tx)
+	if err != nil {
+		panic(err)
+	}
+
+	lgr.Println("Seeding users and people...")
+	err = shelper.SeedUsersAndPeople(tx)
+	if err != nil {
+		panic(err)
+	}
+
+	lgr.Println("Seeding books...")
+	err = shelper.SeedBooks(tx)
 	if err != nil {
 		panic(err)
 	}
