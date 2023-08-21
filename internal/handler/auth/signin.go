@@ -22,8 +22,12 @@ import (
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
-	var params userparams.BaseUserParams
+	var params userparams.SignInParams
 	if err := c.BodyParser(&params); err != nil {
+		return err
+	}
+
+	if err := params.Validate(); err != nil {
 		return err
 	}
 

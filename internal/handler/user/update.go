@@ -21,7 +21,7 @@ const (
 )
 
 // @Summary Update an existing user
-// @Description Updates an existing user in the system
+// @Description Updates an existing user in the system. This only includes username, first name, last name, preferred name, language
 // @Tags user
 // @Accept application/json
 // @Param createuserparam body userparams.UpdateParams true "User update request"
@@ -57,7 +57,7 @@ func HandleUpdate(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	usr, err = user.Update(tx, usr)
+	usr, err = user.UpdateParticulars(tx, usr)
 	if err != nil {
 		return err
 	}

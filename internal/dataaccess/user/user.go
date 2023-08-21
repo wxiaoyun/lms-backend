@@ -6,6 +6,7 @@ import (
 	"lms-backend/internal/model"
 	"lms-backend/internal/orm"
 	"lms-backend/pkg/error/externalerrors"
+	"lms-backend/util"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -90,6 +91,17 @@ func Update(db *gorm.DB, user *model.User) (*model.User, error) {
 	return user, nil
 }
 
+func UpdateParticulars(db *gorm.DB, user *model.User) (*model.User, error) {
+	originalUser, err := Read(db, int64(user.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	// Password will not be updated here
+	user.EncryptedPassword = originalUser.EncryptedPassword
+	return Update(db, user)
+}
+
 func Delete(db *gorm.DB, id int64) (*model.User, error) {
 	usr, err := Read(db, id)
 	if err != nil {
@@ -105,16 +117,24 @@ func Delete(db *gorm.DB, id int64) (*model.User, error) {
 
 func Login(db *gorm.DB, user *model.User) (*model.User, error) {
 	var userInDB model.User
-	result := db.Model(&model.User{}).
-		Scopes(preloadAssociations).
-		Where("email = ?", user.Email).
-		First(&userInDB)
-	if err := result.Error; err != nil {
-		if orm.IsRecordNotFound(err) {
-			return nil, externalerrors.Unauthorized("user not found or invalid password")
+
+	if user.Username != "" {
+		usr, err := ReadByUsername(db, user.Username)
+		if err != nil {
+			return nil, err
 		}
-		return nil, err
+		userInDB = *usr
+	} else if user.Email != "" {
+		usr, err := ReadByEmail(db, user.Email)
+		if err != nil {
+			return nil, err
+		}
+		userInDB = *usr
+	} else {
+		return nil, externalerrors.BadRequest("Email or Username is required")
 	}
+
+	util.Debug(user.EncryptedPassword)
 
 	err := bcrypt.CompareHashAndPassword([]byte(userInDB.EncryptedPassword), []byte(user.EncryptedPassword))
 	if err != nil {
@@ -188,6 +208,8 @@ func GetRoles(db *gorm.DB, userID int64) ([]model.Role, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
+
+	util.Debug(roles)
 
 	return roles, nil
 }

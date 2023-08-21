@@ -10,11 +10,12 @@ import (
 )
 
 type PromoteBelowOwnRank struct {
+	userID int64
 	RoleID int64
 }
 
-func AllowIfPromoteBelowOwnRank(roleID int64) *PromoteBelowOwnRank {
-	return &PromoteBelowOwnRank{roleID}
+func AllowIfPromoteBelowOwnRank(userID, roleID int64) *PromoteBelowOwnRank {
+	return &PromoteBelowOwnRank{userID, roleID}
 }
 
 func (p *PromoteBelowOwnRank) Validate(c *fiber.Ctx) (policy.Decision, error) {
@@ -25,18 +26,18 @@ func (p *PromoteBelowOwnRank) Validate(c *fiber.Ctx) (policy.Decision, error) {
 
 	db := database.GetDB()
 
-	roles, err := user.GetRoles(db, userID)
+	promoterRoles, err := user.GetRoles(db, userID)
 	if err != nil {
 		return policy.Deny, err
 	}
 
-	if len(roles) == 0 {
+	if len(promoterRoles) == 0 {
 		return policy.Deny, nil
 	}
 
 	// Roles are ordered by rank in descending order. The first role is the highest rank.
 	// Higher rank means lower ID number.
-	if int64(roles[0].ID) <= p.RoleID {
+	if int64(promoterRoles[0].ID) >= p.RoleID {
 		return policy.Deny, nil
 	}
 

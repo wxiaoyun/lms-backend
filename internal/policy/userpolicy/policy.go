@@ -34,7 +34,7 @@ func UpdateRolePolicy(userID, roleID int64) policy.Policy {
 		commonpolicy.All(
 			commonpolicy.HasAnyAbility(abilities.CanUpdateUserRole.Name),
 			AllowIfIsNotSelf(userID),
-			AllowIfPromoteBelowOwnRank(roleID),
+			AllowIfPromoteBelowOwnRank(userID, roleID),
 		),
 	)
 }
