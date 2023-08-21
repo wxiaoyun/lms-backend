@@ -85,10 +85,8 @@ func HandleDelete(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := fineview.ToView(fn)
-
 	return c.JSON(api.Response{
-		Data: view,
+		Data: fineview.ToView(fn),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Fine for \"%s\" has been deleted", bookTitle,

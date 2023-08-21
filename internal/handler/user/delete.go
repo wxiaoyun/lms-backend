@@ -3,9 +3,9 @@ package userhandler
 import (
 	"fmt"
 	"lms-backend/internal/api"
+	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
-	"lms-backend/internal/model"
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/userpolicy"
 	"lms-backend/internal/view/userview"
@@ -40,15 +40,25 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	db := database.GetDB()
-	usr, err := user.Delete(db, userID)
+	username, err := user.GetUserName(db, userID)
+
+	tx, rollBackOrCommit := audit.Begin(
+		c, fmt.Sprintf("deleting user %s", username),
+	)
+	defer func() { rollBackOrCommit(err) }()
+
+	usr, err := user.Delete(tx, userID)
 	if err != nil {
 		return err
 	}
 
-	view := userview.ToView(usr, []model.Ability{})
+	abilities, err := user.GetAbilities(tx, userID)
+	if err != nil {
+		return err
+	}
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
-		Data: view,
+		Data: userview.ToView(usr, abilities),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"User %s deleted successfully", usr.Username,

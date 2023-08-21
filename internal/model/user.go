@@ -233,6 +233,11 @@ func (u *User) BeforeCreate(db *gorm.DB) error {
 	return u.Validate(db)
 }
 
+func (u *User) AfterCreate(db *gorm.DB) error {
+	// Default role is "Basic" upon creation
+	return u.UpdateRoles(db, []int64{4})
+}
+
 func (u *User) BeforeUpdate(db *gorm.DB) error {
 	if err := u.ValidateUsername(db); err != nil {
 		return err
@@ -251,6 +256,29 @@ func (u *User) HashPassword() error {
 		return err
 	}
 	u.EncryptedPassword = string(bytes)
+
+	return nil
+}
+
+func (u *User) UpdateRoles(db *gorm.DB, roleIDs []int64) error {
+	// Remove all existing roles
+	result := db.
+		Model(&UserRoles{}).
+		Delete("user_id = ?", u.ID)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	// Add new roles
+	for _, roleID := range roleIDs {
+		err := db.Exec(
+			"INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)",
+			u.ID, roleID,
+		).Error
+		if err != nil {
+			return err
+		}
+	}
 
 	return nil
 }

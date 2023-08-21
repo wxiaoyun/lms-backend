@@ -81,10 +81,8 @@ func HandleRenew(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := loanview.ToView(ln)
-
 	return c.JSON(api.Response{
-		Data: view,
+		Data: loanview.ToView(ln),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Loan for \"%s\" has been extended to %s.", bookTitle,

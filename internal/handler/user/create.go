@@ -8,7 +8,6 @@ import (
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/dataaccess/user"
-	"lms-backend/internal/model"
 	"lms-backend/internal/params/userparams"
 	"lms-backend/internal/view/userview"
 )
@@ -44,10 +43,13 @@ func HandleCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := userview.ToView(usr, []model.Ability{})
+	abilities, err := user.GetAbilities(tx, int64(usr.ID))
+	if err != nil {
+		return err
+	}
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
-		Data: view,
+		Data: userview.ToView(usr, abilities),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"User %s created successfully", usr.Username,

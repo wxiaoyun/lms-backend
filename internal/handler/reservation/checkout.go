@@ -80,10 +80,8 @@ func HandleCheckout(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := reservationview.ToView(res)
-
 	return c.JSON(api.Response{
-		Data: view,
+		Data: reservationview.ToView(res),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"%s has checked out \"%s\".", username, bookTitle,

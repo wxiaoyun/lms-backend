@@ -26,3 +26,15 @@ func DeletePolicy(userID int64) policy.Policy {
 		AllowIfIsSelf(userID),
 	)
 }
+
+func UpdateRolePolicy(userID, roleID int64) policy.Policy {
+	return commonpolicy.Any(
+		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name),
+
+		commonpolicy.All(
+			commonpolicy.HasAnyAbility(abilities.CanUpdateUserRole.Name),
+			AllowIfIsNotSelf(userID),
+			AllowIfPromoteBelowOwnRank(roleID),
+		),
+	)
+}

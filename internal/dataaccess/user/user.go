@@ -145,25 +145,16 @@ func GetUserName(db *gorm.DB, id int64) (string, error) {
 }
 
 func UpdateRoles(db *gorm.DB, userID int64, roleIDs []int64) (*model.User, error) {
-	result := db.
-		Model(&model.UserRoles{}).
-		Delete("user_id = ?", userID)
-	if result.Error != nil {
-		return nil, result.Error
+	usr, err := Read(db, userID)
+	if err != nil {
+		return nil, err
 	}
 
-	// Add new roles
-	for _, roleID := range roleIDs {
-		err := db.Exec(
-			"INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)",
-			userID, roleID,
-		).Error
-		if err != nil {
-			return nil, err
-		}
+	if err := usr.UpdateRoles(db, roleIDs); err != nil {
+		return nil, err
 	}
 
-	return Read(db, userID)
+	return usr, nil
 }
 
 func GetAbilities(db *gorm.DB, userID int64) ([]model.Ability, error) {
@@ -174,6 +165,7 @@ func GetAbilities(db *gorm.DB, userID int64) ([]model.Ability, error) {
 		Joins("JOIN role_abilities ON role_abilities.ability_id = abilities.id").
 		Joins("JOIN user_roles ON user_roles.role_id = role_abilities.role_id").
 		Where("user_roles.user_id = ?", userID).
+		Order("abilities.name ASC").
 		Find(&abilities)
 
 	if result.Error != nil {
@@ -181,6 +173,23 @@ func GetAbilities(db *gorm.DB, userID int64) ([]model.Ability, error) {
 	}
 
 	return abilities, nil
+}
+
+func GetRoles(db *gorm.DB, userID int64) ([]model.Role, error) {
+	var roles []model.Role
+
+	result := db.
+		Model(&model.Role{}).
+		Joins("JOIN user_roles ON user_roles.role_id = roles.id").
+		Where("user_roles.user_id = ?", userID).
+		Order("roles.id ASC").
+		Find(&roles)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return roles, nil
 }
 
 func HasExceededMaxLoan(db *gorm.DB, userID int64) (bool, error) {

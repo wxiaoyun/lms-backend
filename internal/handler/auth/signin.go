@@ -50,10 +50,8 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := userview.ToView(userModel, abilites)
-
 	return c.Status(fiber.StatusOK).JSON(api.Response{
-		Data: view,
+		Data: userview.ToView(userModel, abilites),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"%s is logged in successfully", userModel.Username,

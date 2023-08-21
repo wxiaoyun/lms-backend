@@ -2,7 +2,7 @@ clean:
 	go mod tidy
 	go mod vendor
 
-swagger:
+docs:
 	swag init
 	
 run:

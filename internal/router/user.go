@@ -12,5 +12,7 @@ func UserRoutes(r fiber.Router) {
 		r.Get("/", userhandler.HandleRead)
 		r.Patch("/", userhandler.HandleUpdate)
 		r.Delete("/", userhandler.HandleDelete)
+
+		r.Patch("/role", userhandler.HandleChangeRole)
 	})
 }

@@ -55,10 +55,8 @@ func HandleRead(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := loanview.ToView(loanModel)
-
 	return c.JSON(api.Response{
-		Data: view,
+		Data: loanview.ToView(loanModel),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"Loan %d retrieved", loanID,
