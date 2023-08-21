@@ -26,6 +26,9 @@ const (
 // @Description settles a fine belonging to a loan
 // @Tags fine
 // @Accept */*
+// @Param book_id path int true "Book ID for loan"
+// @Param loan_id path int true "loan ID to fine"
+// @Param fine_id path int true "fine ID to settle"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[fineview.View]
 // @Failure 400 {object} api.SwgErrResponse

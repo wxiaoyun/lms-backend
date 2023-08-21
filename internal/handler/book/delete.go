@@ -18,6 +18,7 @@ import (
 // @Description deletes a book from the library
 // @Tags book
 // @Accept */*
+// @Param book_id path int true "Book ID to delete"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[bookview.View]
 // @Failure 400 {object} api.SwgErrResponse

@@ -24,6 +24,7 @@ const (
 // @Tags user
 // @Accept */*
 // @Produce application/json
+// @Param user_id path int true "User ID to delete"
 // @Success 200 {object} api.SwgResponse[userview.View]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/user/{user_id} [delete]

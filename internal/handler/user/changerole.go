@@ -24,6 +24,7 @@ const (
 // @Description Update user role of a user
 // @Tags user
 // @Accept application/json
+// @Param user_id path int true "User ID to update role"
 // @Param updateroleparam body userparams.UpdateRoleParams true "User update role request"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[userview.View]

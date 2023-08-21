@@ -14,12 +14,17 @@ import (
 
 // @Summary List reservations
 // @Description List reservations in the library depending on the collection query
-// @Tags fine
-// @Accept */*
+// @Tags reservation
+// @Accept application/json
+// @Param offset query int false "Offset for pagination"
+// @Param limit query int false "Limit for pagination"
+// @Param filter[user_id] query int false "Filter by user ID"
+// @Param sortBy query string false "Sort by column name"
+// @Param orderBy query string false "Order by direction (asc or desc)"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[[]reservationview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/reservation?offset=0&limit=25&filter[user_id]=1&sortBy=created_at&orderBy=desc [get]
+// @Router /api/v1/reservation [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readReservationAction, reservationpolicy.ReadPolicy())
 	if err != nil {

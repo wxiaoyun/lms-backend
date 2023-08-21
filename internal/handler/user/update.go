@@ -24,6 +24,7 @@ const (
 // @Description Updates an existing user in the system. This only includes username, first name, last name, preferred name, language
 // @Tags user
 // @Accept application/json
+// @Param user_id path int true "User ID to update"
 // @Param createuserparam body userparams.UpdateParams true "User update request"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[userview.View]

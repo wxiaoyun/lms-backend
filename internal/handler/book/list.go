@@ -13,13 +13,18 @@ import (
 )
 
 // @Summary List books
-// @Description lists books in the library
+// @Description Lists books in the library
 // @Tags book
-// @Accept */*
+// @Accept application/json
+// @Param offset query int false "Offset for pagination"
+// @Param limit query int false "Limit for pagination"
+// @Param filter[value] query string false "Filter by value"
+// @Param sortBy query string false "Sort by column name (e.g. title)"
+// @Param orderBy query string false "Order by direction (asc or desc)"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[[]bookview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book?offset=&limit=&filter[value]=&sortBy=title&orderBy=asc [get]
+// @Router /api/v1/book [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readBookAction, bookpolicy.ReadPolicy())
 	if err != nil {

@@ -68,6 +68,32 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
+  api.SwgResponse-array_loanview_View:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/loanview.View'
+        type: array
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-array_reservationview_View:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/reservationview.View'
+        type: array
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
   api.SwgResponse-bookview_View:
     properties:
       data:
@@ -340,11 +366,32 @@ info:
   contact: {}
   title: Library Mangement System API
 paths:
-  /api/v1/audit_log/:
+  /api/v1/audit_log:
     get:
       consumes:
-      - '*/*'
-      description: list relevang audit logs
+      - application/json
+      description: List relevant audit logs
+      parameters:
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by action
+        in: query
+        name: filter[action]
+        type: string
+      - description: Sort by column name
+        in: query
+        name: sortBy
+        type: string
+      - description: Order by direction (asc or desc)
+        in: query
+        name: orderBy
+        type: string
       produces:
       - application/json
       responses:
@@ -356,9 +403,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/api.SwgErrResponse'
-      summary: list audit logs
+      summary: List audit logs
       tags:
       - audit log
+  /api/v1/audit_log/:
     post:
       consumes:
       - application/json
@@ -455,11 +503,32 @@ paths:
       summary: Create a new user
       tags:
       - auth
-  /api/v1/book/:
+  /api/v1/book:
     get:
       consumes:
-      - '*/*'
-      description: lists books in the library
+      - application/json
+      description: Lists books in the library
+      parameters:
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by value
+        in: query
+        name: filter[value]
+        type: string
+      - description: Sort by column name (e.g. title)
+        in: query
+        name: sortBy
+        type: string
+      - description: Order by direction (asc or desc)
+        in: query
+        name: orderBy
+        type: string
       produces:
       - application/json
       responses:
@@ -474,31 +543,7 @@ paths:
       summary: List books
       tags:
       - book
-    patch:
-      consumes:
-      - application/json
-      description: Updates an existing book in the library
-      parameters:
-      - description: Book update request
-        in: body
-        name: book
-        required: true
-        schema:
-          $ref: '#/definitions/bookparams.UpdateParams'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-bookview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Update a book
-      tags:
-      - book
+  /api/v1/book/:
     post:
       consumes:
       - application/json
@@ -529,6 +574,12 @@ paths:
       consumes:
       - '*/*'
       description: deletes a book from the library
+      parameters:
+      - description: Book ID to delete
+        in: path
+        name: book_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -547,6 +598,12 @@ paths:
       consumes:
       - '*/*'
       description: reads a book in the library
+      parameters:
+      - description: Book ID to read
+        in: path
+        name: book_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -561,11 +618,47 @@ paths:
       summary: Read book
       tags:
       - book
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing book in the library
+      parameters:
+      - description: Book ID to update
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: Book update request
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/bookparams.UpdateParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-bookview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Update a book
+      tags:
+      - book
   /api/v1/book/{book_id}/loan/:
     post:
       consumes:
       - '*/*'
       description: Loans a book from the library
+      parameters:
+      - description: Book ID for loan
+        in: path
+        name: book_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -585,6 +678,17 @@ paths:
       consumes:
       - '*/*'
       description: Deletes an existing loan in the library
+      parameters:
+      - description: Book ID for loan
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: loan ID to delete
+        in: path
+        name: loan_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -603,6 +707,17 @@ paths:
       consumes:
       - '*/*'
       description: Retrieves a loan from the library
+      parameters:
+      - description: Book ID for loan
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: loan ID to read
+        in: path
+        name: loan_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -617,30 +732,27 @@ paths:
       summary: Read a loan
       tags:
       - loan
-  /api/v1/book/{book_id}/loan/{loan_id}/fine/:
-    get:
-      consumes:
-      - '*/*'
-      description: List fines belonging to a loan
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-array_fineview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: List fine
-      tags:
-      - fine
   /api/v1/book/{book_id}/loan/{loan_id}/fine/{fine_id}:
     delete:
       consumes:
       - '*/*'
       description: deletes a fine belonging to a loan
+      parameters:
+      - description: Book ID for loan
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: loan ID to fine
+        in: path
+        name: loan_id
+        required: true
+        type: integer
+      - description: fine ID to delete
+        in: path
+        name: fine_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -660,6 +772,22 @@ paths:
       consumes:
       - '*/*'
       description: settles a fine belonging to a loan
+      parameters:
+      - description: Book ID for loan
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: loan ID to fine
+        in: path
+        name: loan_id
+        required: true
+        type: integer
+      - description: fine ID to settle
+        in: path
+        name: fine_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -679,6 +807,17 @@ paths:
       consumes:
       - '*/*'
       description: Renews a loan from the library
+      parameters:
+      - description: Book ID for loan
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: loan ID to renew
+        in: path
+        name: loan_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -698,6 +837,17 @@ paths:
       consumes:
       - '*/*'
       description: Returns a book to the library
+      parameters:
+      - description: Book ID for loan
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: loan ID to return
+        in: path
+        name: loan_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -717,6 +867,12 @@ paths:
       consumes:
       - '*/*'
       description: Creates a reservation for a book
+      parameters:
+      - description: Book ID for reservation
+        in: path
+        name: book_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -736,6 +892,17 @@ paths:
       consumes:
       - '*/*'
       description: Deletes a reservation for a book
+      parameters:
+      - description: Book ID for reservation
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: reservation ID to delete
+        in: path
+        name: reservation_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -754,6 +921,17 @@ paths:
       consumes:
       - '*/*'
       description: Reads a reservation for a book
+      parameters:
+      - description: Book ID for reservation
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: reservation ID to read
+        in: path
+        name: reservation_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -773,6 +951,17 @@ paths:
       consumes:
       - '*/*'
       description: Cancels a reservation for a book
+      parameters:
+      - description: Book ID for reservation
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: reservation ID to cancel
+        in: path
+        name: reservation_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -792,6 +981,17 @@ paths:
       consumes:
       - '*/*'
       description: Checks out a book for a given reservation
+      parameters:
+      - description: Book ID for reservation
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: reservation ID to checkout
+        in: path
+        name: reservation_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -806,6 +1006,46 @@ paths:
       summary: Checkout a book
       tags:
       - reservation
+  /api/v1/fine:
+    get:
+      consumes:
+      - application/json
+      description: List fines belonging to a loan
+      parameters:
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by user ID
+        in: query
+        name: filter[user_id]
+        type: integer
+      - description: Sort by column name
+        in: query
+        name: sortBy
+        type: string
+      - description: Order by direction (asc or desc)
+        in: query
+        name: orderBy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-array_fineview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: List fines
+      tags:
+      - fine
   /api/v1/health:
     get:
       consumes:
@@ -821,11 +1061,142 @@ paths:
       summary: Show the status of server.
       tags:
       - health
+  /api/v1/loan:
+    get:
+      consumes:
+      - application/json
+      description: List loans depending on collection query
+      parameters:
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by user ID
+        in: query
+        name: filter[user_id]
+        type: integer
+      - description: Sort by column name
+        in: query
+        name: sortBy
+        type: string
+      - description: Order by direction (asc or desc)
+        in: query
+        name: orderBy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-array_loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: List loans
+      tags:
+      - loan
+  /api/v1/reservation:
+    get:
+      consumes:
+      - application/json
+      description: List reservations in the library depending on the collection query
+      parameters:
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by user ID
+        in: query
+        name: filter[user_id]
+        type: integer
+      - description: Sort by column name
+        in: query
+        name: sortBy
+        type: string
+      - description: Order by direction (asc or desc)
+        in: query
+        name: orderBy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-array_reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: List reservations
+      tags:
+      - reservation
+  /api/v1/user:
+    get:
+      consumes:
+      - '*/*'
+      description: List users depending on the collection query
+      parameters:
+      - default: 0
+        description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - default: 25
+        description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: Filter by user ID
+        in: query
+        name: filter[user_id]
+        type: integer
+      - default: '"created_at"'
+        description: Sort by column name
+        in: query
+        name: sortBy
+        type: string
+      - default: '"desc"'
+        description: Order by asc or desc
+        in: query
+        name: orderBy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-array_reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: List users
+      tags:
+      - user
   /api/v1/user/{user_id}:
     delete:
       consumes:
       - '*/*'
       description: Deletes an existing user in the system
+      parameters:
+      - description: User ID to delete
+        in: path
+        name: user_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -843,7 +1214,13 @@ paths:
     get:
       consumes:
       - '*/*'
-      description: Updates an existing user in the system
+      description: Retrieves an existing user from the system
+      parameters:
+      - description: User ID to retrieve
+        in: path
+        name: user_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -864,6 +1241,11 @@ paths:
       description: Updates an existing user in the system. This only includes username,
         first name, last name, preferred name, language
       parameters:
+      - description: User ID to update
+        in: path
+        name: user_id
+        required: true
+        type: integer
       - description: User update request
         in: body
         name: createuserparam
@@ -890,6 +1272,11 @@ paths:
       - application/json
       description: Update user role of a user
       parameters:
+      - description: User ID to update role
+        in: path
+        name: user_id
+        required: true
+        type: integer
       - description: User update role request
         in: body
         name: updateroleparam
