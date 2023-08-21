@@ -114,6 +114,32 @@ func Delete(db *gorm.DB, id int64) (*model.User, error) {
 	return usr, nil
 }
 
+func Count(db *gorm.DB) (int64, error) {
+	var count int64
+
+	result := orm.CloneSession(db).
+		Model(&model.User{}).
+		Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
+}
+
+func List(db *gorm.DB) ([]model.User, error) {
+	var urs []model.User
+
+	result := db.Model(&model.User{}).
+		Scopes(preloadAssociations).
+		Find(&urs)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return urs, nil
+}
+
 func Login(db *gorm.DB, user *model.User) (*model.User, error) {
 	var userInDB model.User
 

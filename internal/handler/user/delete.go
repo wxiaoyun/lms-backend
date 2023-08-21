@@ -24,6 +24,7 @@ const (
 // @Tags user
 // @Accept */*
 // @Produce application/json
+// @Param user_id path int true "User ID to delete"
 // @Success 200 {object} api.SwgResponse[userview.View]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/user/{user_id} [delete]
@@ -58,7 +59,7 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
-		Data: userview.ToView(usr, abilities),
+		Data: userview.ToView(usr, abilities...),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"User %s deleted successfully", usr.Username,

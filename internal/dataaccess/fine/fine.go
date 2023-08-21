@@ -72,3 +72,28 @@ func Settle(db *gorm.DB, fineID int64) (*model.Fine, error) {
 
 	return fn, nil
 }
+
+func Count(db *gorm.DB) (int64, error) {
+	var count int64
+
+	result := orm.CloneSession(db).
+		Model(&model.Fine{}).
+		Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
+}
+
+func List(db *gorm.DB) ([]model.Fine, error) {
+	var fines []model.Fine
+
+	result := db.Model(&model.Fine{}).
+		Find(&fines)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return fines, nil
+}

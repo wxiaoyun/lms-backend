@@ -25,6 +25,8 @@ const (
 // @Description Checks out a book for a given reservation
 // @Tags reservation
 // @Accept */*
+// @Param book_id path int true "Book ID for reservation"
+// @Param reservation_id path int true "reservation ID to checkout"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[reservationview.View]
 // @Failure 400 {object} api.SwgErrResponse

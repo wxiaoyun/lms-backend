@@ -6,6 +6,12 @@ import (
 	"lms-backend/internal/policy/commonpolicy"
 )
 
+func ListPolicy() policy.Policy {
+	return commonpolicy.Any(
+		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanReadUser.Name),
+	)
+}
+
 func ReadPolicy(userID int64) policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanReadUser.Name),

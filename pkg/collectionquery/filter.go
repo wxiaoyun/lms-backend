@@ -5,6 +5,7 @@ import (
 	"lms-backend/internal/orm"
 	"lms-backend/util/sliceutil"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"gorm.io/gorm"
@@ -16,6 +17,11 @@ var (
 )
 
 type Filter func(string) func(*gorm.DB) *gorm.DB
+
+// FilterMap is a map of filter keys to filter functions
+//
+// Key should the the filter key (i.e. "filter[<key>]")
+type FilterMap map[string]Filter
 
 // Filters the database query based on the collection query
 //
@@ -42,7 +48,7 @@ type Filter func(string) func(*gorm.DB) *gorm.DB
 //		"JOIN users ON users.id = posts.user_id",
 //
 //	}
-func (q *Query) Filter(db *gorm.DB, filters map[string]Filter, joinQueries ...string) *gorm.DB {
+func (q *Query) Filter(db *gorm.DB, filters FilterMap, joinQueries ...string) *gorm.DB {
 	db = db.Scopes(orm.JoinAll(joinQueries))
 
 	// Key should be the column name and value should be the value to filter by
@@ -54,6 +60,7 @@ func (q *Query) Filter(db *gorm.DB, filters map[string]Filter, joinQueries ...st
 
 		matches := FilterValueRegex.FindStringSubmatch(key)
 
+		// If there are no matches or the first match is empty, skip this key
 		if len(matches) < 1 || matches[1] == "" {
 			continue
 		}
@@ -143,7 +150,7 @@ func MultipleColumnStringLikeFilter(columnNames ...string) Filter {
 	return func(value string) func(db *gorm.DB) *gorm.DB {
 		// Split the value by commas and convert them to ILIKE conditions (i.e. "column ILIKE '%value%'")
 		conditions := sliceutil.Map(columnNames, func(s string) string {
-			return fmt.Sprintf("%s ILIKE %%%s%%", s, value)
+			return fmt.Sprintf("%s ILIKE '%%%s%%'", s, value)
 		})
 
 		return func(db *gorm.DB) *gorm.DB {
@@ -181,4 +188,28 @@ func IntGreaterThanFilter(columnName string) Filter {
 
 func IntLessThanFilter(columnName string) Filter {
 	return genericFilter(columnName, "<")
+}
+
+// When the value is a comma-separated list of values, this filter will return
+// a function that will filter the database query by the column name equal
+// to any of the values in the list.
+//
+// One column, multiple values
+func MultipleIntEqualFilter(columnName string) Filter {
+	return func(value string) func(db *gorm.DB) *gorm.DB {
+		// Split the value by commas and convert them to ILIKE conditions (i.e. "column ILIKE '%value%'")
+		conditions := sliceutil.Map(strings.Split(value, ","), func(s string) string {
+			val, err := strconv.Atoi(s)
+			if err != nil {
+				return "1 = 0" // Return a condition that will never be true
+			}
+			return fmt.Sprintf("%s = %d", columnName, val)
+		})
+
+		return func(db *gorm.DB) *gorm.DB {
+			return db.Where(
+				fmt.Sprintf("(%s)", strings.Join(conditions, " OR ")),
+			)
+		}
+	}
 }

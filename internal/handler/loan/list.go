@@ -1,32 +1,32 @@
-package bookhandler
+package loanhandler
 
 import (
 	"lms-backend/internal/api"
-	"lms-backend/internal/dataaccess/book"
+	"lms-backend/internal/dataaccess/loan"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
-	"lms-backend/internal/policy/bookpolicy"
-	"lms-backend/internal/view/bookview"
+	"lms-backend/internal/policy/loanpolicy"
+	"lms-backend/internal/view/loanview"
 	collection "lms-backend/pkg/collectionquery"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary List books
-// @Description Lists books in the library
-// @Tags book
+// @Summary List loans
+// @Description List loans depending on collection query
+// @Tags loan
 // @Accept application/json
 // @Param offset query int false "Offset for pagination"
 // @Param limit query int false "Limit for pagination"
-// @Param filter[value] query string false "Filter by value"
-// @Param sortBy query string false "Sort by column name (e.g. title)"
+// @Param filter[user_id] query int false "Filter by user ID"
+// @Param sortBy query string false "Sort by column name"
 // @Param orderBy query string false "Order by direction (asc or desc)"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]bookview.View]
+// @Success 200 {object} api.SwgResponse[[]loanview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book [get]
+// @Router /api/v1/loan [get]
 func HandleList(c *fiber.Ctx) error {
-	err := policy.Authorize(c, readBookAction, bookpolicy.ReadPolicy())
+	err := policy.Authorize(c, readLoanAction, loanpolicy.ReadPolicy())
 	if err != nil {
 		return err
 	}
@@ -34,29 +34,30 @@ func HandleList(c *fiber.Ctx) error {
 	cq := collection.GetCollectionQueryFromParam(c)
 	db := database.GetDB()
 
-	totalCount, err := book.Count(db)
+	totalCount, err := loan.Count(db)
 	if err != nil {
 		return err
 	}
 
-	dbFiltered := cq.Filter(db, book.Filters())
+	dbFiltered := cq.Filter(db, loan.Filters())
 
-	filteredCount, err := book.Count(dbFiltered)
+	filteredCount, err := loan.Count(dbFiltered)
 	if err != nil {
 		return err
 	}
 
-	dbSorted := cq.Sort(dbFiltered, book.Sorters())
+	dbSorted := cq.Sort(dbFiltered, loan.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
-	books, err := book.List(dbPaginated)
+
+	lns, err := loan.List(dbPaginated)
 	if err != nil {
 		return err
 	}
 
-	var view = []*bookview.View{}
-	for _, w := range books {
+	var view = []*loanview.View{}
+	for _, ln := range lns {
 		//nolint:gosec // loop does not modify struct
-		view = append(view, bookview.ToView(&w))
+		view = append(view, loanview.ToView(&ln))
 	}
 
 	return c.JSON(api.Response{
@@ -66,7 +67,7 @@ func HandleList(c *fiber.Ctx) error {
 			FilteredCount: filteredCount,
 		},
 		Messages: api.Messages(
-			api.SilentMessage("books listed successfully"),
+			api.SilentMessage("loans listed successfully"),
 		),
 	})
 }

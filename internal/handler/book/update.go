@@ -19,11 +19,12 @@ import (
 // @Description Updates an existing book in the library
 // @Tags book
 // @Accept application/json
+// @Param book_id path int true "Book ID to update"
 // @Param book body bookparams.UpdateParams true "Book update request"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[bookview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/ [patch]
+// @Router /api/v1/book/{book_id} [patch]
 func HandleUpdate(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createBookAction, bookpolicy.UpdatePolicy())
 	if err != nil {

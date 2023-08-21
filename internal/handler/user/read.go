@@ -19,10 +19,11 @@ const (
 )
 
 // @Summary Read an existing user
-// @Description Updates an existing user in the system
+// @Description Retrieves an existing user from the system
 // @Tags user
 // @Accept */*
 // @Produce application/json
+// @Param user_id path int true "User ID to retrieve"
 // @Success 200 {object} api.SwgResponse[userview.View]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/user/{user_id} [get]
@@ -51,7 +52,7 @@ func HandleRead(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
-		Data: userview.ToView(usr, abilities),
+		Data: userview.ToView(usr, abilities...),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"User %s retrieved successfully", usr.Username,

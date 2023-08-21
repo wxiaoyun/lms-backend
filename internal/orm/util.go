@@ -19,3 +19,5 @@ func JoinAll(joinQueries []string) func(db *gorm.DB) *gorm.DB {
 		)
 	}
 }
+
+func EmptyFilter(_ string) func(*gorm.DB) *gorm.DB { return func(db *gorm.DB) *gorm.DB { return db } }

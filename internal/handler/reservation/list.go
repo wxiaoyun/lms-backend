@@ -1,24 +1,20 @@
-package finehandler
+package reservationhandler
 
 import (
 	"lms-backend/internal/api"
-	"lms-backend/internal/dataaccess/fine"
+	"lms-backend/internal/dataaccess/reservation"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
-	"lms-backend/internal/policy/finepolicy"
-	"lms-backend/internal/view/fineview"
+	"lms-backend/internal/policy/reservationpolicy"
+	"lms-backend/internal/view/reservationview"
 	collection "lms-backend/pkg/collectionquery"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-const (
-	readFineAction = "read fine"
-)
-
-// @Summary List fines
-// @Description List fines belonging to a loan
-// @Tags fine
+// @Summary List reservations
+// @Description List reservations in the library depending on the collection query
+// @Tags reservation
 // @Accept application/json
 // @Param offset query int false "Offset for pagination"
 // @Param limit query int false "Limit for pagination"
@@ -26,11 +22,11 @@ const (
 // @Param sortBy query string false "Sort by column name"
 // @Param orderBy query string false "Order by direction (asc or desc)"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]fineview.View]
+// @Success 200 {object} api.SwgResponse[[]reservationview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/fine [get]
+// @Router /api/v1/reservation [get]
 func HandleList(c *fiber.Ctx) error {
-	err := policy.Authorize(c, readFineAction, finepolicy.ReadPolicy())
+	err := policy.Authorize(c, readReservationAction, reservationpolicy.ReadPolicy())
 	if err != nil {
 		return err
 	}
@@ -38,30 +34,30 @@ func HandleList(c *fiber.Ctx) error {
 	cq := collection.GetCollectionQueryFromParam(c)
 	db := database.GetDB()
 
-	totalCount, err := fine.Count(db)
+	totalCount, err := reservation.Count(db)
 	if err != nil {
 		return err
 	}
 
-	dbFiltered := cq.Filter(db, fine.Filters())
+	dbFiltered := cq.Filter(db, reservation.Filters())
 
-	filteredCount, err := fine.Count(dbFiltered)
+	filteredCount, err := reservation.Count(dbFiltered)
 	if err != nil {
 		return err
 	}
 
-	dbSorted := cq.Sort(dbFiltered, fine.Sorters())
+	dbSorted := cq.Sort(dbFiltered, reservation.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
 
-	fns, err := fine.List(dbPaginated)
+	rvs, err := reservation.List(dbPaginated)
 	if err != nil {
 		return err
 	}
 
-	var view = []*fineview.View{}
-	for _, w := range fns {
+	var view = []*reservationview.View{}
+	for _, r := range rvs {
 		//nolint:gosec // loop does not modify struct
-		view = append(view, fineview.ToView(&w))
+		view = append(view, reservationview.ToView(&r))
 	}
 
 	return c.JSON(api.Response{
@@ -71,7 +67,7 @@ func HandleList(c *fiber.Ctx) error {
 			FilteredCount: filteredCount,
 		},
 		Messages: api.Messages(
-			api.SilentMessage("fines listed successfully"),
+			api.SilentMessage("reservations listed successfully"),
 		),
 	})
 }

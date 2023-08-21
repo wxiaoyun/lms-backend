@@ -10,14 +10,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary list audit logs
-// @Description list relevang audit logs
+// @Summary List audit logs
+// @Description List relevant audit logs
 // @Tags audit log
-// @Accept */*
+// @Accept application/json
+// @Param offset query int false "Offset for pagination"
+// @Param limit query int false "Limit for pagination"
+// @Param filter[action] query string false "Filter by action"
+// @Param sortBy query string false "Sort by column name"
+// @Param orderBy query string false "Order by direction (asc or desc)"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[[]auditlogview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/audit_log?offset=&limit=&filter[action]=<action>&sortBy=<col_name>&orderBy=<asc|desc> [get]
+// @Router /api/v1/audit_log [get]
 func HandleList(c *fiber.Ctx) error {
 	db := database.GetDB()
 	cq := collection.GetCollectionQueryFromParam(c)
@@ -34,7 +39,7 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	dbSorted := cq.Sort(dbFiltered)
+	dbSorted := cq.Sort(dbFiltered, auditlog.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
 	logs, err := auditlog.List(dbPaginated)
 	if err != nil {

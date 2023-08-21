@@ -38,7 +38,7 @@ func HandleGetCurrentUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: userview.ToView(usr, abilites),
+		Data: userview.ToView(usr, abilites...),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf("Welcome back, %s!", usr.Username)),
 		),

@@ -14,7 +14,7 @@ type View struct {
 	Abilities  []string        `json:"abilities,omitempty"`
 }
 
-func ToView(user *model.User, abilities []model.Ability) *View {
+func ToView(user *model.User, abilities ...model.Ability) *View {
 	return &View{
 		ID:         user.ID,
 		Username:   user.Username,

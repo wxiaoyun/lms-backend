@@ -41,6 +41,31 @@ func Delete(db *gorm.DB, reservationID int64) (*model.Reservation, error) {
 	return reservation, nil
 }
 
+func Count(db *gorm.DB) (int64, error) {
+	var count int64
+
+	result := orm.CloneSession(db).
+		Model(&model.Reservation{}).
+		Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
+}
+
+func List(db *gorm.DB) ([]model.Reservation, error) {
+	var rvs []model.Reservation
+
+	result := db.Model(&model.Reservation{}).
+		Find(&rvs)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return rvs, nil
+}
+
 // Returns slice of reservations that is pending and reservation date is after now
 func ReadOutstandingReservationsByBookID(db *gorm.DB, bookID int64) ([]model.Reservation, error) {
 	var reservations []model.Reservation

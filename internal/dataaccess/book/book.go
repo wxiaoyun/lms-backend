@@ -100,7 +100,9 @@ func Delete(db *gorm.DB, bookID int64) (*model.Book, error) {
 func Count(db *gorm.DB) (int64, error) {
 	var count int64
 
-	result := db.Model(&model.Book{}).Count(&count)
+	result := orm.CloneSession(db).
+		Model(&model.Book{}).
+		Count(&count)
 	if result.Error != nil {
 		return 0, result.Error
 	}
@@ -122,14 +124,10 @@ func CountFiltered(db *gorm.DB, cq *collection.Query) (int64, error) {
 	return count, nil
 }
 
-func List(db *gorm.DB, cq *collection.Query) ([]model.Book, error) {
+func List(db *gorm.DB) ([]model.Book, error) {
 	var books []model.Book
 
 	result := db.Model(&model.Book{}).
-		Where("title ILIKE ?", "%"+cq.Search+"%").
-		Or("author ILIKE ?", "%"+cq.Search+"%").
-		Offset(cq.Offset).
-		Limit(cq.Limit).
 		Find(&books)
 	if result.Error != nil {
 		return nil, result.Error

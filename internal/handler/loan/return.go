@@ -25,6 +25,8 @@ const (
 // @Description Returns a book to the library
 // @Tags loan
 // @Accept */*
+// @Param book_id path int true "Book ID for loan"
+// @Param loan_id path int true "loan ID to return"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[loanview.View]
 // @Failure 400 {object} api.SwgErrResponse

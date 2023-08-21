@@ -16,11 +16,11 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/audit_log/": {
+        "/api/v1/audit_log": {
             "get": {
-                "description": "list relevang audit logs",
+                "description": "List relevant audit logs",
                 "consumes": [
-                    "*/*"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -28,7 +28,39 @@ const docTemplate = `{
                 "tags": [
                     "audit log"
                 ],
-                "summary": "list audit logs",
+                "summary": "List audit logs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit for pagination",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by action",
+                        "name": "filter[action]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by column name",
+                        "name": "sortBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by direction (asc or desc)",
+                        "name": "orderBy",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -43,7 +75,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/audit_log/": {
             "post": {
                 "description": "list relevang audit logs",
                 "consumes": [
@@ -192,11 +226,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/book/": {
+        "/api/v1/book": {
             "get": {
-                "description": "lists books in the library",
+                "description": "Lists books in the library",
                 "consumes": [
-                    "*/*"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -205,6 +239,38 @@ const docTemplate = `{
                     "book"
                 ],
                 "summary": "List books",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit for pagination",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by value",
+                        "name": "filter[value]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by column name (e.g. title)",
+                        "name": "sortBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by direction (asc or desc)",
+                        "name": "orderBy",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -219,7 +285,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/book/": {
             "post": {
                 "description": "creates a new book in the library",
                 "consumes": [
@@ -257,44 +325,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "patch": {
-                "description": "Updates an existing book in the library",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "book"
-                ],
-                "summary": "Update a book",
-                "parameters": [
-                    {
-                        "description": "Book update request",
-                        "name": "book",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/bookparams.UpdateParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-bookview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
             }
         },
         "/api/v1/book/{book_id}": {
@@ -310,6 +340,15 @@ const docTemplate = `{
                     "book"
                 ],
                 "summary": "Read book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID to read",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -337,6 +376,60 @@ const docTemplate = `{
                     "book"
                 ],
                 "summary": "Delete a book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID to delete",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-bookview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates an existing book in the library",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "book"
+                ],
+                "summary": "Update a book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID to update",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Book update request",
+                        "name": "book",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/bookparams.UpdateParams"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -366,6 +459,15 @@ const docTemplate = `{
                     "loan"
                 ],
                 "summary": "Loan a book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for loan",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -395,6 +497,22 @@ const docTemplate = `{
                     "loan"
                 ],
                 "summary": "Read a loan",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for loan",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "loan ID to read",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -422,40 +540,27 @@ const docTemplate = `{
                     "loan"
                 ],
                 "summary": "Delete a loan",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for loan",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "loan ID to delete",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.SwgResponse-loanview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/book/{book_id}/loan/{loan_id}/fine/": {
-            "get": {
-                "description": "List fines belonging to a loan",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "fine"
-                ],
-                "summary": "List fine",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-array_fineview_View"
                         }
                     },
                     "400": {
@@ -480,6 +585,29 @@ const docTemplate = `{
                     "fine"
                 ],
                 "summary": "Delete fine",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for loan",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "loan ID to fine",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "fine ID to delete",
+                        "name": "fine_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -509,6 +637,29 @@ const docTemplate = `{
                     "fine"
                 ],
                 "summary": "Settle fine",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for loan",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "loan ID to fine",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "fine ID to settle",
+                        "name": "fine_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -538,6 +689,22 @@ const docTemplate = `{
                     "loan"
                 ],
                 "summary": "Renew a loan",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for loan",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "loan ID to renew",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -567,6 +734,22 @@ const docTemplate = `{
                     "loan"
                 ],
                 "summary": "Return a book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for loan",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "loan ID to return",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -596,6 +779,15 @@ const docTemplate = `{
                     "reservation"
                 ],
                 "summary": "Create a reservation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for reservation",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -625,6 +817,22 @@ const docTemplate = `{
                     "reservation"
                 ],
                 "summary": "Read a reservation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for reservation",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "reservation ID to read",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -652,6 +860,22 @@ const docTemplate = `{
                     "reservation"
                 ],
                 "summary": "Delete a reservation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for reservation",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "reservation ID to delete",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -681,6 +905,22 @@ const docTemplate = `{
                     "reservation"
                 ],
                 "summary": "Cancel a reservation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for reservation",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "reservation ID to cancel",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -710,11 +950,88 @@ const docTemplate = `{
                     "reservation"
                 ],
                 "summary": "Checkout a book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for reservation",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "reservation ID to checkout",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.SwgResponse-reservationview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/fine": {
+            "get": {
+                "description": "List fines belonging to a loan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fine"
+                ],
+                "summary": "List fines",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit for pagination",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by user ID",
+                        "name": "filter[user_id]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by column name",
+                        "name": "sortBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by direction (asc or desc)",
+                        "name": "orderBy",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-array_fineview_View"
                         }
                     },
                     "400": {
@@ -744,6 +1061,194 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.SwgMsgResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/loan": {
+            "get": {
+                "description": "List loans depending on collection query",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "loan"
+                ],
+                "summary": "List loans",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit for pagination",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by user ID",
+                        "name": "filter[user_id]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by column name",
+                        "name": "sortBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by direction (asc or desc)",
+                        "name": "orderBy",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-array_loanview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reservation": {
+            "get": {
+                "description": "List reservations in the library depending on the collection query",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "List reservations",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit for pagination",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by user ID",
+                        "name": "filter[user_id]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by column name",
+                        "name": "sortBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by direction (asc or desc)",
+                        "name": "orderBy",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-array_reservationview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user": {
+            "get": {
+                "description": "List users depending on the collection query",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "List users",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 25,
+                        "description": "Limit for pagination",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Filter by user ID",
+                        "name": "filter[user_id]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "\"created_at\"",
+                        "description": "Sort by column name",
+                        "name": "sortBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "\"desc\"",
+                        "description": "Order by asc or desc",
+                        "name": "orderBy",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-array_reservationview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
                         }
                     }
                 }
@@ -780,7 +1285,7 @@ const docTemplate = `{
         },
         "/api/v1/user/{user_id}": {
             "get": {
-                "description": "Updates an existing user in the system",
+                "description": "Retrieves an existing user from the system",
                 "consumes": [
                     "*/*"
                 ],
@@ -791,6 +1296,15 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Read an existing user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID to retrieve",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -818,6 +1332,15 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Delete an existing user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID to delete",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -846,6 +1369,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update an existing user",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID to update",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "User update request",
                         "name": "createuserparam",
@@ -886,6 +1416,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update user role",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID to update role",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "User update role request",
                         "name": "updateroleparam",
@@ -1088,6 +1625,46 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/fineview.View"
+                    }
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Message"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/api.Meta"
+                }
+            }
+        },
+        "api.SwgResponse-array_loanview_View": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/loanview.View"
+                    }
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Message"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/api.Meta"
+                }
+            }
+        },
+        "api.SwgResponse-array_reservationview_View": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/reservationview.View"
                     }
                 },
                 "messages": {
