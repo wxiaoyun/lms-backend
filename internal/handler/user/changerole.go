@@ -70,7 +70,7 @@ func HandleChangeRole(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: userview.ToView(usr, abilities),
+		Data: userview.ToView(usr, abilities...),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Successfully updated user %s's role to role %d.", username, params.RoleID),

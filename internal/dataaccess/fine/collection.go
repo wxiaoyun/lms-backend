@@ -1,4 +1,4 @@
-package auditlog
+package fine
 
 import (
 	collection "lms-backend/pkg/collectionquery"
@@ -6,13 +6,15 @@ import (
 
 func Filters() collection.FilterMap {
 	return map[string]collection.Filter{
-		"action": collection.StringLikeFilter("action"),
+		"status":  collection.StringEqualFilter("status"),
+		"user_id": collection.MultipleIntEqualFilter("user_id"),
+		"loan_id": collection.MultipleIntEqualFilter("loan_id"),
 	}
 }
 
 func Sorters() collection.SortMap {
 	return map[string]collection.Sorter{
-		"action":     collection.SortBy("action"),
+		"amount":     collection.SortBy("amount"),
 		"created_at": collection.SortBy("created_at"),
 	}
 }

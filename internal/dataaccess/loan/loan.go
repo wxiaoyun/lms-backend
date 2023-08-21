@@ -64,6 +64,31 @@ func Delete(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	return ln, nil
 }
 
+func Count(db *gorm.DB) (int64, error) {
+	var count int64
+
+	result := orm.CloneSession(db).
+		Model(&model.Loan{}).
+		Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
+}
+
+func List(db *gorm.DB) ([]model.Loan, error) {
+	var lns []model.Loan
+
+	result := db.Model(&model.Loan{}).
+		Find(&lns)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return lns, nil
+}
+
 // Returns the outstanding loan for the given book, sorted by create date.
 func ReadOutstandingLoansByBookID(db *gorm.DB, bookID int64) ([]model.Loan, error) {
 	var loans []model.Loan

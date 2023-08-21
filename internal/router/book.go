@@ -18,12 +18,12 @@ func BookRoutes(r fiber.Router) {
 		r.Patch("/", bookhandler.HandleUpdate)
 		r.Delete("/", bookhandler.HandleDelete)
 
-		Route(r, "/loan", LoanRoutes)
-		Route(r, "/reservation", ReservationRoutes)
+		Route(r, "/loan", BookLoanRoutes)
+		Route(r, "/reservation", BookReservationRoutes)
 	})
 }
 
-func LoanRoutes(r fiber.Router) {
+func BookLoanRoutes(r fiber.Router) {
 	r.Post("/", loanhandler.HandleLoan)
 
 	Route(r, "/:loan_id", func(r fiber.Router) {
@@ -32,11 +32,11 @@ func LoanRoutes(r fiber.Router) {
 		r.Patch("/return", loanhandler.HandleReturn)
 		r.Patch("/renew", loanhandler.HandleRenew)
 
-		Route(r, "/fine", FineRoutes)
+		Route(r, "/fine", BookFineRoutes)
 	})
 }
 
-func ReservationRoutes(r fiber.Router) {
+func BookReservationRoutes(r fiber.Router) {
 	r.Post("/", reservationhandler.HandleReserve)
 
 	Route(r, "/:reservation_id", func(r fiber.Router) {
@@ -47,9 +47,7 @@ func ReservationRoutes(r fiber.Router) {
 	})
 }
 
-func FineRoutes(r fiber.Router) {
-	r.Get("/", finehandler.HandleList)
-
+func BookFineRoutes(r fiber.Router) {
 	Route(r, "/:fine_id", func(r fiber.Router) {
 		r.Patch("/settle", finehandler.HandleSettle)
 		r.Delete("/", finehandler.HandleDelete)

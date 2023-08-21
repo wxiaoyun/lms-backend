@@ -19,7 +19,7 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[[]bookview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/ [get]
+// @Router /api/v1/book?offset=&limit=&filter[value]=&sortBy=title&orderBy=asc [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readBookAction, bookpolicy.ReadPolicy())
 	if err != nil {
@@ -34,12 +34,16 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	filteredCount, err := book.CountFiltered(db, cq)
+	dbFiltered := cq.Filter(db, book.Filters())
+
+	filteredCount, err := book.Count(dbFiltered)
 	if err != nil {
 		return err
 	}
 
-	books, err := book.List(db, cq)
+	dbSorted := cq.Sort(dbFiltered, book.Sorters())
+	dbPaginated := cq.Paginate(dbSorted)
+	books, err := book.List(dbPaginated)
 	if err != nil {
 		return err
 	}

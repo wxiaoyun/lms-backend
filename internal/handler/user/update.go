@@ -68,7 +68,7 @@ func HandleUpdate(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
-		Data: userview.ToView(usr, abilities),
+		Data: userview.ToView(usr, abilities...),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"User %s updated successfully", usr.Username,

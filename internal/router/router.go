@@ -12,4 +12,7 @@ func SetUpRoutes(app *fiber.App) {
 	Route(v1Routes, "/user", UserRoutes)
 	Route(v1Routes, "/audit_log", AuditLogRoutes)
 	Route(v1Routes, "/book", BookRoutes)
+	Route(v1Routes, "/loan", LoanRoutes)
+	Route(v1Routes, "/reservation", ReservationRoutes)
+	Route(v1Routes, "/fine", FineRoutes)
 }

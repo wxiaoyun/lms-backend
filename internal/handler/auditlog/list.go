@@ -34,7 +34,7 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	dbSorted := cq.Sort(dbFiltered)
+	dbSorted := cq.Sort(dbFiltered, auditlog.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
 	logs, err := auditlog.List(dbPaginated)
 	if err != nil {
