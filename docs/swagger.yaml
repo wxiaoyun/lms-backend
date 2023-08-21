@@ -283,15 +283,6 @@ definitions:
       user_id:
         type: integer
     type: object
-  userparams.BaseUserParams:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-      username:
-        type: string
-    type: object
   userparams.CreateParams:
     properties:
       email:
@@ -300,6 +291,15 @@ definitions:
         type: string
       person_attributes:
         $ref: '#/definitions/peopleparams.BaseParams'
+      username:
+        type: string
+    type: object
+  userparams.SignInParams:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
       username:
         type: string
     type: object
@@ -316,6 +316,11 @@ definitions:
       username:
         type: string
     type: object
+  userparams.UpdateRoleParams:
+    properties:
+      role_id:
+        type: integer
+    type: object
   userview.View:
     properties:
       abilities:
@@ -328,6 +333,8 @@ definitions:
         type: integer
       person_attributes:
         $ref: '#/definitions/personview.View'
+      username:
+        type: string
     type: object
 info:
   contact: {}
@@ -388,7 +395,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/userparams.BaseUserParams'
+          $ref: '#/definitions/userparams.SignInParams'
       produces:
       - application/json
       responses:
@@ -528,7 +535,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgMsgResponse'
+            $ref: '#/definitions/api.SwgResponse-bookview_View'
         "400":
           description: Bad Request
           schema:
@@ -854,7 +861,8 @@ paths:
     patch:
       consumes:
       - application/json
-      description: Updates an existing user in the system
+      description: Updates an existing user in the system. This only includes username,
+        first name, last name, preferred name, language
       parameters:
       - description: User update request
         in: body
@@ -874,6 +882,32 @@ paths:
           schema:
             $ref: '#/definitions/api.SwgErrResponse'
       summary: Update an existing user
+      tags:
+      - user
+  /api/v1/user/{user_id}/role:
+    patch:
+      consumes:
+      - application/json
+      description: Update user role of a user
+      parameters:
+      - description: User update role request
+        in: body
+        name: updateroleparam
+        required: true
+        schema:
+          $ref: '#/definitions/userparams.UpdateRoleParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-userview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Update user role
       tags:
       - user
   /api/v1/user/currentuser:

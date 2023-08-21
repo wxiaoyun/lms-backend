@@ -1,3 +1,5 @@
+.PHONY: docs
+
 clean:
 	go mod tidy
 	go mod vendor

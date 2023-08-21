@@ -6,7 +6,6 @@ import (
 	"lms-backend/internal/model"
 	"lms-backend/internal/orm"
 	"lms-backend/pkg/error/externalerrors"
-	"lms-backend/util"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -134,8 +133,6 @@ func Login(db *gorm.DB, user *model.User) (*model.User, error) {
 		return nil, externalerrors.BadRequest("Email or Username is required")
 	}
 
-	util.Debug(user.EncryptedPassword)
-
 	err := bcrypt.CompareHashAndPassword([]byte(userInDB.EncryptedPassword), []byte(user.EncryptedPassword))
 	if err != nil {
 		return nil, externalerrors.Unauthorized("user not found or invalid password")
@@ -208,8 +205,6 @@ func GetRoles(db *gorm.DB, userID int64) ([]model.Role, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
-	util.Debug(roles)
 
 	return roles, nil
 }

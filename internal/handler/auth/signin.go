@@ -16,7 +16,7 @@ import (
 // @Description signs in a user and creates a session
 // @Tags auth
 // @Accept application/json
-// @Param user body userparams.BaseUserParams true "User creation request"
+// @Param user body userparams.SignInParams true "User creation request"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[userview.View]
 // @Failure 400 {object} api.SwgErrResponse
