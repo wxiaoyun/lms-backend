@@ -3,7 +3,7 @@ package model
 import (
 	"database/sql"
 	"lms-backend/pkg/error/externalerrors"
-	"slices"
+	"lms-backend/util/sliceutil"
 	"time"
 
 	"gorm.io/gorm"
@@ -113,7 +113,7 @@ func (l *Loan) ValidateStatus() error {
 		return externalerrors.BadRequest("status is required")
 	}
 
-	if !slices.Contains([]LoanStatus{
+	if !sliceutil.Contains([]LoanStatus{
 		LoanStatusBorrowed,
 		LoanStatusReturned,
 	}, l.Status) {

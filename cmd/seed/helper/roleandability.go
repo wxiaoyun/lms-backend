@@ -6,7 +6,7 @@ import (
 	"lms-backend/internal/model"
 	"lms-backend/internal/policy/abilities"
 	"lms-backend/internal/policy/roles"
-	"slices"
+	"lms-backend/util/sliceutil"
 
 	"gorm.io/gorm"
 )
@@ -82,7 +82,7 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 	// Assign abilities to roles
 	for _, role := range roles.GetAllRoles() {
 		for _, ability := range abilities.GetAllAbilities() {
-			if !slices.Contains(rbMap[role.Name], ability.Name) {
+			if !sliceutil.Contains(rbMap[role.Name], ability.Name) {
 				continue
 			}
 

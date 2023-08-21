@@ -2,7 +2,7 @@ package model
 
 import (
 	"lms-backend/pkg/error/externalerrors"
-	"slices"
+	"lms-backend/util/sliceutil"
 
 	"gorm.io/gorm"
 )
@@ -83,7 +83,7 @@ func (f *Fine) Validate(db *gorm.DB) error {
 		return externalerrors.BadRequest("Amount must be greater than 0")
 	}
 
-	if !slices.Contains([]FineStatus{
+	if !sliceutil.Contains([]FineStatus{
 		FineStatusOutstanding,
 		FineStatusPaid,
 	}, f.Status) {

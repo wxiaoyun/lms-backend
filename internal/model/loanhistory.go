@@ -1,7 +1,7 @@
 package model
 
 import (
-	"slices"
+	"lms-backend/util/sliceutil"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -60,7 +60,7 @@ func (l *LoanHistory) ValidateAction() error {
 		return fiber.NewError(fiber.StatusBadRequest, "action is required")
 	}
 
-	if !slices.Contains([]LoanHistoryAction{
+	if !sliceutil.Contains([]LoanHistoryAction{
 		LoanHistoryActionBorrow,
 		LoanHistoryActionExtend,
 		LoanHistoryActionReturn,

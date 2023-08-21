@@ -3,7 +3,7 @@ package sessionmiddleware
 import (
 	"lms-backend/internal/api"
 	"lms-backend/internal/session"
-	"slices"
+	"lms-backend/util/sliceutil"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,16 +11,16 @@ import (
 
 func SessionMiddleware(c *fiber.Ctx) error {
 	paths := strings.Split(c.Path(), "/")
-	if slices.Contains(paths, "swagger") {
+	if sliceutil.Contains(paths, "swagger") {
 		return c.Next()
 	}
-	if slices.Contains(paths, "signin") {
+	if sliceutil.Contains(paths, "signin") {
 		return c.Next()
 	}
-	if slices.Contains(paths, "signup") {
+	if sliceutil.Contains(paths, "signup") {
 		return c.Next()
 	}
-	if slices.Contains(paths, "health") {
+	if sliceutil.Contains(paths, "health") {
 		return c.Next()
 	}
 

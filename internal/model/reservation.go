@@ -2,7 +2,7 @@ package model
 
 import (
 	"lms-backend/pkg/error/externalerrors"
-	"slices"
+	"lms-backend/util/sliceutil"
 	"time"
 
 	"gorm.io/gorm"
@@ -87,7 +87,7 @@ func (r *Reservation) ValidateStatus() error {
 		return externalerrors.BadRequest("status is required")
 	}
 
-	if !slices.Contains([]ReservationStatus{
+	if !sliceutil.Contains([]ReservationStatus{
 		ReservationStatusPending,
 		ReservationStatusFulfilled,
 	}, r.Status) {

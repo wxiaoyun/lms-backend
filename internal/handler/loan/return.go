@@ -30,7 +30,7 @@ const (
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/book/{book_id}/loan/{loan_id}/return [patch]
 func HandleReturn(c *fiber.Ctx) error {
-	param := c.Params("id")
+	param := c.Params("book_id")
 	bookID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
