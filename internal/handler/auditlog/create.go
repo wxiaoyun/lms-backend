@@ -7,6 +7,7 @@ import (
 	audlog "lms-backend/internal/dataaccess/auditlog"
 	"lms-backend/internal/params/auditlogparams"
 	"lms-backend/internal/session"
+	"lms-backend/internal/view/auditlogview"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -17,7 +18,7 @@ import (
 // @Accept application/json
 // @Param audit_log body auditlogparams.BaseParams true "Audit log creation request"
 // @Produce application/json
-// @Success 200 {object} api.SwgMsgResponse
+// @Success 200 {object} api.SwgMsgResponse[auditlogview.View]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/audit_log/ [post]
 func HandleCreate(c *fiber.Ctx) error {
@@ -45,6 +46,7 @@ func HandleCreate(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
+		Data: auditlogview.ToView(log),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Entry in audit log created successfully: %s", log.Action,

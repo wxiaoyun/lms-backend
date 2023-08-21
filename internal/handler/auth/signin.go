@@ -22,8 +22,12 @@ import (
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
-	var params userparams.BaseUserParams
+	var params userparams.SignInParams
 	if err := c.BodyParser(&params); err != nil {
+		return err
+	}
+
+	if err := params.Validate(); err != nil {
 		return err
 	}
 
@@ -50,10 +54,8 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := userview.ToView(userModel, abilites)
-
 	return c.Status(fiber.StatusOK).JSON(api.Response{
-		Data: view,
+		Data: userview.ToView(userModel, abilites),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"%s is logged in successfully", userModel.Username,

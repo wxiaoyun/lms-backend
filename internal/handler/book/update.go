@@ -56,10 +56,8 @@ func HandleUpdate(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := bookview.ToView(bookModel)
-
 	return c.JSON(api.Response{
-		Data: view,
+		Data: bookview.ToView(bookModel),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" modified successfully.", bookModel.Title,

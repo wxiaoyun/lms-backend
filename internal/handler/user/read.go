@@ -5,7 +5,6 @@ import (
 	"lms-backend/internal/api"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
-	"lms-backend/internal/model"
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/userpolicy"
 	"lms-backend/internal/view/userview"
@@ -46,10 +45,13 @@ func HandleRead(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := userview.ToView(usr, []model.Ability{})
+	abilities, err := user.GetAbilities(db, userID)
+	if err != nil {
+		return err
+	}
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
-		Data: view,
+		Data: userview.ToView(usr, abilities),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"User %s retrieved successfully", usr.Username,

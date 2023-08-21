@@ -61,10 +61,8 @@ func HandleRead(c *fiber.Ctx) error {
 		))
 	}
 
-	view := reservationview.ToView(res)
-
 	return c.JSON(api.Response{
-		Data: view,
+		Data: reservationview.ToView(res),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"Reservation %d retrieved.", resID,

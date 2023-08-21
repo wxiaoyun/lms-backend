@@ -81,10 +81,8 @@ func HandleDelete(c *fiber.Ctx) error {
 		return err
 	}
 
-	view := reservationview.ToView(res)
-
 	return c.JSON(api.Response{
-		Data: view,
+		Data: reservationview.ToView(res),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Reservation for \"%s\" is deleted.", bookTitle,

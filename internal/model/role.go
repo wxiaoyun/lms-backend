@@ -11,7 +11,7 @@ type Role struct {
 	CreatedAt time.Time
 
 	Name      string    `gorm:"not null"`
-	Abilities []Ability `gorm:"many2many:role_abilities;->;<-:create"`
+	Abilities []Ability `gorm:"many2many:role_abilities;->"`
 }
 
 func (r *Role) Create(db *gorm.DB) error {

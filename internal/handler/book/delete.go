@@ -7,6 +7,7 @@ import (
 	"lms-backend/internal/dataaccess/book"
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/bookpolicy"
+	"lms-backend/internal/view/bookview"
 	"lms-backend/pkg/error/externalerrors"
 	"strconv"
 
@@ -18,7 +19,7 @@ import (
 // @Tags book
 // @Accept */*
 // @Produce application/json
-// @Success 200 {object} api.SwgMsgResponse
+// @Success 200 {object} api.api.SwgResponse[bookview.View]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/book/{book_id} [delete]
 func HandleDelete(c *fiber.Ctx) error {
@@ -44,6 +45,7 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
+		Data: bookview.ToView(bookModel),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" removed from library.", bookModel.Title,

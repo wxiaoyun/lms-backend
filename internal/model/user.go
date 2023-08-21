@@ -91,7 +91,7 @@ func (u *User) ensureEmailIsUniqueIfPresent(db *gorm.DB) error {
 	return nil
 }
 
-func (u *User) ensurePersonIsNewOrExists(db *gorm.DB) error {
+func (u *User) ensurePersonIsNewOrBelongsToUser(db *gorm.DB) error {
 	if u.PersonID == 0 {
 		return nil
 	}
@@ -103,7 +103,8 @@ func (u *User) ensurePersonIsNewOrExists(db *gorm.DB) error {
 	var exists int64
 
 	result := db.Model(&Person{}).
-		Where("id = ?", u.PersonID).
+		Joins("JOIN users ON users.person_id = people.id").
+		Where("people.id = ?", u.PersonID).
 		Count(&exists)
 	if result.Error != nil {
 		return externalerrors.BadRequest("person not found")
@@ -198,7 +199,7 @@ func (u *User) ValidateEmail(db *gorm.DB) error {
 }
 
 func (u *User) Validate(db *gorm.DB) error {
-	return u.ensurePersonIsNewOrExists(db)
+	return u.ensurePersonIsNewOrBelongsToUser(db)
 }
 
 func (u *User) Create(db *gorm.DB) error {
@@ -233,6 +234,11 @@ func (u *User) BeforeCreate(db *gorm.DB) error {
 	return u.Validate(db)
 }
 
+func (u *User) AfterCreate(db *gorm.DB) error {
+	// Default role is "Basic" upon creation
+	return u.UpdateRoles(db, []int64{4})
+}
+
 func (u *User) BeforeUpdate(db *gorm.DB) error {
 	if err := u.ValidateUsername(db); err != nil {
 		return err
@@ -251,6 +257,29 @@ func (u *User) HashPassword() error {
 		return err
 	}
 	u.EncryptedPassword = string(bytes)
+
+	return nil
+}
+
+func (u *User) UpdateRoles(db *gorm.DB, roleIDs []int64) error {
+	// Remove all existing roles
+	result := db.
+		Where("user_id = ?", u.ID).
+		Delete(&UserRoles{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	// Add new roles
+	for _, roleID := range roleIDs {
+		err := db.Exec(
+			"INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)",
+			u.ID, roleID,
+		).Error
+		if err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
