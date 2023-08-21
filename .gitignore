@@ -3,7 +3,7 @@
 vendor/
 vendor
 
-.env.development
-.env.production
+/.env.development
+/.env.production
 
 .DS_Store
