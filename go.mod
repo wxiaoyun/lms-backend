@@ -1,6 +1,6 @@
 module lms-backend
 
-go 1.21
+go 1.18
 
 require (
 	github.com/dlclark/regexp2 v1.10.0
