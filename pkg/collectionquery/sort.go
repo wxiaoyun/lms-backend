@@ -15,18 +15,18 @@ type SortMap map[string]Sorter
 //
 // To be called after the Filter() method.
 func (q *Query) Sort(db *gorm.DB, sorters SortMap, joinQueries ...string) *gorm.DB {
-	if q.SortBy == "" {
+	if q.sortBy == "" {
 		return db
 	}
 
 	db = db.Scopes(orm.JoinAll(joinQueries))
 
-	sorter, ok := sorters[q.SortBy]
+	sorter, ok := sorters[q.sortBy]
 	if !ok {
 		return db
 	}
 
-	return db.Scopes(sorter(q.OrderBy))
+	return db.Scopes(sorter(q.orderBy))
 }
 
 func SortBy(columnName string) Sorter {

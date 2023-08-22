@@ -9,6 +9,6 @@ import (
 // To be called after the Filter() and Sort() methods.
 func (q *Query) Paginate(db *gorm.DB) *gorm.DB {
 	return db.Scopes(func(*gorm.DB) *gorm.DB {
-		return db.Offset(q.Offset).Limit(q.Limit)
+		return db.Offset(q.offset).Limit(q.limit)
 	})
 }

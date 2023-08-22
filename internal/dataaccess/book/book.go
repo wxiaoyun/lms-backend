@@ -6,7 +6,6 @@ import (
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/model"
 	"lms-backend/internal/orm"
-	collection "lms-backend/pkg/collectionquery"
 	"lms-backend/pkg/error/externalerrors"
 
 	"gorm.io/gorm"
@@ -102,20 +101,6 @@ func Count(db *gorm.DB) (int64, error) {
 
 	result := orm.CloneSession(db).
 		Model(&model.Book{}).
-		Count(&count)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return count, nil
-}
-
-func CountFiltered(db *gorm.DB, cq *collection.Query) (int64, error) {
-	var count int64
-
-	result := db.Model(&model.Book{}).
-		Where("title ILIKE ?", "%"+cq.Search+"%").
-		Or("author ILIKE ?", "%"+cq.Search+"%").
 		Count(&count)
 	if result.Error != nil {
 		return 0, result.Error
