@@ -10,6 +10,10 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+
+    environment:
+      name: telegram
+
     steps:
       - name: send telegram message on push or pull request
         uses: appleboy/telegram-action@master
