@@ -15,18 +15,36 @@ jobs:
       name: telegram
 
     steps:
-      - name: send telegram message on push or pull request
+      - name: send telegram message on push
+        if: github.event_name == 'push'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: html
           message: |
-            <b>LMS Backend Event</b>: 
-            <i>${{ github.event_name }} by ${{ github.actor }}</i>
+            <b>LMS Backend Push Event</b>: 
+            <i>Push by ${{ github.actor }}</i>
 
             Commit message: 
             <code>${{ github.event.commits[0].message }}</code>
 
             Repository: ${{ github.repository }}
             <a href="https://github.com/${{ github.repository }}/commit/${{github.sha}}">See changes</a>
+
+      - name: send telegram message on pull request
+        if: github.event_name == 'pull_request'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          message: |
+            <b>LMS Backend Pull Request Event</b>: 
+            <i>Pull Request by ${{ github.actor }}</i>
+
+            <code>Title: ${{ github.event.pull_request.title }}</code>
+            <code>${{ github.event.pull_request.comments }}</code>
+
+            Repository: ${{ github.repository }}
+            <a href="${{ github.event.pull_request.html_url }}">See details</a>
