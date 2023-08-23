@@ -20,15 +20,11 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
           message: |
-            Event: ${{ github.event_name }}
+            <b>LMS Backend Event</b>: <i>${{ github.event_name }} by ${{ github.actor }}</i>
 
-            ${{ github.actor }} created commit:
-            Commit message: ${{ github.event.commits[0].message }}
+            Commit message: <code>${{ github.event.commits[0].message }}</code>
 
             Repository: ${{ github.repository }}
-
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
-
-            Action: ${{ github.action }}
-            Actor: ${{ github.actor }}
+            [See changes](https://github.com/${{ github.repository }}/commit/${{github.sha}})
