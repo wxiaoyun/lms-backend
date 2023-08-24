@@ -3,6 +3,7 @@ module lms-backend
 go 1.18
 
 require (
+	github.com/ForAeons/ternary v1.0.0
 	github.com/dlclark/regexp2 v1.10.0
 	github.com/go-loremipsum/loremipsum v1.1.3
 	github.com/gofiber/fiber/v2 v2.47.0

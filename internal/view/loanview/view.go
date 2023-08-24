@@ -4,8 +4,10 @@ import (
 	"lms-backend/internal/model"
 	"lms-backend/internal/view/fineview"
 	loanhistoryview "lms-backend/internal/view/loanhistory"
-	"lms-backend/util/ternary"
+
 	"time"
+
+	"github.com/ForAeons/ternary"
 )
 
 type View struct {
