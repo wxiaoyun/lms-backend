@@ -6,11 +6,11 @@ import (
 	"lms-backend/internal/app"
 	"lms-backend/internal/config"
 	"lms-backend/internal/database"
-	"lms-backend/util/ternary"
 	"log"
 	"math"
 	"path/filepath"
 
+	"github.com/ForAeons/ternary"
 	migrate "github.com/rubenv/sql-migrate"
 )
 

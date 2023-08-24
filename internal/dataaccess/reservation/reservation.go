@@ -5,8 +5,9 @@ import (
 	"lms-backend/internal/model"
 	"lms-backend/internal/orm"
 	"lms-backend/pkg/error/externalerrors"
-	"lms-backend/util/ternary"
 	"time"
+
+	"github.com/ForAeons/ternary"
 
 	"gorm.io/gorm"
 )
@@ -115,9 +116,9 @@ func ReserveBook(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) 
 		Status: model.ReservationStatusPending,
 		ReservationDate: ternary.If[time.Time](len(loans) > 0). // If there are outstanding loans
 			// Set reservation date to the return date of the first outstanding loan
-			LazyThen(func() time.Time { return loans[0].DueDate }).
+			LThen(func() time.Time { return loans[0].DueDate }).
 			//nolint Else set reservation date to now
-			LazyElse(func() time.Time { return time.Now() }).
+			LElse(func() time.Time { return time.Now() }).
 			Add(model.ReservationDuration),
 	}
 
