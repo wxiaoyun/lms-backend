@@ -7,7 +7,7 @@ import (
 )
 
 func UserRoutes(r fiber.Router) {
-	r.Get("/currentuser", userhandler.HandleGetCurrentUser)
+	r.Get("/current", userhandler.HandleGetCurrentUser)
 	r.Get("/", userhandler.HandleList)
 
 	Route(r, "/:user_id", func(r fiber.Router) {
