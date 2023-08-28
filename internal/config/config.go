@@ -5,13 +5,15 @@ import (
 )
 
 type Config struct {
-	DBUsername string
-	DBPassword string
-	DBHost     string
-	DBPort     string
-	DBName     string
-	SSLMode    string
-	Port       string
+	AppName     string
+	DBUsername  string
+	DBPassword  string
+	DBHost      string
+	DBPort      string
+	DBName      string
+	SSLMode     string
+	Port        string
+	FrontendURL string
 }
 
 // Returns a Config struct with the values from the environment variables
@@ -19,13 +21,15 @@ type Config struct {
 // Must be ran after loading env
 func GetConfig() *Config {
 	return &Config{
-		DBUsername: os.Getenv("DB_USERNAME"),
-		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBHost:     os.Getenv("DB_HOST"),
-		DBPort:     os.Getenv("DB_PORT"),
-		DBName:     os.Getenv("DB_NAME"),
-		SSLMode:    os.Getenv("SSL_MODE"),
-		Port:       os.Getenv("PORT"),
+		AppName:     os.Getenv("APP_NAME"),
+		DBUsername:  os.Getenv("DB_USERNAME"),
+		DBPassword:  os.Getenv("DB_PASSWORD"),
+		DBHost:      os.Getenv("DB_HOST"),
+		DBPort:      os.Getenv("DB_PORT"),
+		DBName:      os.Getenv("DB_NAME"),
+		SSLMode:     os.Getenv("SSL_MODE"),
+		Port:        os.Getenv("PORT"),
+		FrontendURL: os.Getenv("FRONTEND_URL"),
 	}
 }
 
