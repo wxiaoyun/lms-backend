@@ -1,33 +1,39 @@
+// Package app
+//
+// Runs the app
 package app
 
 import (
-	"os"
-
-	"github.com/gofiber/fiber/v2"
-
 	"lms-backend/internal/api"
 	"lms-backend/internal/config"
 	"lms-backend/internal/cron"
 	"lms-backend/internal/database"
 	"lms-backend/internal/middleware"
 	"lms-backend/internal/router"
+
+	"github.com/gofiber/fiber/v2"
 )
 
+// SetupAndRunApp sets up the app and runs it
 func SetupAndRunApp() error {
-	// load ENV
-	err := LoadEnvAndConnectToDB()
+	cfg, err := config.LoadEnvAndGetConfig()
+	if err != nil {
+		return err
+	}
+
+	err = database.OpenDataBase(cfg)
 	if err != nil {
 		return err
 	}
 
 	// create app
 	app := fiber.New(fiber.Config{
-		AppName:      "Library Management System Backend",
+		AppName:      cfg.AppName,
 		ErrorHandler: api.ErrorHandler,
 	})
 
 	// attach app middleware
-	middleware.SetupAppMiddleware(app)
+	middleware.SetupAppMiddleware(app, cfg)
 
 	// setup routes
 	router.SetUpRoutes(app)
@@ -39,10 +45,10 @@ func SetupAndRunApp() error {
 	defer c.Stop()
 
 	// get the port and start
-	port := os.Getenv("PORT")
-	return app.Listen(":" + port)
+	return app.Listen(":" + cfg.Port)
 }
 
+// LoadEnvAndConnectToDB loads the environment variables and connects to the database
 func LoadEnvAndConnectToDB() error {
 	cf, err := config.LoadEnvAndGetConfig()
 	if err != nil {

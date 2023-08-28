@@ -1,9 +1,9 @@
 package middleware
 
 import (
+	"lms-backend/internal/config"
 	sessionmiddleware "lms-backend/internal/middleware/session"
 	"lms-backend/internal/session"
-	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -12,16 +12,16 @@ import (
 )
 
 // attach middleware
-func SetupAppMiddleware(app *fiber.App) {
+func SetupAppMiddleware(app *fiber.App, cfg *config.Config) {
+	app.Use(cors.New(cors.Config{
+		AllowCredentials: true,
+		AllowOrigins:     cfg.FrontendURL,
+		AllowHeaders:     "Origin, Content-Type, Accept",
+	}))
+
 	session.SetupStore()
 
 	app.Use(sessionmiddleware.SessionMiddleware)
-
-	app.Use(cors.New(cors.Config{
-		AllowCredentials: true,
-		AllowOrigins:     os.Getenv("FRONTEND_URL"),
-		AllowHeaders:     "Origin, Content-Type, Accept",
-	}))
 
 	app.Use(recover.New(recover.Config{
 		EnableStackTrace: true,
