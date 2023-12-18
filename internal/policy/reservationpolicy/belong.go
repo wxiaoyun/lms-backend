@@ -15,10 +15,9 @@ type ReservationBelongsToUser struct {
 	BookID        int64
 }
 
-func AllowIfReservationBelongsToUser(reservationID, bookID int64) *ReservationBelongsToUser {
+func AllowIfReservationBelongsToUser(reservationID int64) *ReservationBelongsToUser {
 	return &ReservationBelongsToUser{
 		ReservationID: reservationID,
-		BookID:        bookID,
 	}
 }
 
@@ -32,7 +31,7 @@ func (p *ReservationBelongsToUser) Validate(c *fiber.Ctx) (policy.Decision, erro
 
 	var exists int64
 	result := db.Model(&model.Reservation{}).
-		Where("id = ? AND user_id = ? AND book_id = ?", p.ReservationID, userID, p.BookID).
+		Where("id = ? AND user_id = ?", p.ReservationID, userID).
 		Count(&exists)
 	if result.Error != nil {
 		return policy.Deny, result.Error

@@ -15,9 +15,8 @@ type FineBelongsToUser struct {
 	FineID int64
 }
 
-func AllowIfFineBelongsToUser(loanID, fineID int64) *FineBelongsToUser {
+func AllowIfFineBelongsToUser(fineID int64) *FineBelongsToUser {
 	return &FineBelongsToUser{
-		LoanID: loanID,
 		FineID: fineID,
 	}
 }
@@ -32,8 +31,7 @@ func (p *FineBelongsToUser) Validate(c *fiber.Ctx) (policy.Decision, error) {
 
 	var exists int64
 	result := db.Model(&model.Fine{}).
-		Joins("JOIN loans ON loans.id = fines.loan_id").
-		Where("fines.id = ? AND fines.loan_id = ? AND loans.user_id = ?", p.FineID, p.LoanID, userID).
+		Where("fines.id = ? AND fines.user_id = ?", p.FineID, userID).
 		Count(&exists)
 	if result.Error != nil {
 		return policy.Deny, result.Error

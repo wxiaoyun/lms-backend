@@ -25,25 +25,19 @@ const (
 // @Description Checks out a book for a given reservation
 // @Tags reservation
 // @Accept */*
-// @Param book_id path int true "Book ID for reservation"
 // @Param reservation_id path int true "reservation ID to checkout"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[reservationview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id}/reservation/{reservation_id}/checkout [patch]
+// @Router /api/v1/reservation/{reservation_id}/checkout [patch]
 func HandleCheckout(c *fiber.Ctx) error {
-	param := c.Params("id")
-	bookID, err := strconv.ParseInt(param, 10, 64)
-	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
-	}
 	param2 := c.Params("reservation_id")
 	resID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid reservation id.", param2))
 	}
 
-	err = policy.Authorize(c, checkoutBookAction, reservationpolicy.CheckoutPolicy(resID, bookID))
+	err = policy.Authorize(c, checkoutBookAction, reservationpolicy.CheckoutPolicy(resID))
 	if err != nil {
 		return err
 	}
@@ -60,25 +54,13 @@ func HandleCheckout(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, bookID)
-	if err != nil {
-		return err
-	}
-
 	tx, rollBackOrCommit := audit.Begin(
-		c, fmt.Sprintf("%s checking out reservation for \"%s\"", username, bookTitle),
+		c, fmt.Sprintf("%s checking out reservation id - \"%d\"", username, resID),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	res, err := book.CheckOutReservation(tx, userID, bookID, resID)
+	res, err := book.CheckOutReservation(tx, userID, resID)
 	if err != nil {
-		return err
-	}
-
-	if res.BookID != uint(bookID) {
-		err = externalerrors.BadRequest(fmt.Sprintf(
-			"Reservation with id %d is not for book with id %d.", resID, bookID,
-		))
 		return err
 	}
 
@@ -86,7 +68,7 @@ func HandleCheckout(c *fiber.Ctx) error {
 		Data: reservationview.ToView(res),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"%s has checked out \"%s\".", username, bookTitle,
+				"%s has checked out reservation id - \"%d\".", username, resID,
 			))),
 	})
 }

@@ -26,25 +26,19 @@ const (
 // @Description Renews a loan from the library
 // @Tags loan
 // @Accept */*
-// @Param book_id path int true "Book ID for loan"
 // @Param loan_id path int true "loan ID to renew"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[loanview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id}/loan/{loan_id}/renew [patch]
+// @Router /api/v1/loan/{loan_id}/renew [patch]
 func HandleRenew(c *fiber.Ctx) error {
-	param := c.Params("book_id")
-	bookID, err := strconv.ParseInt(param, 10, 64)
-	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
-	}
 	param2 := c.Params("loan_id")
 	loanID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param2))
 	}
 
-	err = policy.Authorize(c, renewLoanAction, loanpolicy.RenewPolicy(loanID, bookID))
+	err = policy.Authorize(c, renewLoanAction, loanpolicy.RenewPolicy(loanID))
 	if err != nil {
 		return err
 	}
@@ -61,13 +55,8 @@ func HandleRenew(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, bookID)
-	if err != nil {
-		return err
-	}
-
 	tx, rollBackOrCommit := audit.Begin(
-		c, fmt.Sprintf("%s renewing loan for \"%s\"", username, bookTitle),
+		c, fmt.Sprintf("%s renewing loan id - \"%d\"", username, loanID),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
@@ -76,18 +65,11 @@ func HandleRenew(c *fiber.Ctx) error {
 		return err
 	}
 
-	if ln.BookID != uint(bookID) {
-		err = externalerrors.BadRequest(fmt.Sprintf(
-			"Loan with id %d does not belong to %s.", ln.ID, bookTitle,
-		))
-		return err
-	}
-
 	return c.JSON(api.Response{
 		Data: loanview.ToView(ln),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"Loan for \"%s\" has been extended to %s.", bookTitle,
+				"Loan id \"%d\" has been extended to %s.", loanID,
 				ln.DueDate.Format(time.RFC3339),
 			))),
 	})

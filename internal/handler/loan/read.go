@@ -22,12 +22,11 @@ const (
 // @Description Retrieves a loan from the library
 // @Tags loan
 // @Accept */*
-// @Param book_id path int true "Book ID for loan"
 // @Param loan_id path int true "loan ID to read"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[loanview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id}/loan/{loan_id}/ [get]
+// @Router /api/v1//loan/{loan_id}/ [get]
 func HandleRead(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readLoanAction, loanpolicy.ReadPolicy())
 	if err != nil {
@@ -39,11 +38,6 @@ func HandleRead(c *fiber.Ctx) error {
 	// 	return err
 	// }
 
-	// param := c.Params("id")
-	// bookID, err := strconv.ParseInt(param, 10, 64)
-	// if err != nil {
-	// 	return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
-	// }
 	param2 := c.Params("loan_id")
 	loanID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {

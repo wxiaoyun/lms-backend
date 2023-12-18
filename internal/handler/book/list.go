@@ -53,7 +53,7 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	var view = []*bookview.View{}
+	var view = []*bookview.BaseView{}
 	for _, w := range books {
 		//nolint:gosec // loop does not modify struct
 		view = append(view, bookview.ToView(&w))

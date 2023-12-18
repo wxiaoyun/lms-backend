@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/dataaccess/book"
 	"lms-backend/internal/dataaccess/fine"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
@@ -26,31 +25,19 @@ const (
 // @Description settles a fine belonging to a loan
 // @Tags fine
 // @Accept */*
-// @Param book_id path int true "Book ID for loan"
-// @Param loan_id path int true "loan ID to fine"
 // @Param fine_id path int true "fine ID to settle"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[fineview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id}/loan/{loan_id}/fine/{fine_id}/settle [patch]
+// @Router /api/v1/fine/{fine_id}/settle [patch]
 func HandleSettle(c *fiber.Ctx) error {
-	param := c.Params("book_id")
-	bookID, err := strconv.ParseInt(param, 10, 64)
-	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
-	}
-	param2 := c.Params("loan_id")
-	loanID, err := strconv.ParseInt(param2, 10, 64)
-	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param2))
-	}
 	param3 := c.Params("fine_id")
 	fineID, err := strconv.ParseInt(param3, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid fine id.", param3))
 	}
 
-	err = policy.Authorize(c, settleFineAction, finepolicy.SettlePolicy(loanID, fineID))
+	err = policy.Authorize(c, settleFineAction, finepolicy.SettlePolicy(fineID))
 	if err != nil {
 		return err
 	}
@@ -67,13 +54,8 @@ func HandleSettle(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, bookID)
-	if err != nil {
-		return err
-	}
-
 	tx, rollBackOrCommit := audit.Begin(
-		c, fmt.Sprintf("%s settling fine for \"%s\"", username, bookTitle),
+		c, fmt.Sprintf("%s settling fine id: \"%d\"", username, fineID),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
@@ -82,18 +64,11 @@ func HandleSettle(c *fiber.Ctx) error {
 		return err
 	}
 
-	if fn.LoanID != uint(loanID) {
-		err = externalerrors.BadRequest(fmt.Sprintf(
-			"Fine with id %d does not belong to loan with id %d.", fn.ID, loanID,
-		))
-		return err
-	}
-
 	return c.JSON(api.Response{
 		Data: fineview.ToView(fn),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"Fine for \"%s\" is settled.", bookTitle,
+				"Fine id - \"%d\" is settled.", fineID,
 			))),
 	})
 }

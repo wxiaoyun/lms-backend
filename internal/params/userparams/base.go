@@ -26,7 +26,7 @@ func (b *BaseUserParams) ToModel() *model.User {
 }
 
 func (b *BaseUserParams) Validate() error {
-	if !emailReg.MatchString(b.Email) {
+	if len(b.Email) > 0 && !emailReg.MatchString(b.Email) {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid email format")
 	}
 

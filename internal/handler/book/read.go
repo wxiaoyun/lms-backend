@@ -41,13 +41,13 @@ func HandleRead(c *fiber.Ctx) error {
 
 	db := database.GetDB()
 
-	bookModel, err := book.Read(db, bookID)
+	bookModel, err := book.ReadDetailed(db, bookID)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(api.Response{
-		Data: bookview.ToView(bookModel),
+		Data: bookview.ToDetailedView(bookModel),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"\"%s\" retrieved.", bookModel.Title,
