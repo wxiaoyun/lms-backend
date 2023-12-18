@@ -6,9 +6,11 @@ import (
 
 func Filters() collection.FilterMap {
 	return map[string]collection.Filter{
-		"title":  collection.StringEqualFilter("title"),
-		"author": collection.StringEqualFilter("author"),
-		"value":  collection.MultipleColumnStringLikeFilter("title", "author"),
+		"title":     collection.StringLikeFilter("title"),
+		"author":    collection.StringLikeFilter("author"),
+		"isbn":      collection.StringLikeFilter("isbn"),
+		"publisher": collection.StringLikeFilter("publisher"),
+		"value":     collection.MultipleColumnStringLikeFilter("title", "author", "isbn", "publisher"),
 	}
 }
 

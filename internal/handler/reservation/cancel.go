@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/dataaccess/book"
 	"lms-backend/internal/dataaccess/reservation"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
@@ -26,25 +25,19 @@ const (
 // @Description Cancels a reservation for a book
 // @Tags reservation
 // @Accept */*
-// @Param book_id path int true "Book ID for reservation"
 // @Param reservation_id path int true "reservation ID to cancel"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[reservationview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id}/reservation/{reservation_id}/cancel [patch]
+// @Router /api/v1/reservation/{reservation_id}/cancel [patch]
 func HandleCancel(c *fiber.Ctx) error {
-	param := c.Params("id")
-	bookID, err := strconv.ParseInt(param, 10, 64)
-	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
-	}
 	param2 := c.Params("reservation_id")
 	resID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid reservation id.", param2))
 	}
 
-	err = policy.Authorize(c, cancelReservationAction, reservationpolicy.CancelPolicy(resID, bookID))
+	err = policy.Authorize(c, cancelReservationAction, reservationpolicy.CancelPolicy(resID))
 	if err != nil {
 		return err
 	}
@@ -61,13 +54,8 @@ func HandleCancel(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, bookID)
-	if err != nil {
-		return err
-	}
-
 	tx, rollBackOrCommit := audit.Begin(
-		c, fmt.Sprintf("%s canceling reservation for \"%s\"", username, bookTitle),
+		c, fmt.Sprintf("%s canceling reservation id - \"%d\"", username, resID),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
@@ -76,18 +64,11 @@ func HandleCancel(c *fiber.Ctx) error {
 		return err
 	}
 
-	if res.BookID != uint(bookID) {
-		err = externalerrors.BadRequest(fmt.Sprintf(
-			"Reservation with id %d is not for book with id %d.", resID, bookID,
-		))
-		return err
-	}
-
 	return c.JSON(api.Response{
 		Data: reservationview.ToView(res),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"Reservation for \"%s\" is canceled.", bookTitle,
+				"Reservation id \"%d\" is canceled.", resID,
 			))),
 	})
 }

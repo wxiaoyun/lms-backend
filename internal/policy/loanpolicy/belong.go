@@ -15,10 +15,9 @@ type LoanBelongsToUser struct {
 	BookID int64
 }
 
-func AllowIfLoanBelongsToUser(loanID, bookID int64) *LoanBelongsToUser {
+func AllowIfLoanBelongsToUser(loanID int64) *LoanBelongsToUser {
 	return &LoanBelongsToUser{
 		LoanID: loanID,
-		BookID: bookID,
 	}
 }
 
@@ -32,7 +31,7 @@ func (p *LoanBelongsToUser) Validate(c *fiber.Ctx) (policy.Decision, error) {
 
 	var exists int64
 	result := db.Model(&model.Loan{}).
-		Where("id = ? AND user_id = ? AND book_id = ?", p.LoanID, userID, p.BookID).
+		Where("id = ? AND user_id = ?", p.LoanID, userID).
 		Count(&exists)
 	if result.Error != nil {
 		return policy.Deny, result.Error

@@ -36,24 +36,24 @@ func ReservePolicy() policy.Policy {
 	)
 }
 
-func CheckoutPolicy(resID, bookID int64) policy.Policy {
+func CheckoutPolicy(resID int64) policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
 			abilities.CanCheckoutReservation.Name,
 		),
-		AllowIfReservationBelongsToUser(resID, bookID),
+		AllowIfReservationBelongsToUser(resID),
 	)
 }
 
-func CancelPolicy(resID, bookID int64) policy.Policy {
+func CancelPolicy(resID int64) policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
 			abilities.CanCancelReservation.Name,
 		),
-		AllowIfReservationBelongsToUser(resID, bookID),
+		AllowIfReservationBelongsToUser(resID),
 	)
 }

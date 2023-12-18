@@ -7,7 +7,7 @@ import (
 
 type CreateParams struct {
 	BaseUserParams
-	PersonParams peopleparams.BaseParams `json:"person_attributes"`
+	PersonParams peopleparams.CreateParams `json:"person_attributes"`
 }
 
 func (p *CreateParams) ToModel() *model.User {

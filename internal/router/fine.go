@@ -8,4 +8,9 @@ import (
 
 func FineRoutes(r fiber.Router) {
 	r.Get("/", finehandler.HandleList)
+
+	Route(r, "/:fine_id", func(r fiber.Router) {
+		r.Patch("/settle", finehandler.HandleSettle)
+		r.Delete("/", finehandler.HandleDelete)
+	})
 }

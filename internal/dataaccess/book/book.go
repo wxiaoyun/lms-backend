@@ -243,8 +243,13 @@ func ReserveBook(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) 
 	return res, nil
 }
 
-func CheckOutReservation(db *gorm.DB, userID, bookID, resID int64) (*model.Reservation, error) {
-	isOnLoan, err := IsOnLoan(db, bookID)
+func CheckOutReservation(db *gorm.DB, userID, resID int64) (*model.Reservation, error) {
+	res, err := reservation.Read(db, resID)
+	if err != nil {
+		return nil, err
+	}
+
+	isOnLoan, err := IsOnLoan(db, int64(res.BookID))
 	if err != nil {
 		return nil, err
 	}
@@ -253,13 +258,13 @@ func CheckOutReservation(db *gorm.DB, userID, bookID, resID int64) (*model.Reser
 	}
 
 	// Fulfill the reservation
-	res, err := reservation.FullfilReservation(db, resID)
+	res, err = reservation.FullfilReservation(db, resID)
 	if err != nil {
 		return nil, err
 	}
 
 	// Loan the book to the user
-	_, err = LoanBook(db, userID, bookID)
+	_, err = LoanBook(db, userID, int64(res.BookID))
 	if err != nil {
 		return nil, err
 	}

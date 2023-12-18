@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/dataaccess/book"
 	"lms-backend/internal/dataaccess/loan"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
@@ -26,12 +25,11 @@ const (
 // @Description Deletes an existing loan in the library
 // @Tags loan
 // @Accept */*
-// @Param book_id path int true "Book ID for loan"
 // @Param loan_id path int true "loan ID to delete"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[loanview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id}/loan/{loan_id}/ [delete]
+// @Router /api/v1/loan/{loan_id}/ [delete]
 func HandleDelete(c *fiber.Ctx) error {
 	err := policy.Authorize(c, deleteLoanAction, loanpolicy.DeletePolicy())
 	if err != nil {
@@ -43,11 +41,6 @@ func HandleDelete(c *fiber.Ctx) error {
 		return err
 	}
 
-	param := c.Params("book_id")
-	bookID, err := strconv.ParseInt(param, 10, 64)
-	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
-	}
 	param2 := c.Params("loan_id")
 	loanID, err := strconv.ParseInt(param2, 10, 64)
 	if err != nil {
@@ -61,13 +54,8 @@ func HandleDelete(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, bookID)
-	if err != nil {
-		return err
-	}
-
 	tx, rollBackOrCommit := audit.Begin(
-		c, fmt.Sprintf("%s deleting loan of id - %d belonging to \"%s\"", username, loanID, bookTitle),
+		c, fmt.Sprintf("%s deleting loan of id - %d ", username, loanID),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
@@ -76,18 +64,11 @@ func HandleDelete(c *fiber.Ctx) error {
 		return err
 	}
 
-	if ln.BookID != uint(bookID) {
-		err = externalerrors.BadRequest(fmt.Sprintf(
-			"Loan with id %d does not belong to %s.", ln.ID, bookTitle,
-		))
-		return err
-	}
-
 	return c.JSON(api.Response{
 		Data: loanview.ToView(ln),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
-				"Loan for \"%s\" has been deleted", bookTitle,
+				"Loan id - \"%d\" has been deleted", loanID,
 			))),
 	})
 }

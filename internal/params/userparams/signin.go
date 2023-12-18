@@ -14,10 +14,8 @@ func (p *SignInParams) ToModel() *model.User {
 }
 
 func (p *SignInParams) Validate() error {
-	if p.Email != "" {
-		if err := p.BaseUserParams.Validate(); err != nil {
-			return err
-		}
+	if err := p.BaseUserParams.Validate(); err != nil {
+		return err
 	}
 
 	if p.Password == "" {

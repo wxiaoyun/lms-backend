@@ -1,10 +1,10 @@
 name: Telegram Notification
 on:
   push:
+  pull_request:
     branches:
       - master
-  pull_request:
-    types: [opened, closed, synchronize]
+    types: [closed, synchronize]
 
 jobs:
   build:
@@ -16,14 +16,14 @@ jobs:
 
     steps:
       - name: send telegram message on push
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && toJson(github.event.commits) != '[]'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: html
           message: |
-            <b>LMS Backend Push Event</b>: 
+            <b>LMS Frontend Push Event</b>: 
             <i>Push by ${{ github.actor }}</i>
 
             Commit message: 
@@ -33,18 +33,17 @@ jobs:
             <a href="https://github.com/${{ github.repository }}/commit/${{github.sha}}">See changes</a>
 
       - name: send telegram message on pull request
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: html
           message: |
-            <b>LMS Backend Pull Request Event</b>: 
+            <b>LMS Frontend Pull Request Event</b>: 
             <i>Pull Request by ${{ github.actor }}</i>
 
             <code>Title: ${{ github.event.pull_request.title }}</code>
-            <code>${{ github.event.pull_request.comments }}</code>
 
             Repository: ${{ github.repository }}
             <a href="${{ github.event.pull_request.html_url }}">See details</a>
