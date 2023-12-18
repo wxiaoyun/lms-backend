@@ -23,7 +23,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: html
           message: |
-            <b>LMS Frontend Push Event</b>: 
+            <b>LMS Backend Push Event</b>: 
             <i>Push by ${{ github.actor }}</i>
 
             Commit message: 
@@ -40,7 +40,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: html
           message: |
-            <b>LMS Frontend Pull Request Event</b>: 
+            <b>LMS Backend Pull Request Event</b>: 
             <i>Pull Request by ${{ github.actor }}</i>
 
             <code>Title: ${{ github.event.pull_request.title }}</code>
