@@ -76,7 +76,7 @@ func (q *Query) Filter(db *gorm.DB, filters FilterMap) *gorm.DB {
 func genericFilter(columnName, operator string, joinQueries ...string) Filter {
 	return func(value string) func(db *gorm.DB) *gorm.DB {
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Scopes(orm.JoinAll(joinQueries)).Where(
+			return db.Scopes(orm.JoinAllIfNotJoined(joinQueries)).Where(
 				fmt.Sprintf("%s %s ?", columnName, operator),
 				value,
 			)
@@ -87,7 +87,7 @@ func genericFilter(columnName, operator string, joinQueries ...string) Filter {
 func StringLikeFilter(columnName string, joinQueries ...string) Filter {
 	return func(value string) func(db *gorm.DB) *gorm.DB {
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Scopes(orm.JoinAll(joinQueries)).Where(
+			return db.Scopes(orm.JoinAllIfNotJoined(joinQueries)).Where(
 				fmt.Sprintf("%s ILIKE ?", columnName),
 				fmt.Sprintf("%%%s%%", value),
 			)
@@ -112,7 +112,7 @@ func MultipleStringEqualFilter(columnName string, joinQueries ...string) Filter 
 		})
 
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Scopes(orm.JoinAll(joinQueries)).Where(
+			return db.Scopes(orm.JoinAllIfNotJoined(joinQueries)).Where(
 				fmt.Sprintf("%s IN ?", columnName),
 				fmt.Sprintf("(%s)", strings.Join(values, ",")),
 			)
@@ -133,7 +133,7 @@ func MultipleStringLikeFilter(columnName string, joinQueries ...string) Filter {
 		})
 
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Scopes(orm.JoinAll(joinQueries)).Where(
+			return db.Scopes(orm.JoinAllIfNotJoined(joinQueries)).Where(
 				fmt.Sprintf("(%s)", strings.Join(conditions, " OR ")),
 			)
 		}
@@ -152,7 +152,7 @@ func MultipleColumnStringLikeFilter(columnNames []string, joinQueries ...string)
 		})
 
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Scopes(orm.JoinAll(joinQueries)).Where(
+			return db.Scopes(orm.JoinAllIfNotJoined(joinQueries)).Where(
 				fmt.Sprintf("(%s)", strings.Join(conditions, " OR ")),
 			)
 		}
@@ -205,7 +205,7 @@ func MultipleIntEqualFilter(columnName string, joinQueries ...string) Filter {
 		})
 
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Scopes(orm.JoinAll(joinQueries)).Where(
+			return db.Scopes(orm.JoinAllIfNotJoined(joinQueries)).Where(
 				fmt.Sprintf("(%s)", strings.Join(conditions, " OR ")),
 			)
 		}
