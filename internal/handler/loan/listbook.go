@@ -21,7 +21,7 @@ const (
 // @Tags loan
 // @Accept */*
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[bookview.View]
+// @Success 200 {object} api.SwgResponse[bookview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/loan/book [get]
 func HandleListBook(c *fiber.Ctx) error {

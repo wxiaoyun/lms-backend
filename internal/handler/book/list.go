@@ -22,7 +22,7 @@ import (
 // @Param sortBy query string false "Sort by column name (e.g. title)"
 // @Param orderBy query string false "Order by direction (asc or desc)"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]bookview.View]
+// @Success 200 {object} api.SwgResponse[[]bookview.BaseView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/book [get]
 func HandleList(c *fiber.Ctx) error {

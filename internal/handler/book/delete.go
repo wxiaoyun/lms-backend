@@ -20,7 +20,7 @@ import (
 // @Accept */*
 // @Param book_id path int true "Book ID to delete"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[bookview.View]
+// @Success 200 {object} api.SwgResponse[bookview.BaseView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/book/{book_id} [delete]
 func HandleDelete(c *fiber.Ctx) error {

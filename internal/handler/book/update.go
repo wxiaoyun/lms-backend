@@ -22,7 +22,7 @@ import (
 // @Param book_id path int true "Book ID to update"
 // @Param book body bookparams.UpdateParams true "Book update request"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[bookview.View]
+// @Success 200 {object} api.SwgResponse[bookview.BaseView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/book/{book_id} [patch]
 func HandleUpdate(c *fiber.Ctx) error {

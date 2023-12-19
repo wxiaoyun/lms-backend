@@ -24,7 +24,7 @@ const (
 // @Accept */*
 // @Param book_id path int true "Book ID to read"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[bookview.View]
+// @Success 200 {object} api.SwgResponse[bookview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/book/{book_id} [get]
 func HandleRead(c *fiber.Ctx) error {

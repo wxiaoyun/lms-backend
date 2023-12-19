@@ -16,6 +16,44 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1//loan/{loan_id}/": {
+            "get": {
+                "description": "Retrieves a loan from the library",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "loan"
+                ],
+                "summary": "Read a loan",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "loan ID to read",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/audit_log": {
             "get": {
                 "description": "List relevant audit logs",
@@ -186,46 +224,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/signup": {
-            "post": {
-                "description": "Creates a new user in the system",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Create a new user",
-                "parameters": [
-                    {
-                        "description": "User creation request",
-                        "name": "createuserparam",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/userparams.CreateParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-userview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/book": {
             "get": {
                 "description": "Lists books in the library",
@@ -275,7 +273,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-array_bookview_View"
+                            "$ref": "#/definitions/api.SwgResponse-array_bookview_BaseView"
                         }
                     },
                     "400": {
@@ -315,7 +313,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-bookview_View"
+                            "$ref": "#/definitions/api.SwgResponse-bookview_BaseView"
                         }
                     },
                     "400": {
@@ -353,7 +351,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-bookview_View"
+                            "$ref": "#/definitions/api.SwgResponse-bookview_DetailedView"
                         }
                     },
                     "400": {
@@ -389,7 +387,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-bookview_View"
+                            "$ref": "#/definitions/api.SwgResponse-bookview_BaseView"
                         }
                     },
                     "400": {
@@ -434,7 +432,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-bookview_View"
+                            "$ref": "#/definitions/api.SwgResponse-bookview_BaseView"
                         }
                     },
                     "400": {
@@ -484,288 +482,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/book/{book_id}/loan/{loan_id}/": {
-            "get": {
-                "description": "Retrieves a loan from the library",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "loan"
-                ],
-                "summary": "Read a loan",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for loan",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "loan ID to read",
-                        "name": "loan_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Deletes an existing loan in the library",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "loan"
-                ],
-                "summary": "Delete a loan",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for loan",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "loan ID to delete",
-                        "name": "loan_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/book/{book_id}/loan/{loan_id}/fine/{fine_id}": {
-            "delete": {
-                "description": "deletes a fine belonging to a loan",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "fine"
-                ],
-                "summary": "Delete fine",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for loan",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "loan ID to fine",
-                        "name": "loan_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "fine ID to delete",
-                        "name": "fine_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-fineview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/book/{book_id}/loan/{loan_id}/fine/{fine_id}/settle": {
-            "patch": {
-                "description": "settles a fine belonging to a loan",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "fine"
-                ],
-                "summary": "Settle fine",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for loan",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "loan ID to fine",
-                        "name": "loan_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "fine ID to settle",
-                        "name": "fine_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-fineview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/book/{book_id}/loan/{loan_id}/renew": {
-            "patch": {
-                "description": "Renews a loan from the library",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "loan"
-                ],
-                "summary": "Renew a loan",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for loan",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "loan ID to renew",
-                        "name": "loan_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/book/{book_id}/loan/{loan_id}/return": {
-            "patch": {
-                "description": "Returns a book to the library",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "loan"
-                ],
-                "summary": "Return a book",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for loan",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "loan ID to return",
-                        "name": "loan_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/book/{book_id}/reservation/": {
             "post": {
                 "description": "Creates a reservation for a book",
@@ -784,184 +500,6 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Book ID for reservation",
                         "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/book/{book_id}/reservation/{reservation_id}/": {
-            "get": {
-                "description": "Reads a reservation for a book",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "reservation"
-                ],
-                "summary": "Read a reservation",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for reservation",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "reservation ID to read",
-                        "name": "reservation_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Deletes a reservation for a book",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "reservation"
-                ],
-                "summary": "Delete a reservation",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for reservation",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "reservation ID to delete",
-                        "name": "reservation_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/book/{book_id}/reservation/{reservation_id}/cancel": {
-            "patch": {
-                "description": "Cancels a reservation for a book",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "reservation"
-                ],
-                "summary": "Cancel a reservation",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for reservation",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "reservation ID to cancel",
-                        "name": "reservation_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/book/{book_id}/reservation/{reservation_id}/checkout": {
-            "patch": {
-                "description": "Checks out a book for a given reservation",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "reservation"
-                ],
-                "summary": "Checkout a book",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Book ID for reservation",
-                        "name": "book_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "reservation ID to checkout",
-                        "name": "reservation_id",
                         "in": "path",
                         "required": true
                     }
@@ -1032,6 +570,82 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.SwgResponse-array_fineview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/fine/{fine_id}": {
+            "delete": {
+                "description": "deletes a fine belonging to a loan",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fine"
+                ],
+                "summary": "Delete fine",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "fine ID to delete",
+                        "name": "fine_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-fineview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/fine/{fine_id}/settle": {
+            "patch": {
+                "description": "settles a fine belonging to a loan",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fine"
+                ],
+                "summary": "Settle fine",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "fine ID to settle",
+                        "name": "fine_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-fineview_View"
                         }
                     },
                     "400": {
@@ -1127,6 +741,149 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/loan/book": {
+            "get": {
+                "description": "Lists books on loan by current user",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "loan"
+                ],
+                "summary": "List books on loan by current user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-bookview_DetailedView"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/loan/{loan_id}/": {
+            "delete": {
+                "description": "Deletes an existing loan in the library",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "loan"
+                ],
+                "summary": "Delete a loan",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "loan ID to delete",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/loan/{loan_id}/renew": {
+            "patch": {
+                "description": "Renews a loan from the library",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "loan"
+                ],
+                "summary": "Renew a loan",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "loan ID to renew",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/loan/{loan_id}/return": {
+            "patch": {
+                "description": "Returns a book to the library",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "loan"
+                ],
+                "summary": "Return a book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "loan ID to return",
+                        "name": "loan_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/reservation": {
             "get": {
                 "description": "List reservations in the library depending on the collection query",
@@ -1177,6 +934,192 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.SwgResponse-array_reservationview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reservation/book": {
+            "get": {
+                "description": "Lists books on reservation",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "loan"
+                ],
+                "summary": "List books on reservation",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-bookview_DetailedView"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reservation/{reservation_id}/": {
+            "get": {
+                "description": "Reads a reservation for a book",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Read a reservation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "reservation ID to read",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a reservation for a book",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Delete a reservation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID for reservation",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "reservation ID to delete",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reservation/{reservation_id}/cancel": {
+            "patch": {
+                "description": "Cancels a reservation for a book",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Cancel a reservation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "reservation ID to cancel",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reservation/{reservation_id}/checkout": {
+            "patch": {
+                "description": "Checks out a book for a given reservation",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Checkout a book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "reservation ID to checkout",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
                         }
                     },
                     "400": {
@@ -1243,6 +1186,46 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.SwgResponse-array_reservationview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/": {
+            "post": {
+                "description": "Creates a new user in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Create a new user",
+                "parameters": [
+                    {
+                        "description": "User creation request",
+                        "name": "createuserparam",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userparams.CreateParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-userview_View"
                         }
                     },
                     "400": {
@@ -1518,13 +1501,13 @@ const docTemplate = `{
                 }
             }
         },
-        "api.SwgResponse-array_bookview_View": {
+        "api.SwgResponse-array_bookview_BaseView": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/bookview.View"
+                        "$ref": "#/definitions/bookview.BaseView"
                     }
                 },
                 "messages": {
@@ -1598,11 +1581,28 @@ const docTemplate = `{
                 }
             }
         },
-        "api.SwgResponse-bookview_View": {
+        "api.SwgResponse-bookview_BaseView": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/bookview.View"
+                    "$ref": "#/definitions/bookview.BaseView"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Message"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/api.Meta"
+                }
+            }
+        },
+        "api.SwgResponse-bookview_DetailedView": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/bookview.DetailedView"
                 },
                 "messages": {
                     "type": "array",
@@ -1760,7 +1760,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bookview.View": {
+        "bookview.BaseView": {
             "type": "object",
             "properties": {
                 "author": {
@@ -1783,6 +1783,47 @@ const docTemplate = `{
                 },
                 "publisher": {
                     "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "bookview.DetailedView": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "genre": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isbn": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "loans": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/loanview.View"
+                    }
+                },
+                "publication_date": {
+                    "type": "string"
+                },
+                "publisher": {
+                    "type": "string"
+                },
+                "reservations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/reservationview.View"
+                    }
                 },
                 "title": {
                     "type": "string"
@@ -1861,13 +1902,10 @@ const docTemplate = `{
                 }
             }
         },
-        "peopleparams.BaseParams": {
+        "peopleparams.CreateParams": {
             "type": "object",
             "properties": {
                 "full_name": {
-                    "type": "string"
-                },
-                "language_preference": {
                     "type": "string"
                 },
                 "preferred_name": {
@@ -1939,7 +1977,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "person_attributes": {
-                    "$ref": "#/definitions/peopleparams.BaseParams"
+                    "$ref": "#/definitions/peopleparams.CreateParams"
                 },
                 "username": {
                     "type": "string"

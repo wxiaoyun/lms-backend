@@ -42,11 +42,11 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
-  api.SwgResponse-array_bookview_View:
+  api.SwgResponse-array_bookview_BaseView:
     properties:
       data:
         items:
-          $ref: '#/definitions/bookview.View'
+          $ref: '#/definitions/bookview.BaseView'
         type: array
       messages:
         items:
@@ -94,10 +94,21 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
-  api.SwgResponse-bookview_View:
+  api.SwgResponse-bookview_BaseView:
     properties:
       data:
-        $ref: '#/definitions/bookview.View'
+        $ref: '#/definitions/bookview.BaseView'
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-bookview_DetailedView:
+    properties:
+      data:
+        $ref: '#/definitions/bookview.DetailedView'
       messages:
         items:
           $ref: '#/definitions/api.Message'
@@ -199,7 +210,7 @@ definitions:
       title:
         type: string
     type: object
-  bookview.View:
+  bookview.BaseView:
     properties:
       author:
         type: string
@@ -215,6 +226,33 @@ definitions:
         type: string
       publisher:
         type: string
+      title:
+        type: string
+    type: object
+  bookview.DetailedView:
+    properties:
+      author:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      isbn:
+        type: string
+      language:
+        type: string
+      loans:
+        items:
+          $ref: '#/definitions/loanview.View'
+        type: array
+      publication_date:
+        type: string
+      publisher:
+        type: string
+      reservations:
+        items:
+          $ref: '#/definitions/reservationview.View'
+        type: array
       title:
         type: string
     type: object
@@ -265,11 +303,9 @@ definitions:
       user_id:
         type: integer
     type: object
-  peopleparams.BaseParams:
+  peopleparams.CreateParams:
     properties:
       full_name:
-        type: string
-      language_preference:
         type: string
       preferred_name:
         type: string
@@ -316,7 +352,7 @@ definitions:
       password:
         type: string
       person_attributes:
-        $ref: '#/definitions/peopleparams.BaseParams'
+        $ref: '#/definitions/peopleparams.CreateParams'
       username:
         type: string
     type: object
@@ -366,6 +402,31 @@ info:
   contact: {}
   title: Library Mangement System API
 paths:
+  /api/v1//loan/{loan_id}/:
+    get:
+      consumes:
+      - '*/*'
+      description: Retrieves a loan from the library
+      parameters:
+      - description: loan ID to read
+        in: path
+        name: loan_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Read a loan
+      tags:
+      - loan
   /api/v1/audit_log:
     get:
       consumes:
@@ -477,32 +538,6 @@ paths:
       summary: SignOut
       tags:
       - auth
-  /api/v1/auth/signup:
-    post:
-      consumes:
-      - application/json
-      description: Creates a new user in the system
-      parameters:
-      - description: User creation request
-        in: body
-        name: createuserparam
-        required: true
-        schema:
-          $ref: '#/definitions/userparams.CreateParams'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-userview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Create a new user
-      tags:
-      - auth
   /api/v1/book:
     get:
       consumes:
@@ -535,7 +570,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-array_bookview_View'
+            $ref: '#/definitions/api.SwgResponse-array_bookview_BaseView'
         "400":
           description: Bad Request
           schema:
@@ -561,7 +596,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-bookview_View'
+            $ref: '#/definitions/api.SwgResponse-bookview_BaseView'
         "400":
           description: Bad Request
           schema:
@@ -586,7 +621,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-bookview_View'
+            $ref: '#/definitions/api.SwgResponse-bookview_BaseView'
         "400":
           description: Bad Request
           schema:
@@ -610,7 +645,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-bookview_View'
+            $ref: '#/definitions/api.SwgResponse-bookview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -640,7 +675,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-bookview_View'
+            $ref: '#/definitions/api.SwgResponse-bookview_BaseView'
         "400":
           description: Bad Request
           schema:
@@ -673,195 +708,6 @@ paths:
       summary: Loan a book
       tags:
       - loan
-  /api/v1/book/{book_id}/loan/{loan_id}/:
-    delete:
-      consumes:
-      - '*/*'
-      description: Deletes an existing loan in the library
-      parameters:
-      - description: Book ID for loan
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: loan ID to delete
-        in: path
-        name: loan_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-loanview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Delete a loan
-      tags:
-      - loan
-    get:
-      consumes:
-      - '*/*'
-      description: Retrieves a loan from the library
-      parameters:
-      - description: Book ID for loan
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: loan ID to read
-        in: path
-        name: loan_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-loanview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Read a loan
-      tags:
-      - loan
-  /api/v1/book/{book_id}/loan/{loan_id}/fine/{fine_id}:
-    delete:
-      consumes:
-      - '*/*'
-      description: deletes a fine belonging to a loan
-      parameters:
-      - description: Book ID for loan
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: loan ID to fine
-        in: path
-        name: loan_id
-        required: true
-        type: integer
-      - description: fine ID to delete
-        in: path
-        name: fine_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-fineview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Delete fine
-      tags:
-      - fine
-  /api/v1/book/{book_id}/loan/{loan_id}/fine/{fine_id}/settle:
-    patch:
-      consumes:
-      - '*/*'
-      description: settles a fine belonging to a loan
-      parameters:
-      - description: Book ID for loan
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: loan ID to fine
-        in: path
-        name: loan_id
-        required: true
-        type: integer
-      - description: fine ID to settle
-        in: path
-        name: fine_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-fineview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Settle fine
-      tags:
-      - fine
-  /api/v1/book/{book_id}/loan/{loan_id}/renew:
-    patch:
-      consumes:
-      - '*/*'
-      description: Renews a loan from the library
-      parameters:
-      - description: Book ID for loan
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: loan ID to renew
-        in: path
-        name: loan_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-loanview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Renew a loan
-      tags:
-      - loan
-  /api/v1/book/{book_id}/loan/{loan_id}/return:
-    patch:
-      consumes:
-      - '*/*'
-      description: Returns a book to the library
-      parameters:
-      - description: Book ID for loan
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: loan ID to return
-        in: path
-        name: loan_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-loanview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Return a book
-      tags:
-      - loan
   /api/v1/book/{book_id}/reservation/:
     post:
       consumes:
@@ -885,125 +731,6 @@ paths:
           schema:
             $ref: '#/definitions/api.SwgErrResponse'
       summary: Create a reservation
-      tags:
-      - reservation
-  /api/v1/book/{book_id}/reservation/{reservation_id}/:
-    delete:
-      consumes:
-      - '*/*'
-      description: Deletes a reservation for a book
-      parameters:
-      - description: Book ID for reservation
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: reservation ID to delete
-        in: path
-        name: reservation_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-reservationview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Delete a reservation
-      tags:
-      - reservation
-    get:
-      consumes:
-      - '*/*'
-      description: Reads a reservation for a book
-      parameters:
-      - description: Book ID for reservation
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: reservation ID to read
-        in: path
-        name: reservation_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-reservationview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Read a reservation
-      tags:
-      - reservation
-  /api/v1/book/{book_id}/reservation/{reservation_id}/cancel:
-    patch:
-      consumes:
-      - '*/*'
-      description: Cancels a reservation for a book
-      parameters:
-      - description: Book ID for reservation
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: reservation ID to cancel
-        in: path
-        name: reservation_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-reservationview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Cancel a reservation
-      tags:
-      - reservation
-  /api/v1/book/{book_id}/reservation/{reservation_id}/checkout:
-    patch:
-      consumes:
-      - '*/*'
-      description: Checks out a book for a given reservation
-      parameters:
-      - description: Book ID for reservation
-        in: path
-        name: book_id
-        required: true
-        type: integer
-      - description: reservation ID to checkout
-        in: path
-        name: reservation_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-reservationview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Checkout a book
       tags:
       - reservation
   /api/v1/fine:
@@ -1044,6 +771,56 @@ paths:
           schema:
             $ref: '#/definitions/api.SwgErrResponse'
       summary: List fines
+      tags:
+      - fine
+  /api/v1/fine/{fine_id}:
+    delete:
+      consumes:
+      - '*/*'
+      description: deletes a fine belonging to a loan
+      parameters:
+      - description: fine ID to delete
+        in: path
+        name: fine_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-fineview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Delete fine
+      tags:
+      - fine
+  /api/v1/fine/{fine_id}/settle:
+    patch:
+      consumes:
+      - '*/*'
+      description: settles a fine belonging to a loan
+      parameters:
+      - description: fine ID to settle
+        in: path
+        name: fine_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-fineview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Settle fine
       tags:
       - fine
   /api/v1/health:
@@ -1101,6 +878,100 @@ paths:
       summary: List loans
       tags:
       - loan
+  /api/v1/loan/{loan_id}/:
+    delete:
+      consumes:
+      - '*/*'
+      description: Deletes an existing loan in the library
+      parameters:
+      - description: loan ID to delete
+        in: path
+        name: loan_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Delete a loan
+      tags:
+      - loan
+  /api/v1/loan/{loan_id}/renew:
+    patch:
+      consumes:
+      - '*/*'
+      description: Renews a loan from the library
+      parameters:
+      - description: loan ID to renew
+        in: path
+        name: loan_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Renew a loan
+      tags:
+      - loan
+  /api/v1/loan/{loan_id}/return:
+    patch:
+      consumes:
+      - '*/*'
+      description: Returns a book to the library
+      parameters:
+      - description: loan ID to return
+        in: path
+        name: loan_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-loanview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Return a book
+      tags:
+      - loan
+  /api/v1/loan/book:
+    get:
+      consumes:
+      - '*/*'
+      description: Lists books on loan by current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-bookview_DetailedView'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: List books on loan by current user
+      tags:
+      - loan
   /api/v1/reservation:
     get:
       consumes:
@@ -1141,6 +1012,129 @@ paths:
       summary: List reservations
       tags:
       - reservation
+  /api/v1/reservation/{reservation_id}/:
+    delete:
+      consumes:
+      - '*/*'
+      description: Deletes a reservation for a book
+      parameters:
+      - description: Book ID for reservation
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: reservation ID to delete
+        in: path
+        name: reservation_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Delete a reservation
+      tags:
+      - reservation
+    get:
+      consumes:
+      - '*/*'
+      description: Reads a reservation for a book
+      parameters:
+      - description: reservation ID to read
+        in: path
+        name: reservation_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Read a reservation
+      tags:
+      - reservation
+  /api/v1/reservation/{reservation_id}/cancel:
+    patch:
+      consumes:
+      - '*/*'
+      description: Cancels a reservation for a book
+      parameters:
+      - description: reservation ID to cancel
+        in: path
+        name: reservation_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Cancel a reservation
+      tags:
+      - reservation
+  /api/v1/reservation/{reservation_id}/checkout:
+    patch:
+      consumes:
+      - '*/*'
+      description: Checks out a book for a given reservation
+      parameters:
+      - description: reservation ID to checkout
+        in: path
+        name: reservation_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Checkout a book
+      tags:
+      - reservation
+  /api/v1/reservation/book:
+    get:
+      consumes:
+      - '*/*'
+      description: Lists books on reservation
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-bookview_DetailedView'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: List books on reservation
+      tags:
+      - loan
   /api/v1/user:
     get:
       consumes:
@@ -1186,6 +1180,32 @@ paths:
       summary: List users
       tags:
       - user
+  /api/v1/user/:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user in the system
+      parameters:
+      - description: User creation request
+        in: body
+        name: createuserparam
+        required: true
+        schema:
+          $ref: '#/definitions/userparams.CreateParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-userview_View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Create a new user
+      tags:
+      - auth
   /api/v1/user/{user_id}:
     delete:
       consumes:
