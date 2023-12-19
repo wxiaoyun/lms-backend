@@ -12,7 +12,6 @@ import (
 
 type ReservationBelongsToUser struct {
 	ReservationID int64
-	BookID        int64
 }
 
 func AllowIfReservationBelongsToUser(reservationID int64) *ReservationBelongsToUser {
