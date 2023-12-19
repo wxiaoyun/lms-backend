@@ -10,7 +10,21 @@ func Filters() collection.FilterMap {
 		"author":    collection.StringLikeFilter("author"),
 		"isbn":      collection.StringLikeFilter("isbn"),
 		"publisher": collection.StringLikeFilter("publisher"),
-		"value":     collection.MultipleColumnStringLikeFilter("title", "author", "isbn", "publisher"),
+		"value":     collection.MultipleColumnStringLikeFilter([]string{"title", "author", "isbn", "publisher"}),
+	}
+}
+
+func LoanFilters() collection.FilterMap {
+	return map[string]collection.Filter{
+		"loans.user_id": collection.IntEqualFilter("loans.user_id", JoinLoan),
+		"loans.status":  collection.StringEqualFilter("loans.status", JoinLoan),
+	}
+}
+
+func ReservationFilters() collection.FilterMap {
+	return map[string]collection.Filter{
+		"reservations.user_id": collection.IntEqualFilter("reservations.user_id", JoinReservation),
+		"reservations.status":  collection.StringEqualFilter("reservations.status", JoinReservation),
 	}
 }
 

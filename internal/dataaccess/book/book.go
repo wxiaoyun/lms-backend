@@ -271,3 +271,35 @@ func CheckOutReservation(db *gorm.DB, userID, resID int64) (*model.Reservation, 
 
 	return res, nil
 }
+
+func ListWithLoan(db *gorm.DB) ([]model.Book, error) {
+	books, err := List(db)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range books {
+		books[i].Loans, err = loan.ReadOutstandingLoansByBookID(orm.NewSession(db), int64(books[i].ID))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return books, nil
+}
+
+func ListWithReservation(db *gorm.DB) ([]model.Book, error) {
+	books, err := List(db)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range books {
+		books[i].Reservations, err = reservation.ReadOutstandingReservationsByBookID(orm.NewSession(db), int64(books[i].ID))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return books, nil
+}

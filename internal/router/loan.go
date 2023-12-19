@@ -8,6 +8,7 @@ import (
 
 func LoanRoutes(r fiber.Router) {
 	r.Get("/", loanhandler.HandleList)
+	r.Get("/book", loanhandler.HandleListBook)
 
 	Route(r, "/:loan_id", func(r fiber.Router) {
 		r.Get("/", loanhandler.HandleRead)

@@ -48,9 +48,7 @@ type FilterMap map[string]Filter
 //		"JOIN users ON users.id = posts.user_id",
 //
 //	}
-func (q *Query) Filter(db *gorm.DB, filters FilterMap, joinQueries ...string) *gorm.DB {
-	db = db.Scopes(orm.JoinAll(joinQueries))
-
+func (q *Query) Filter(db *gorm.DB, filters FilterMap) *gorm.DB {
 	// Key should be the column name and value should be the value to filter by
 	for key, value := range q.Queries {
 		// Test if the key is a filter key (filter[...])
@@ -75,10 +73,10 @@ func (q *Query) Filter(db *gorm.DB, filters FilterMap, joinQueries ...string) *g
 	return db
 }
 
-func genericFilter(columnName, operator string) Filter {
+func genericFilter(columnName, operator string, joinQueries ...string) Filter {
 	return func(value string) func(db *gorm.DB) *gorm.DB {
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Where(
+			return db.Scopes(orm.JoinAll(joinQueries)).Where(
 				fmt.Sprintf("%s %s ?", columnName, operator),
 				value,
 			)
@@ -86,10 +84,10 @@ func genericFilter(columnName, operator string) Filter {
 	}
 }
 
-func StringLikeFilter(columnName string) Filter {
+func StringLikeFilter(columnName string, joinQueries ...string) Filter {
 	return func(value string) func(db *gorm.DB) *gorm.DB {
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Where(
+			return db.Scopes(orm.JoinAll(joinQueries)).Where(
 				fmt.Sprintf("%s ILIKE ?", columnName),
 				fmt.Sprintf("%%%s%%", value),
 			)
@@ -97,8 +95,8 @@ func StringLikeFilter(columnName string) Filter {
 	}
 }
 
-func StringEqualFilter(columnName string) Filter {
-	return genericFilter(columnName, "=")
+func StringEqualFilter(columnName string, joinQueries ...string) Filter {
+	return genericFilter(columnName, "=", joinQueries...)
 }
 
 // When the value is a comma-separated list of values, this filter will return
@@ -106,7 +104,7 @@ func StringEqualFilter(columnName string) Filter {
 // to any of the values in the list.
 //
 // One column, multiple values
-func MultipleStringEqualFilter(columnName string) Filter {
+func MultipleStringEqualFilter(columnName string, joinQueries ...string) Filter {
 	return func(value string) func(db *gorm.DB) *gorm.DB {
 		// Split the value by commas and surround each value with single quotes
 		values := sliceutil.Map(strings.Split(value, ","), func(s string) string {
@@ -114,7 +112,7 @@ func MultipleStringEqualFilter(columnName string) Filter {
 		})
 
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Where(
+			return db.Scopes(orm.JoinAll(joinQueries)).Where(
 				fmt.Sprintf("%s IN ?", columnName),
 				fmt.Sprintf("(%s)", strings.Join(values, ",")),
 			)
@@ -127,7 +125,7 @@ func MultipleStringEqualFilter(columnName string) Filter {
 // to any of the values in the list.
 //
 // One column, multiple values
-func MultipleStringLikeFilter(columnName string) Filter {
+func MultipleStringLikeFilter(columnName string, joinQueries ...string) Filter {
 	return func(value string) func(db *gorm.DB) *gorm.DB {
 		// Split the value by commas and convert them to ILIKE conditions (i.e. "column ILIKE '%value%'")
 		conditions := sliceutil.Map(strings.Split(value, ","), func(s string) string {
@@ -135,7 +133,7 @@ func MultipleStringLikeFilter(columnName string) Filter {
 		})
 
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Where(
+			return db.Scopes(orm.JoinAll(joinQueries)).Where(
 				fmt.Sprintf("(%s)", strings.Join(conditions, " OR ")),
 			)
 		}
@@ -146,7 +144,7 @@ func MultipleStringLikeFilter(columnName string) Filter {
 // a function that will filter the database query if the column name is similar to the value.
 //
 // Multiple columns, one value
-func MultipleColumnStringLikeFilter(columnNames ...string) Filter {
+func MultipleColumnStringLikeFilter(columnNames []string, joinQueries ...string) Filter {
 	return func(value string) func(db *gorm.DB) *gorm.DB {
 		// Split the value by commas and convert them to ILIKE conditions (i.e. "column ILIKE '%value%'")
 		conditions := sliceutil.Map(columnNames, func(s string) string {
@@ -154,7 +152,7 @@ func MultipleColumnStringLikeFilter(columnNames ...string) Filter {
 		})
 
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Where(
+			return db.Scopes(orm.JoinAll(joinQueries)).Where(
 				fmt.Sprintf("(%s)", strings.Join(conditions, " OR ")),
 			)
 		}
@@ -170,24 +168,24 @@ func GenericBoolFilter(value bool, columnName string, operator string) func(*gor
 	}
 }
 
-func IntEqualFilter(columnName string) Filter {
-	return genericFilter(columnName, "=")
+func IntEqualFilter(columnName string, joinQueries ...string) Filter {
+	return genericFilter(columnName, "=", joinQueries...)
 }
 
-func IntGreaterThanOrEqualFilter(columnName string) Filter {
-	return genericFilter(columnName, ">=")
+func IntGreaterThanOrEqualFilter(columnName string, joinQueries ...string) Filter {
+	return genericFilter(columnName, ">=", joinQueries...)
 }
 
-func IntLessThanOrEqualFilter(columnName string) Filter {
-	return genericFilter(columnName, "<=")
+func IntLessThanOrEqualFilter(columnName string, joinQueries ...string) Filter {
+	return genericFilter(columnName, "<=", joinQueries...)
 }
 
-func IntGreaterThanFilter(columnName string) Filter {
-	return genericFilter(columnName, ">")
+func IntGreaterThanFilter(columnName string, joinQueries ...string) Filter {
+	return genericFilter(columnName, ">", joinQueries...)
 }
 
-func IntLessThanFilter(columnName string) Filter {
-	return genericFilter(columnName, "<")
+func IntLessThanFilter(columnName string, joinQueries ...string) Filter {
+	return genericFilter(columnName, "<", joinQueries...)
 }
 
 // When the value is a comma-separated list of values, this filter will return
@@ -195,7 +193,7 @@ func IntLessThanFilter(columnName string) Filter {
 // to any of the values in the list.
 //
 // One column, multiple values
-func MultipleIntEqualFilter(columnName string) Filter {
+func MultipleIntEqualFilter(columnName string, joinQueries ...string) Filter {
 	return func(value string) func(db *gorm.DB) *gorm.DB {
 		// Split the value by commas and convert them to ILIKE conditions (i.e. "column ILIKE '%value%'")
 		conditions := sliceutil.Map(strings.Split(value, ","), func(s string) string {
@@ -207,7 +205,7 @@ func MultipleIntEqualFilter(columnName string) Filter {
 		})
 
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Where(
+			return db.Scopes(orm.JoinAll(joinQueries)).Where(
 				fmt.Sprintf("(%s)", strings.Join(conditions, " OR ")),
 			)
 		}

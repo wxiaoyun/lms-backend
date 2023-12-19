@@ -12,7 +12,6 @@ import (
 
 type LoanBelongsToUser struct {
 	LoanID int64
-	BookID int64
 }
 
 func AllowIfLoanBelongsToUser(loanID int64) *LoanBelongsToUser {
