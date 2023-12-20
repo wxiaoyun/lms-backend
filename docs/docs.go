@@ -758,7 +758,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-bookview_DetailedView"
+                            "$ref": "#/definitions/api.SwgResponse-bookview_BookLoanView"
                         }
                     },
                     "400": {
@@ -962,7 +962,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-bookview_DetailedView"
+                            "$ref": "#/definitions/api.SwgResponse-bookview_BookReservationView"
                         }
                     },
                     "400": {
@@ -1598,6 +1598,40 @@ const docTemplate = `{
                 }
             }
         },
+        "api.SwgResponse-bookview_BookLoanView": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/bookview.BookLoanView"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Message"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/api.Meta"
+                }
+            }
+        },
+        "api.SwgResponse-bookview_BookReservationView": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/bookview.BookReservationView"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Message"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/api.Meta"
+                }
+            }
+        },
         "api.SwgResponse-bookview_DetailedView": {
             "type": "object",
             "properties": {
@@ -1783,6 +1817,70 @@ const docTemplate = `{
                 },
                 "publisher": {
                     "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "bookview.BookLoanView": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "genre": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isbn": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "loan": {
+                    "$ref": "#/definitions/loanview.View"
+                },
+                "publication_date": {
+                    "type": "string"
+                },
+                "publisher": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "bookview.BookReservationView": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "genre": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isbn": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "publication_date": {
+                    "type": "string"
+                },
+                "publisher": {
+                    "type": "string"
+                },
+                "reservation": {
+                    "$ref": "#/definitions/reservationview.View"
                 },
                 "title": {
                     "type": "string"

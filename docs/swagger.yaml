@@ -105,6 +105,28 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
+  api.SwgResponse-bookview_BookLoanView:
+    properties:
+      data:
+        $ref: '#/definitions/bookview.BookLoanView'
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
+  api.SwgResponse-bookview_BookReservationView:
+    properties:
+      data:
+        $ref: '#/definitions/bookview.BookReservationView'
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
   api.SwgResponse-bookview_DetailedView:
     properties:
       data:
@@ -226,6 +248,48 @@ definitions:
         type: string
       publisher:
         type: string
+      title:
+        type: string
+    type: object
+  bookview.BookLoanView:
+    properties:
+      author:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      isbn:
+        type: string
+      language:
+        type: string
+      loan:
+        $ref: '#/definitions/loanview.View'
+      publication_date:
+        type: string
+      publisher:
+        type: string
+      title:
+        type: string
+    type: object
+  bookview.BookReservationView:
+    properties:
+      author:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      isbn:
+        type: string
+      language:
+        type: string
+      publication_date:
+        type: string
+      publisher:
+        type: string
+      reservation:
+        $ref: '#/definitions/reservationview.View'
       title:
         type: string
     type: object
@@ -964,7 +1028,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-bookview_DetailedView'
+            $ref: '#/definitions/api.SwgResponse-bookview_BookLoanView'
         "400":
           description: Bad Request
           schema:
@@ -1127,7 +1191,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-bookview_DetailedView'
+            $ref: '#/definitions/api.SwgResponse-bookview_BookReservationView'
         "400":
           description: Bad Request
           schema:
