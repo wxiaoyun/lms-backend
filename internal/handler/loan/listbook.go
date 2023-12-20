@@ -8,6 +8,7 @@ import (
 	"lms-backend/internal/policy/loanpolicy"
 	"lms-backend/internal/view/bookview"
 	collection "lms-backend/pkg/collectionquery"
+	"lms-backend/pkg/error/internalerror"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,7 +22,7 @@ const (
 // @Tags loan
 // @Accept */*
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[bookview.DetailedView]
+// @Success 200 {object} api.SwgResponse[bookview.BookLoanView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/loan/book [get]
 func HandleListBook(c *fiber.Ctx) error {
@@ -52,10 +53,13 @@ func HandleListBook(c *fiber.Ctx) error {
 		return err
 	}
 
-	var view = []*bookview.DetailedView{}
-	for _, w := range books {
+	var view = []*bookview.BookLoanView{}
+	for _, b := range books {
+		if (b.Loans == nil) || (len(b.Loans) == 0) {
+			return internalerror.InternalServerError("book does not have any loan")
+		}
 		//nolint:gosec // loop does not modify struct
-		view = append(view, bookview.ToDetailedView(&w))
+		view = append(view, bookview.ToBookLoanView(&b, &b.Loans[0]))
 	}
 
 	return c.JSON(api.Response{
