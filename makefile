@@ -32,5 +32,5 @@ setupDB: createDB migrateDB seedDB
 
 resetDB: dropDB setupDB
 
-countlines:
-	git ls-files | xargs wc -l
+count:
+	git ls-files '*.go' | grep -v '^docs/' | xargs wc -l
