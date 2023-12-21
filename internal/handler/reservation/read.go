@@ -24,7 +24,7 @@ const (
 // @Accept */*
 // @Param reservation_id path int true "reservation ID to read"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[reservationview.View]
+// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/reservation/{reservation_id}/ [get]
 func HandleRead(c *fiber.Ctx) error {
@@ -52,7 +52,7 @@ func HandleRead(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: reservationview.ToView(res),
+		Data: reservationview.ToDetailedView(res),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"Reservation %d retrieved.", resID,

@@ -42,7 +42,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
+                            "$ref": "#/definitions/api.SwgResponse-loanview_DetailedView"
                         }
                     },
                     "400": {
@@ -325,6 +325,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/book/autocomplete": {
+            "get": {
+                "description": "Autocomplete 10 books based on input value",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Autocomplete 10 books based on input value",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-array_userview_SimpleView"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/book/{book_id}": {
             "get": {
                 "description": "reads a book in the library",
@@ -470,7 +499,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
+                            "$ref": "#/definitions/api.SwgResponse-loanview_DetailedView"
                         }
                     },
                     "400": {
@@ -508,7 +537,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_DetailedView"
                         }
                     },
                     "400": {
@@ -680,11 +709,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/loan": {
-            "get": {
-                "description": "List loans depending on collection query",
+        "/api/v1/loan/": {
+            "post": {
+                "description": "Admin loans a book on behalf of a user",
                 "consumes": [
-                    "application/json"
+                    "*/*"
                 ],
                 "produces": [
                     "application/json"
@@ -692,44 +721,12 @@ const docTemplate = `{
                 "tags": [
                     "loan"
                 ],
-                "summary": "List loans",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Offset for pagination",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit for pagination",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Filter by user ID",
-                        "name": "filter[user_id]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort by column name",
-                        "name": "sortBy",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order by direction (asc or desc)",
-                        "name": "orderBy",
-                        "in": "query"
-                    }
-                ],
+                "summary": "Admin loans a book on behalf of a user",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-array_loanview_View"
+                            "$ref": "#/definitions/api.SwgResponse-loanview_DetailedView"
                         }
                     },
                     "400": {
@@ -758,7 +755,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-bookview_BookLoanView"
+                            "$ref": "#/definitions/api.SwgResponse-loanview_DetailedView"
                         }
                     },
                     "400": {
@@ -796,7 +793,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
+                            "$ref": "#/definitions/api.SwgResponse-loanview_DetailedView"
                         }
                     },
                     "400": {
@@ -834,7 +831,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
+                            "$ref": "#/definitions/api.SwgResponse-loanview_DetailedView"
                         }
                     },
                     "400": {
@@ -872,7 +869,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-loanview_View"
+                            "$ref": "#/definitions/api.SwgResponse-loanview_DetailedView"
                         }
                     },
                     "400": {
@@ -884,56 +881,24 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/reservation": {
-            "get": {
-                "description": "List reservations in the library depending on the collection query",
+        "/api/v1/reservation/": {
+            "post": {
+                "description": "Admin reservations a book on behalf of a user",
                 "consumes": [
-                    "application/json"
+                    "*/*"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "reservation"
+                    "loan"
                 ],
-                "summary": "List reservations",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Offset for pagination",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit for pagination",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Filter by user ID",
-                        "name": "filter[user_id]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort by column name",
-                        "name": "sortBy",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order by direction (asc or desc)",
-                        "name": "orderBy",
-                        "in": "query"
-                    }
-                ],
+                "summary": "Admin reservations a book on behalf of a user",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-array_reservationview_View"
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_DetailedView"
                         }
                     },
                     "400": {
@@ -962,7 +927,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-bookview_BookReservationView"
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_DetailedView"
                         }
                     },
                     "400": {
@@ -1000,7 +965,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_DetailedView"
                         }
                     },
                     "400": {
@@ -1043,7 +1008,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_DetailedView"
                         }
                     },
                     "400": {
@@ -1081,7 +1046,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_DetailedView"
                         }
                     },
                     "400": {
@@ -1119,7 +1084,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-reservationview_View"
+                            "$ref": "#/definitions/api.SwgResponse-reservationview_DetailedView"
                         }
                     },
                     "400": {
@@ -1185,7 +1150,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-array_reservationview_View"
+                            "$ref": "#/definitions/api.SwgResponse-array_userview_View"
                         }
                     },
                     "400": {
@@ -1226,6 +1191,35 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.SwgResponse-userview_View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/autocomplete": {
+            "get": {
+                "description": "Autocomplete 10 users based on input value",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Autocomplete 10 users based on input value",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-array_userview_SimpleView"
                         }
                     },
                     "400": {
@@ -1541,13 +1535,13 @@ const docTemplate = `{
                 }
             }
         },
-        "api.SwgResponse-array_loanview_View": {
+        "api.SwgResponse-array_userview_SimpleView": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/loanview.View"
+                        "$ref": "#/definitions/userview.SimpleView"
                     }
                 },
                 "messages": {
@@ -1561,13 +1555,13 @@ const docTemplate = `{
                 }
             }
         },
-        "api.SwgResponse-array_reservationview_View": {
+        "api.SwgResponse-array_userview_View": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/reservationview.View"
+                        "$ref": "#/definitions/userview.View"
                     }
                 },
                 "messages": {
@@ -1586,40 +1580,6 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/bookview.BaseView"
-                },
-                "messages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.Message"
-                    }
-                },
-                "meta": {
-                    "$ref": "#/definitions/api.Meta"
-                }
-            }
-        },
-        "api.SwgResponse-bookview_BookLoanView": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/bookview.BookLoanView"
-                },
-                "messages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.Message"
-                    }
-                },
-                "meta": {
-                    "$ref": "#/definitions/api.Meta"
-                }
-            }
-        },
-        "api.SwgResponse-bookview_BookReservationView": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/bookview.BookReservationView"
                 },
                 "messages": {
                     "type": "array",
@@ -1666,11 +1626,11 @@ const docTemplate = `{
                 }
             }
         },
-        "api.SwgResponse-loanview_View": {
+        "api.SwgResponse-loanview_DetailedView": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/loanview.View"
+                    "$ref": "#/definitions/loanview.DetailedView"
                 },
                 "messages": {
                     "type": "array",
@@ -1683,11 +1643,11 @@ const docTemplate = `{
                 }
             }
         },
-        "api.SwgResponse-reservationview_View": {
+        "api.SwgResponse-reservationview_DetailedView": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/reservationview.View"
+                    "$ref": "#/definitions/reservationview.DetailedView"
                 },
                 "messages": {
                     "type": "array",
@@ -1823,70 +1783,6 @@ const docTemplate = `{
                 }
             }
         },
-        "bookview.BookLoanView": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "type": "string"
-                },
-                "genre": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "isbn": {
-                    "type": "string"
-                },
-                "language": {
-                    "type": "string"
-                },
-                "loan": {
-                    "$ref": "#/definitions/loanview.View"
-                },
-                "publication_date": {
-                    "type": "string"
-                },
-                "publisher": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "bookview.BookReservationView": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "type": "string"
-                },
-                "genre": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "isbn": {
-                    "type": "string"
-                },
-                "language": {
-                    "type": "string"
-                },
-                "publication_date": {
-                    "type": "string"
-                },
-                "publisher": {
-                    "type": "string"
-                },
-                "reservation": {
-                    "$ref": "#/definitions/reservationview.View"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "bookview.DetailedView": {
             "type": "object",
             "properties": {
@@ -1908,7 +1804,7 @@ const docTemplate = `{
                 "loans": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/loanview.View"
+                        "$ref": "#/definitions/loanview.BaseView"
                     }
                 },
                 "publication_date": {
@@ -1920,7 +1816,7 @@ const docTemplate = `{
                 "reservations": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/reservationview.View"
+                        "$ref": "#/definitions/reservationview.BaseView"
                     }
                 },
                 "title": {
@@ -1962,7 +1858,7 @@ const docTemplate = `{
                 }
             }
         },
-        "loanview.View": {
+        "loanview.BaseView": {
             "type": "object",
             "properties": {
                 "book_id": {
@@ -1994,6 +1890,79 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "loanview.BookView": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "genre": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isbn": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "publication_date": {
+                    "type": "string"
+                },
+                "publisher": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "loanview.DetailedView": {
+            "type": "object",
+            "properties": {
+                "book": {
+                    "$ref": "#/definitions/loanview.BookView"
+                },
+                "book_id": {
+                    "type": "integer"
+                },
+                "borrow_date": {
+                    "type": "string"
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "fines": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/fineview.View"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "loan_histories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/loanhistoryview.View"
+                    }
+                },
+                "return_date": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/userview.View"
                 },
                 "user_id": {
                     "type": "integer"
@@ -2045,7 +2014,7 @@ const docTemplate = `{
                 }
             }
         },
-        "reservationview.View": {
+        "reservationview.BaseView": {
             "type": "object",
             "properties": {
                 "book_id": {
@@ -2059,6 +2028,61 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "reservationview.BookView": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "genre": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isbn": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "publication_date": {
+                    "type": "string"
+                },
+                "publisher": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "reservationview.DetailedView": {
+            "type": "object",
+            "properties": {
+                "book": {
+                    "$ref": "#/definitions/reservationview.BookView"
+                },
+                "book_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reservation_date": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/userview.View"
                 },
                 "user_id": {
                     "type": "integer"
@@ -2121,6 +2145,17 @@ const docTemplate = `{
             "properties": {
                 "role_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "userview.SimpleView": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },

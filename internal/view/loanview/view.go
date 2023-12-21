@@ -10,7 +10,7 @@ import (
 	"github.com/ForAeons/ternary"
 )
 
-type View struct {
+type BaseView struct {
 	ID            int64                  `json:"id,omitempty"`
 	UserID        int64                  `json:"user_id"`
 	BookID        int64                  `json:"book_id"`
@@ -22,8 +22,8 @@ type View struct {
 	Fines         []fineview.View        `json:"fines"`
 }
 
-func ToView(loan *model.Loan) *View {
-	return &View{
+func ToView(loan *model.Loan) *BaseView {
+	return &BaseView{
 		ID:         int64(loan.ID),
 		UserID:     int64(loan.UserID),
 		BookID:     int64(loan.BookID),

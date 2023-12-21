@@ -15,7 +15,9 @@ type Loan struct {
 	gorm.Model
 
 	UserID        uint          `gorm:"not null"`
+	User          *User         `gorm:"->"`
 	BookID        uint          `gorm:"not null"`
+	Book          *Book         `gorm:"->"`
 	Status        LoanStatus    `gorm:"not null"`
 	BorrowDate    time.Time     `gorm:"not null"` // Date when the book is borrowed
 	DueDate       time.Time     `gorm:"not null"` // Date when the book is due

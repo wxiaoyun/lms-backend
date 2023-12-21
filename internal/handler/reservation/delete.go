@@ -28,7 +28,7 @@ const (
 // @Param book_id path int true "Book ID for reservation"
 // @Param reservation_id path int true "reservation ID to delete"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[reservationview.View]
+// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/reservation/{reservation_id}/ [delete]
 func HandleDelete(c *fiber.Ctx) error {
@@ -66,7 +66,7 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: reservationview.ToView(res),
+		Data: reservationview.ToDetailedView(res),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Reservation id - \"%d\" is deleted.", resID,

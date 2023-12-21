@@ -39,6 +39,14 @@ func DeletePolicy() policy.Policy {
 func LoanPolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
+			abilities.CanLoanBook.Name,
+		),
+	)
+}
+
+func CreatePolicy() policy.Policy {
+	return commonpolicy.Any(
+		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
 			abilities.CanLoanBook.Name,

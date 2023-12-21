@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	readBookAction = "create book"
+	readBookAction = "read book"
 )
 
 // @Summary Read book

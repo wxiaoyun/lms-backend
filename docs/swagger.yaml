@@ -68,11 +68,11 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
-  api.SwgResponse-array_loanview_View:
+  api.SwgResponse-array_userview_SimpleView:
     properties:
       data:
         items:
-          $ref: '#/definitions/loanview.View'
+          $ref: '#/definitions/userview.SimpleView'
         type: array
       messages:
         items:
@@ -81,11 +81,11 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
-  api.SwgResponse-array_reservationview_View:
+  api.SwgResponse-array_userview_View:
     properties:
       data:
         items:
-          $ref: '#/definitions/reservationview.View'
+          $ref: '#/definitions/userview.View'
         type: array
       messages:
         items:
@@ -98,28 +98,6 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/bookview.BaseView'
-      messages:
-        items:
-          $ref: '#/definitions/api.Message'
-        type: array
-      meta:
-        $ref: '#/definitions/api.Meta'
-    type: object
-  api.SwgResponse-bookview_BookLoanView:
-    properties:
-      data:
-        $ref: '#/definitions/bookview.BookLoanView'
-      messages:
-        items:
-          $ref: '#/definitions/api.Message'
-        type: array
-      meta:
-        $ref: '#/definitions/api.Meta'
-    type: object
-  api.SwgResponse-bookview_BookReservationView:
-    properties:
-      data:
-        $ref: '#/definitions/bookview.BookReservationView'
       messages:
         items:
           $ref: '#/definitions/api.Message'
@@ -149,10 +127,10 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
-  api.SwgResponse-loanview_View:
+  api.SwgResponse-loanview_DetailedView:
     properties:
       data:
-        $ref: '#/definitions/loanview.View'
+        $ref: '#/definitions/loanview.DetailedView'
       messages:
         items:
           $ref: '#/definitions/api.Message'
@@ -160,10 +138,10 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
-  api.SwgResponse-reservationview_View:
+  api.SwgResponse-reservationview_DetailedView:
     properties:
       data:
-        $ref: '#/definitions/reservationview.View'
+        $ref: '#/definitions/reservationview.DetailedView'
       messages:
         items:
           $ref: '#/definitions/api.Message'
@@ -251,48 +229,6 @@ definitions:
       title:
         type: string
     type: object
-  bookview.BookLoanView:
-    properties:
-      author:
-        type: string
-      genre:
-        type: string
-      id:
-        type: integer
-      isbn:
-        type: string
-      language:
-        type: string
-      loan:
-        $ref: '#/definitions/loanview.View'
-      publication_date:
-        type: string
-      publisher:
-        type: string
-      title:
-        type: string
-    type: object
-  bookview.BookReservationView:
-    properties:
-      author:
-        type: string
-      genre:
-        type: string
-      id:
-        type: integer
-      isbn:
-        type: string
-      language:
-        type: string
-      publication_date:
-        type: string
-      publisher:
-        type: string
-      reservation:
-        $ref: '#/definitions/reservationview.View'
-      title:
-        type: string
-    type: object
   bookview.DetailedView:
     properties:
       author:
@@ -307,7 +243,7 @@ definitions:
         type: string
       loans:
         items:
-          $ref: '#/definitions/loanview.View'
+          $ref: '#/definitions/loanview.BaseView'
         type: array
       publication_date:
         type: string
@@ -315,7 +251,7 @@ definitions:
         type: string
       reservations:
         items:
-          $ref: '#/definitions/reservationview.View'
+          $ref: '#/definitions/reservationview.BaseView'
         type: array
       title:
         type: string
@@ -342,7 +278,7 @@ definitions:
       loan_id:
         type: integer
     type: object
-  loanview.View:
+  loanview.BaseView:
     properties:
       book_id:
         type: integer
@@ -364,6 +300,54 @@ definitions:
         type: string
       status:
         type: string
+      user_id:
+        type: integer
+    type: object
+  loanview.BookView:
+    properties:
+      author:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      isbn:
+        type: string
+      language:
+        type: string
+      publication_date:
+        type: string
+      publisher:
+        type: string
+      title:
+        type: string
+    type: object
+  loanview.DetailedView:
+    properties:
+      book:
+        $ref: '#/definitions/loanview.BookView'
+      book_id:
+        type: integer
+      borrow_date:
+        type: string
+      due_date:
+        type: string
+      fines:
+        items:
+          $ref: '#/definitions/fineview.View'
+        type: array
+      id:
+        type: integer
+      loan_histories:
+        items:
+          $ref: '#/definitions/loanhistoryview.View'
+        type: array
+      return_date:
+        type: string
+      status:
+        type: string
+      user:
+        $ref: '#/definitions/userview.View'
       user_id:
         type: integer
     type: object
@@ -396,7 +380,7 @@ definitions:
       preferred_name:
         type: string
     type: object
-  reservationview.View:
+  reservationview.BaseView:
     properties:
       book_id:
         type: integer
@@ -406,6 +390,42 @@ definitions:
         type: string
       status:
         type: string
+      user_id:
+        type: integer
+    type: object
+  reservationview.BookView:
+    properties:
+      author:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      isbn:
+        type: string
+      language:
+        type: string
+      publication_date:
+        type: string
+      publisher:
+        type: string
+      title:
+        type: string
+    type: object
+  reservationview.DetailedView:
+    properties:
+      book:
+        $ref: '#/definitions/reservationview.BookView'
+      book_id:
+        type: integer
+      id:
+        type: integer
+      reservation_date:
+        type: string
+      status:
+        type: string
+      user:
+        $ref: '#/definitions/userview.View'
       user_id:
         type: integer
     type: object
@@ -447,6 +467,13 @@ definitions:
       role_id:
         type: integer
     type: object
+  userview.SimpleView:
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
   userview.View:
     properties:
       abilities:
@@ -483,7 +510,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-loanview_View'
+            $ref: '#/definitions/api.SwgResponse-loanview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -764,7 +791,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-loanview_View'
+            $ref: '#/definitions/api.SwgResponse-loanview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -789,7 +816,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+            $ref: '#/definitions/api.SwgResponse-reservationview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -797,6 +824,25 @@ paths:
       summary: Create a reservation
       tags:
       - reservation
+  /api/v1/book/autocomplete:
+    get:
+      consumes:
+      - '*/*'
+      description: Autocomplete 10 books based on input value
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-array_userview_SimpleView'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Autocomplete 10 books based on input value
+      tags:
+      - user
   /api/v1/fine:
     get:
       consumes:
@@ -902,44 +948,23 @@ paths:
       summary: Show the status of server.
       tags:
       - health
-  /api/v1/loan:
-    get:
+  /api/v1/loan/:
+    post:
       consumes:
-      - application/json
-      description: List loans depending on collection query
-      parameters:
-      - description: Offset for pagination
-        in: query
-        name: offset
-        type: integer
-      - description: Limit for pagination
-        in: query
-        name: limit
-        type: integer
-      - description: Filter by user ID
-        in: query
-        name: filter[user_id]
-        type: integer
-      - description: Sort by column name
-        in: query
-        name: sortBy
-        type: string
-      - description: Order by direction (asc or desc)
-        in: query
-        name: orderBy
-        type: string
+      - '*/*'
+      description: Admin loans a book on behalf of a user
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-array_loanview_View'
+            $ref: '#/definitions/api.SwgResponse-loanview_DetailedView'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/api.SwgErrResponse'
-      summary: List loans
+      summary: Admin loans a book on behalf of a user
       tags:
       - loan
   /api/v1/loan/{loan_id}/:
@@ -959,7 +984,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-loanview_View'
+            $ref: '#/definitions/api.SwgResponse-loanview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -984,7 +1009,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-loanview_View'
+            $ref: '#/definitions/api.SwgResponse-loanview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -1009,7 +1034,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-loanview_View'
+            $ref: '#/definitions/api.SwgResponse-loanview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -1028,7 +1053,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-bookview_BookLoanView'
+            $ref: '#/definitions/api.SwgResponse-loanview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -1036,46 +1061,25 @@ paths:
       summary: List books on loan by current user
       tags:
       - loan
-  /api/v1/reservation:
-    get:
+  /api/v1/reservation/:
+    post:
       consumes:
-      - application/json
-      description: List reservations in the library depending on the collection query
-      parameters:
-      - description: Offset for pagination
-        in: query
-        name: offset
-        type: integer
-      - description: Limit for pagination
-        in: query
-        name: limit
-        type: integer
-      - description: Filter by user ID
-        in: query
-        name: filter[user_id]
-        type: integer
-      - description: Sort by column name
-        in: query
-        name: sortBy
-        type: string
-      - description: Order by direction (asc or desc)
-        in: query
-        name: orderBy
-        type: string
+      - '*/*'
+      description: Admin reservations a book on behalf of a user
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-array_reservationview_View'
+            $ref: '#/definitions/api.SwgResponse-reservationview_DetailedView'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/api.SwgErrResponse'
-      summary: List reservations
+      summary: Admin reservations a book on behalf of a user
       tags:
-      - reservation
+      - loan
   /api/v1/reservation/{reservation_id}/:
     delete:
       consumes:
@@ -1098,7 +1102,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+            $ref: '#/definitions/api.SwgResponse-reservationview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -1122,7 +1126,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+            $ref: '#/definitions/api.SwgResponse-reservationview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -1147,7 +1151,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+            $ref: '#/definitions/api.SwgResponse-reservationview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -1172,7 +1176,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-reservationview_View'
+            $ref: '#/definitions/api.SwgResponse-reservationview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -1191,7 +1195,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-bookview_BookReservationView'
+            $ref: '#/definitions/api.SwgResponse-reservationview_DetailedView'
         "400":
           description: Bad Request
           schema:
@@ -1236,7 +1240,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.SwgResponse-array_reservationview_View'
+            $ref: '#/definitions/api.SwgResponse-array_userview_View'
         "400":
           description: Bad Request
           schema:
@@ -1379,6 +1383,25 @@ paths:
           schema:
             $ref: '#/definitions/api.SwgErrResponse'
       summary: Update user role
+      tags:
+      - user
+  /api/v1/user/autocomplete:
+    get:
+      consumes:
+      - '*/*'
+      description: Autocomplete 10 users based on input value
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-array_userview_SimpleView'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Autocomplete 10 users based on input value
       tags:
       - user
   /api/v1/user/currentuser:

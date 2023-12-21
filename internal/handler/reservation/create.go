@@ -7,65 +7,60 @@ import (
 	"lms-backend/internal/dataaccess/book"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
+	"lms-backend/internal/params/sharedparams"
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/reservationpolicy"
-	"lms-backend/internal/session"
 	"lms-backend/internal/view/reservationview"
-	"lms-backend/pkg/error/externalerrors"
-	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 const (
-	reserveBookAction = "reserve book"
+	createReservationAction = "create reservation"
 )
 
-// @Summary Create a reservation
-// @Description Creates a reservation for a book
-// @Tags reservation
+// @Summary Admin reservations a book on behalf of a user
+// @Description Admin reservations a book on behalf of a user
+// @Tags loan
 // @Accept */*
-// @Param book_id path int true "Book ID for reservation"
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id}/reservation/ [post]
-func HandleReserve(c *fiber.Ctx) error {
-	err := policy.Authorize(c, reserveBookAction, reservationpolicy.ReservePolicy())
+// @Router /api/v1/reservation/ [post]
+func HandleCreate(c *fiber.Ctx) error {
+	err := policy.Authorize(c, createReservationAction, reservationpolicy.CreatePolicy())
 	if err != nil {
 		return err
 	}
 
-	userID, err := session.GetLoginSession(c)
-	if err != nil {
+	var params sharedparams.UserBookParams
+	if err := c.BodyParser(&params); err != nil {
 		return err
 	}
 
-	param := c.Params("book_id")
-	bookID, err := strconv.ParseInt(param, 10, 64)
-	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
+	if err := params.Validate(); err != nil {
+		return err
 	}
 
 	db := database.GetDB()
 
-	username, err := user.GetUserName(db, userID)
+	username, err := user.GetUserName(db, params.UserID)
 	if err != nil {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, bookID)
+	bookTitle, err := book.GetBookTitle(db, params.BookID)
 	if err != nil {
 		return err
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, fmt.Sprintf("%s reserving \"%s\"", username, bookTitle),
+		c, fmt.Sprintf("%s loaning \"%s\"", username, bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	res, err := book.ReserveBook(tx, userID, bookID)
+	res, err := book.ReserveBook(tx, params.UserID, params.BookID)
 	if err != nil {
 		return err
 	}

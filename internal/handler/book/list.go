@@ -26,7 +26,7 @@ import (
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/book [get]
 func HandleList(c *fiber.Ctx) error {
-	err := policy.Authorize(c, readBookAction, bookpolicy.ReadPolicy())
+	err := policy.Authorize(c, readBookAction, bookpolicy.ListPolicy())
 	if err != nil {
 		return err
 	}

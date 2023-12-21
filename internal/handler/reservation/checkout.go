@@ -27,7 +27,7 @@ const (
 // @Accept */*
 // @Param reservation_id path int true "reservation ID to checkout"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[reservationview.View]
+// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /api/v1/reservation/{reservation_id}/checkout [patch]
 func HandleCheckout(c *fiber.Ctx) error {
@@ -65,7 +65,7 @@ func HandleCheckout(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: reservationview.ToView(res),
+		Data: reservationview.ToDetailedView(res),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"%s has checked out reservation id - \"%d\".", username, resID,

@@ -12,21 +12,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary List loans
-// @Description List loans depending on collection query
+const (
+	listBookLoanAction = "list book on loan"
+)
+
+// @Summary List books on loan by current user
+// @Description Lists books on loan by current user
 // @Tags loan
-// @Accept application/json
-// @Param offset query int false "Offset for pagination"
-// @Param limit query int false "Limit for pagination"
-// @Param filter[user_id] query int false "Filter by user ID"
-// @Param sortBy query string false "Sort by column name"
-// @Param orderBy query string false "Order by direction (asc or desc)"
+// @Accept */*
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]loanview.View]
+// @Success 200 {object} api.SwgResponse[loanview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/loan [get]
+// @Router /api/v1/loan/book [get]
 func HandleList(c *fiber.Ctx) error {
-	err := policy.Authorize(c, readLoanAction, loanpolicy.ReadPolicy())
+	err := policy.Authorize(c, listBookLoanAction, loanpolicy.ReadBookPolicy())
 	if err != nil {
 		return err
 	}
@@ -39,7 +38,7 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	dbFiltered := cq.Filter(db, loan.Filters())
+	dbFiltered := cq.Filter(db, loan.Filters(), loan.JoinBook)
 
 	filteredCount, err := loan.Count(dbFiltered)
 	if err != nil {
@@ -48,16 +47,15 @@ func HandleList(c *fiber.Ctx) error {
 
 	dbSorted := cq.Sort(dbFiltered, loan.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
-
-	lns, err := loan.List(dbPaginated)
+	lns, err := loan.ListWithBookUser(dbPaginated)
 	if err != nil {
 		return err
 	}
 
-	var view = []*loanview.View{}
-	for _, ln := range lns {
+	var view = []loanview.DetailedView{}
+	for _, l := range lns {
 		//nolint:gosec // loop does not modify struct
-		view = append(view, loanview.ToView(&ln))
+		view = append(view, *loanview.ToDetailedView(&l))
 	}
 
 	return c.JSON(api.Response{
@@ -67,7 +65,7 @@ func HandleList(c *fiber.Ctx) error {
 			FilteredCount: filteredCount,
 		},
 		Messages: api.Messages(
-			api.SilentMessage("loans listed successfully"),
+			api.SilentMessage("books listed successfully"),
 		),
 	})
 }

@@ -14,20 +14,6 @@ func Filters() collection.FilterMap {
 	}
 }
 
-func LoanFilters() collection.FilterMap {
-	return map[string]collection.Filter{
-		"loans.user_id": collection.IntEqualFilter("loans.user_id", JoinLoan),
-		"loans.status":  collection.StringEqualFilter("loans.status", JoinLoan),
-	}
-}
-
-func ReservationFilters() collection.FilterMap {
-	return map[string]collection.Filter{
-		"reservations.user_id": collection.IntEqualFilter("reservations.user_id", JoinReservation),
-		"reservations.status":  collection.StringEqualFilter("reservations.status", JoinReservation),
-	}
-}
-
 func Sorters() collection.SortMap {
 	return map[string]collection.Sorter{
 		"title":            collection.SortBy("title"),
