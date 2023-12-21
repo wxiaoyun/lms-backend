@@ -549,6 +549,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/current": {
+            "get": {
+                "description": "Retrieves the current user if logged in",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Retrieve current user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgResponse-userview_CurrentUserView"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.SwgErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/fine": {
             "get": {
                 "description": "List fines belonging to a loan",
@@ -1231,35 +1260,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/currentuser": {
-            "get": {
-                "description": "Retrieves the current user if logged in",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Retrieve current user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgResponse-userview_View"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/api.SwgErrResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/user/{user_id}": {
             "get": {
                 "description": "Retrieves an existing user from the system",
@@ -1648,6 +1648,23 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/reservationview.DetailedView"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Message"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/api.Meta"
+                }
+            }
+        },
+        "api.SwgResponse-userview_CurrentUserView": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/userview.CurrentUserView"
                 },
                 "messages": {
                     "type": "array",
@@ -2145,6 +2162,17 @@ const docTemplate = `{
             "properties": {
                 "role_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "userview.CurrentUserView": {
+            "type": "object",
+            "properties": {
+                "is_logged_in": {
+                    "type": "boolean"
+                },
+                "user": {
+                    "$ref": "#/definitions/userview.View"
                 }
             }
         },

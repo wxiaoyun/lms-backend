@@ -34,9 +34,6 @@ func SetupAndRunApp() error {
 	// setup routes
 	router.SetUpRoutes(app, cfg)
 
-	// attach swagger
-	AddSwaggerRoutes(app)
-
 	c := cron.RunJobs()
 	defer c.Stop()
 

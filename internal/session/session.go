@@ -23,6 +23,7 @@ func SetupStore() {
 		CookieSameSite: "None",
 		CookieSecure:   true,
 		CookieHTTPOnly: true,
-		CookiePath:     "/",
+		// CookiePath:     "/",
+		// CookieDomain: ".app.localhost",
 	})
 }

@@ -149,6 +149,17 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
+  api.SwgResponse-userview_CurrentUserView:
+    properties:
+      data:
+        $ref: '#/definitions/userview.CurrentUserView'
+      messages:
+        items:
+          $ref: '#/definitions/api.Message'
+        type: array
+      meta:
+        $ref: '#/definitions/api.Meta'
+    type: object
   api.SwgResponse-userview_View:
     properties:
       data:
@@ -466,6 +477,13 @@ definitions:
     properties:
       role_id:
         type: integer
+    type: object
+  userview.CurrentUserView:
+    properties:
+      is_logged_in:
+        type: boolean
+      user:
+        $ref: '#/definitions/userview.View'
     type: object
   userview.SimpleView:
     properties:
@@ -841,6 +859,25 @@ paths:
           schema:
             $ref: '#/definitions/api.SwgErrResponse'
       summary: Autocomplete 10 books based on input value
+      tags:
+      - user
+  /api/v1/current:
+    get:
+      consumes:
+      - '*/*'
+      description: Retrieves the current user if logged in
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SwgResponse-userview_CurrentUserView'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.SwgErrResponse'
+      summary: Retrieve current user
       tags:
       - user
   /api/v1/fine:
@@ -1402,25 +1439,6 @@ paths:
           schema:
             $ref: '#/definitions/api.SwgErrResponse'
       summary: Autocomplete 10 users based on input value
-      tags:
-      - user
-  /api/v1/user/currentuser:
-    get:
-      consumes:
-      - '*/*'
-      description: Retrieves the current user if logged in
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.SwgResponse-userview_View'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.SwgErrResponse'
-      summary: Retrieve current user
       tags:
       - user
 swagger: "2.0"

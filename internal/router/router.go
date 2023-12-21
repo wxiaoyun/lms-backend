@@ -13,7 +13,7 @@ import (
 func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 	middleware.SetupCors(app, cfg)
 	middleware.SetupRecover(app)
-	middleware.SetupRecover(app)
+	middleware.SetupLogger(app)
 	session.SetupStore()
 
 	v1Routes := app.Group("/api/v1")
@@ -29,6 +29,7 @@ func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 func PublicRoutes(r fiber.Router) {
 	Route(r, "/health", HealthRoutes)
 	Route(r, "/auth", AuthRoutes)
+	Route(r, "/swagger", SwaggerRoutes)
 	r.Get("/current", userhandler.HandleGetCurrentUser)
 }
 
