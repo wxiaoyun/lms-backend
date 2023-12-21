@@ -13,6 +13,7 @@ var (
 const (
 	CookieKey = "token"
 	MaxAge    = time.Hour * 24 * 7 // 7 days
+	UserIDKey = "UserID"
 )
 
 func SetupStore() {

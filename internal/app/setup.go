@@ -8,7 +8,6 @@ import (
 	"lms-backend/internal/config"
 	"lms-backend/internal/cron"
 	"lms-backend/internal/database"
-	"lms-backend/internal/middleware"
 	"lms-backend/internal/router"
 
 	"github.com/gofiber/fiber/v2"
@@ -32,11 +31,8 @@ func SetupAndRunApp() error {
 		ErrorHandler: api.ErrorHandler,
 	})
 
-	// attach app middleware
-	middleware.SetupAppMiddleware(app, cfg)
-
 	// setup routes
-	router.SetUpRoutes(app)
+	router.SetUpRoutes(app, cfg)
 
 	// attach swagger
 	AddSwaggerRoutes(app)

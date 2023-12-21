@@ -7,7 +7,6 @@ import (
 )
 
 func UserRoutes(r fiber.Router) {
-	r.Get("/current", userhandler.HandleGetCurrentUser)
 	r.Get("/", userhandler.HandleList)
 	r.Post("/", userhandler.HandleCreate)
 

@@ -1,18 +1,42 @@
 package router
 
 import (
+	"lms-backend/internal/config"
+	userhandler "lms-backend/internal/handler/user"
+	"lms-backend/internal/middleware"
+	sessionmiddleware "lms-backend/internal/middleware/session"
+	"lms-backend/internal/session"
+
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetUpRoutes(app *fiber.App) {
+func SetUpRoutes(app *fiber.App, cfg *config.Config) {
+	middleware.SetupCors(app, cfg)
+	middleware.SetupRecover(app)
+	middleware.SetupRecover(app)
+	session.SetupStore()
+
 	v1Routes := app.Group("/api/v1")
 
-	Route(v1Routes, "/health", HealthRoutes)
-	Route(v1Routes, "/auth", AuthRoutes)
-	Route(v1Routes, "/user", UserRoutes)
-	Route(v1Routes, "/audit_log", AuditLogRoutes)
-	Route(v1Routes, "/book", BookRoutes)
-	Route(v1Routes, "/loan", LoanRoutes)
-	Route(v1Routes, "/reservation", ReservationRoutes)
-	Route(v1Routes, "/fine", FineRoutes)
+	publicRoutes := v1Routes.Group("/")
+	Route(publicRoutes, "/", PublicRoutes)
+
+	privateRoutes := v1Routes.Group("/")
+	privateRoutes.Use(sessionmiddleware.SessionMiddleware)
+	Route(privateRoutes, "/", PrivateRoutes)
+}
+
+func PublicRoutes(r fiber.Router) {
+	Route(r, "/health", HealthRoutes)
+	Route(r, "/auth", AuthRoutes)
+	r.Get("/current", userhandler.HandleGetCurrentUser)
+}
+
+func PrivateRoutes(r fiber.Router) {
+	Route(r, "/user", UserRoutes)
+	Route(r, "/audit_log", AuditLogRoutes)
+	Route(r, "/book", BookRoutes)
+	Route(r, "/loan", LoanRoutes)
+	Route(r, "/reservation", ReservationRoutes)
+	Route(r, "/fine", FineRoutes)
 }

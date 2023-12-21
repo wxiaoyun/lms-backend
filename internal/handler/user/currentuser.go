@@ -16,10 +16,19 @@ import (
 // @Tags user
 // @Accept */*
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[userview.View]
+// @Success 200 {object} api.SwgResponse[userview.CurrentUserView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/user/currentuser [get]
+// @Router /api/v1/current [get]
 func HandleGetCurrentUser(c *fiber.Ctx) error {
+	if !session.HasSession(c) {
+		return c.JSON(api.Response{
+			Data: userview.ToCurrentUserView(nil),
+			Messages: api.Messages(
+				api.SuccessMessage("Welcome guest!"),
+			),
+		})
+	}
+
 	userID, err := session.GetLoginSession(c)
 	if err != nil {
 		return err
@@ -38,7 +47,7 @@ func HandleGetCurrentUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: userview.ToView(usr, abilites...),
+		Data: userview.ToCurrentUserView(usr, abilites...),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf("Welcome back, %s!", usr.Username)),
 		),

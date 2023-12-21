@@ -12,13 +12,26 @@ type LoginSession struct {
 	IsMasquerading bool
 }
 
-func GetLoginSession(c *fiber.Ctx) (int64, error) {
-	sess, err := Store.Get(c)
-	if err != nil {
-		return 0, err
+func HasSession(c *fiber.Ctx) bool {
+	token := c.Locals(UserIDKey)
+	if token == nil {
+		return false
 	}
 
-	token := sess.Get(CookieKey)
+	userID, ok := token.(uint)
+	if !ok {
+		return false
+	}
+
+	if userID == 0 {
+		return false
+	}
+
+	return true
+}
+
+func GetLoginSession(c *fiber.Ctx) (int64, error) {
+	token := c.Locals(UserIDKey)
 	if token == nil {
 		//nolint
 		c.Status(fiber.StatusUnauthorized).JSON(api.Response{
