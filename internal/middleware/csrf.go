@@ -16,7 +16,7 @@ func SetupCSRF(app *fiber.App) {
 	app.Use(csrf.New(
 		csrf.Config{
 			KeyLookup:         "header:" + csrf.HeaderName,
-			CookieName:        "__Host-csrf_",
+			CookieName:        "csrf_",
 			CookieSameSite:    "None",
 			CookieSecure:      true,
 			CookieSessionOnly: true,
