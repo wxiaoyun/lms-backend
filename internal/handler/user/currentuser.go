@@ -20,7 +20,13 @@ import (
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /v1/current [get]
 func HandleGetCurrentUser(c *fiber.Ctx) error {
-	if !session.HasSession(c) {
+	sess, err := session.Store.Get(c)
+	if err != nil {
+		return err
+	}
+
+	token := sess.Get(session.CookieKey)
+	if token == nil {
 		return c.JSON(api.Response{
 			Data: userview.ToCurrentUserView(nil),
 			Messages: api.Messages(
@@ -29,19 +35,35 @@ func HandleGetCurrentUser(c *fiber.Ctx) error {
 		})
 	}
 
-	userID, err := session.GetLoginSession(c)
-	if err != nil {
-		return err
+	userID, ok := token.(uint)
+	if !ok {
+		return c.JSON(api.Response{
+			Data: userview.ToCurrentUserView(nil),
+			Messages: api.Messages(
+				api.SuccessMessage("Welcome guest!"),
+			),
+		})
 	}
+
+	if userID == 0 {
+		return c.JSON(api.Response{
+			Data: userview.ToCurrentUserView(nil),
+			Messages: api.Messages(
+				api.SuccessMessage("Welcome guest!"),
+			),
+		})
+	}
+
+	id := int64(userID)
 
 	db := database.GetDB()
 
-	usr, err := user.Read(db, userID)
+	usr, err := user.Read(db, id)
 	if err != nil {
 		return err
 	}
 
-	abilites, err := user.GetAbilities(db, userID)
+	abilites, err := user.GetAbilities(db, id)
 	if err != nil {
 		return err
 	}
