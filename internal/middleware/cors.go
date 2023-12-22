@@ -30,9 +30,7 @@ func SetupCors(app *fiber.App, cfg *config.Config) {
 // e.g. https://deploy-preview-21--lms-cambodia-dev.netlify.app/
 func allowedOrigins(s string) func(string) bool {
 	return func(header string) bool {
-		if s == "http://localhost:3000" ||
-			s == "http://localhost:5173" ||
-			s == "http://127.0.0.1:5173" {
+		if s == header {
 			return true
 		}
 

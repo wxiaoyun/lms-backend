@@ -16,7 +16,7 @@ func SetupCSRF(app *fiber.App) {
 	app.Use(csrf.New(
 		csrf.Config{
 			KeyLookup:         "header:" + csrf.HeaderName,
-			CookieName:        "csrf_",
+			CookieName:        "__Host-csrf_",
 			CookieSameSite:    "None",
 			CookieSecure:      true,
 			CookieSessionOnly: true,
@@ -24,7 +24,5 @@ func SetupCSRF(app *fiber.App) {
 			Expiration:        MaxAge,
 			Extractor:         csrf.CsrfFromHeader(csrf.HeaderName),
 			Session:           session.Store,
-			SessionKey:        "fiber.csrf.token",
-			HandlerContextKey: "fiber.csrf.handler",
 		}))
 }
