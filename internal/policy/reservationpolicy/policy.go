@@ -22,7 +22,7 @@ func ReadBookPolicy() policy.Policy {
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
 		),
-		AllowIfLoanSelf(),
+		AllowIfSelf(),
 	)
 }
 

@@ -37,9 +37,9 @@ func PublicRoutes(r fiber.Router) {
 
 func PrivateRoutes(r fiber.Router) {
 	Route(r, "/user", UserRoutes)
-	Route(r, "/audit_log", AuditLogRoutes)
 	Route(r, "/book", BookRoutes)
 	Route(r, "/loan", LoanRoutes)
 	Route(r, "/reservation", ReservationRoutes)
 	Route(r, "/fine", FineRoutes)
+	Route(r, "/audit_log", AuditLogRoutes)
 }

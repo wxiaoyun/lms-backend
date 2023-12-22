@@ -16,13 +16,14 @@ func ReadPolicy() policy.Policy {
 	)
 }
 
-func ReadBookPolicy() policy.Policy {
+func ListPolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
+			abilities.CanReadLoan.Name,
 		),
-		AllowIfLoanSelf(),
+		AllowIfSelf(),
 	)
 }
 

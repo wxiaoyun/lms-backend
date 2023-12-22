@@ -1,4 +1,4 @@
-package reservationpolicy
+package finepolicy
 
 import (
 	"lms-backend/internal/policy"
@@ -29,5 +29,5 @@ func (*Self) Validate(c *fiber.Ctx) (policy.Decision, error) {
 }
 
 func (*Self) Reason() string {
-	return "You cannot query reservations that is not yours."
+	return "You cannot query fines that is not yours."
 }

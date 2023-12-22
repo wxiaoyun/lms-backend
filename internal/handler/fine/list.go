@@ -26,7 +26,7 @@ const (
 // @Param sortBy query string false "Sort by column name"
 // @Param orderBy query string false "Order by direction (asc or desc)"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]fineview.View]
+// @Success 200 {object} api.SwgResponse[[]fineview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /v1/fine [get]
 func HandleList(c *fiber.Ctx) error {
@@ -43,7 +43,7 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	dbFiltered := cq.Filter(db, fine.Filters())
+	dbFiltered := cq.Filter(db, fine.Filters(), fine.JoinLoan)
 
 	filteredCount, err := fine.Count(dbFiltered)
 	if err != nil {
@@ -53,15 +53,15 @@ func HandleList(c *fiber.Ctx) error {
 	dbSorted := cq.Sort(dbFiltered, fine.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
 
-	fns, err := fine.List(dbPaginated)
+	fns, err := fine.ListDetailed(dbPaginated)
 	if err != nil {
 		return err
 	}
 
-	var view = []*fineview.View{}
-	for _, w := range fns {
+	var view = []*fineview.DetailedView{}
+	for _, f := range fns {
 		//nolint:gosec // loop does not modify struct
-		view = append(view, fineview.ToView(&w))
+		view = append(view, fineview.ToDetailedView(&f))
 	}
 
 	return c.JSON(api.Response{

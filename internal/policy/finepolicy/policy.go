@@ -23,6 +23,7 @@ func ReadPolicy() policy.Policy {
 			abilities.CanManageBookRecords.Name,
 			abilities.CanReadFine.Name,
 		),
+		AllowIfSelf(),
 	)
 }
 

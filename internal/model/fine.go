@@ -13,7 +13,9 @@ type Fine struct {
 	gorm.Model
 
 	UserID uint       `gorm:"not null"`
+	User   *User      `gorm:"->"`
 	LoanID uint       `gorm:"not null"`
+	Loan   *Loan      `gorm:"->"`
 	Status FineStatus `gorm:"not null"`
 	Amount float64    `gorm:"not null"`
 }

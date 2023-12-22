@@ -65,7 +65,7 @@ func HandleSettle(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: fineview.ToView(fn),
+		Data: fineview.ToDetailedView(fn),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Fine id - \"%d\" is settled.", fineID,

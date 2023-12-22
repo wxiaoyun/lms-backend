@@ -7,20 +7,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type LoanSelf struct {
+type Self struct {
 }
 
-func AllowIfLoanSelf() *LoanSelf {
-	return &LoanSelf{}
+func AllowIfSelf() *Self {
+	return &Self{}
 }
 
-func (*LoanSelf) Validate(c *fiber.Ctx) (policy.Decision, error) {
+func (*Self) Validate(c *fiber.Ctx) (policy.Decision, error) {
 	userID, err := session.GetLoginSession(c)
 	if err != nil {
 		return policy.Deny, err
 	}
 
-	queryUserID := c.QueryInt("filter[loans.user_id]", 0)
+	queryUserID := c.QueryInt("filter[user_id]", 0)
 	if int(userID) != queryUserID {
 		return policy.Deny, nil
 	}
@@ -28,6 +28,6 @@ func (*LoanSelf) Validate(c *fiber.Ctx) (policy.Decision, error) {
 	return policy.Allow, nil
 }
 
-func (*LoanSelf) Reason() string {
+func (*Self) Reason() string {
 	return "You cannot query loans that is not yours."
 }

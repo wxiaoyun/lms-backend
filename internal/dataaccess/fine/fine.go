@@ -7,9 +7,33 @@ import (
 	"gorm.io/gorm"
 )
 
+func preloadAssociations(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("User").
+		Preload("User.Person").
+		Preload("Loan").
+		Preload("Loan.Book")
+}
+
 func Read(db *gorm.DB, fineID int64) (*model.Fine, error) {
 	var fine model.Fine
 	result := db.Model(&model.Fine{}).
+		Where("id = ?", fineID).
+		First(&fine)
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, orm.ErrRecordNotFound(model.FineModelName)
+		}
+		return nil, err
+	}
+
+	return &fine, nil
+}
+
+func ReadDetailed(db *gorm.DB, fineID int64) (*model.Fine, error) {
+	var fine model.Fine
+	result := db.Model(&model.Fine{}).
+		Scopes(preloadAssociations).
 		Where("id = ?", fineID).
 		First(&fine)
 	if err := result.Error; err != nil {
@@ -42,7 +66,7 @@ func Update(db *gorm.DB, fine *model.Fine) (*model.Fine, error) {
 		return nil, err
 	}
 
-	return Read(db, int64(fine.ID))
+	return ReadDetailed(db, int64(fine.ID))
 }
 
 func Delete(db *gorm.DB, fineID int64) (*model.Fine, error) {
@@ -55,7 +79,7 @@ func Delete(db *gorm.DB, fineID int64) (*model.Fine, error) {
 		return nil, err
 	}
 
-	return fn, nil
+	return ReadDetailed(db, fineID)
 }
 
 func Settle(db *gorm.DB, fineID int64) (*model.Fine, error) {
@@ -70,7 +94,7 @@ func Settle(db *gorm.DB, fineID int64) (*model.Fine, error) {
 		return nil, err
 	}
 
-	return fn, nil
+	return ReadDetailed(db, fineID)
 }
 
 func Count(db *gorm.DB) (int64, error) {
@@ -90,6 +114,19 @@ func List(db *gorm.DB) ([]model.Fine, error) {
 	var fines []model.Fine
 
 	result := db.Model(&model.Fine{}).
+		Find(&fines)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return fines, nil
+}
+
+func ListDetailed(db *gorm.DB) ([]model.Fine, error) {
+	var fines []model.Fine
+
+	result := db.Model(&model.Fine{}).
+		Scopes(preloadAssociations).
 		Find(&fines)
 	if result.Error != nil {
 		return nil, result.Error

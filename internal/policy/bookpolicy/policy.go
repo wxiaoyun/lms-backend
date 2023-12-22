@@ -8,11 +8,7 @@ import (
 
 func ReadPolicy() policy.Policy {
 	return commonpolicy.Any(
-		commonpolicy.HasAnyAbility(
-			abilities.CanManageAll.Name,
-			abilities.CanManageBookRecords.Name,
-			abilities.CanReadBook.Name,
-		),
+		commonpolicy.AllowAll(),
 	)
 }
 

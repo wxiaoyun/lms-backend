@@ -19,7 +19,7 @@ type BaseView struct {
 	DueDate       *time.Time             `json:"due_date"`
 	ReturnDate    *time.Time             `json:"return_date"`
 	LoanHistories []loanhistoryview.View `json:"loan_histories"`
-	Fines         []fineview.View        `json:"fines"`
+	Fines         []fineview.BaseView    `json:"fines"`
 }
 
 func ToView(loan *model.Loan) *BaseView {

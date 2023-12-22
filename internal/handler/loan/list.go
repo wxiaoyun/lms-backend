@@ -25,7 +25,7 @@ const (
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /v1/loan/book [get]
 func HandleList(c *fiber.Ctx) error {
-	err := policy.Authorize(c, listBookLoanAction, loanpolicy.ReadBookPolicy())
+	err := policy.Authorize(c, listBookLoanAction, loanpolicy.ListPolicy())
 	if err != nil {
 		return err
 	}
