@@ -20,7 +20,7 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgMsgResponse[auditlogview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/audit_log/ [post]
+// @Router /v1/audit_log/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	var params auditlogparams.BaseParams
 	if err := c.BodyParser(&params); err != nil {

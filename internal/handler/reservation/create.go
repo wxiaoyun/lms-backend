@@ -27,7 +27,7 @@ const (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/reservation/ [post]
+// @Router /v1/reservation/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createReservationAction, reservationpolicy.CreatePolicy())
 	if err != nil {

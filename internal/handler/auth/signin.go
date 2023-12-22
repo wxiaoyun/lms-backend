@@ -20,7 +20,7 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[userview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/auth/login [post]
+// @Router /v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
 	var params userparams.SignInParams
 	if err := c.BodyParser(&params); err != nil {

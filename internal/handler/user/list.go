@@ -24,7 +24,7 @@ import (
 // @Param orderBy query string false "Order by asc or desc" default("desc")
 // @Success 200 {object} api.SwgResponse[[]userview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/user [get]
+// @Router /v1/user [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readUserAction, userpolicy.ListPolicy())
 	if err != nil {

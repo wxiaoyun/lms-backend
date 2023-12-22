@@ -24,7 +24,7 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[bookview.BaseView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id} [patch]
+// @Router /v1/book/{book_id} [patch]
 func HandleUpdate(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createBookAction, bookpolicy.UpdatePolicy())
 	if err != nil {

@@ -2,6 +2,7 @@ package router
 
 import (
 	"lms-backend/internal/config"
+	bookhandler "lms-backend/internal/handler/book"
 	userhandler "lms-backend/internal/handler/user"
 	"lms-backend/internal/middleware"
 	sessionmiddleware "lms-backend/internal/middleware/session"
@@ -12,11 +13,12 @@ import (
 
 func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 	middleware.SetupCors(app, cfg)
+	middleware.SetupCSRF(app)
 	middleware.SetupRecover(app)
 	middleware.SetupLogger(app)
 	session.SetupStore()
 
-	v1Routes := app.Group("/api/v1")
+	v1Routes := app.Group("/v1")
 
 	publicRoutes := v1Routes.Group("/")
 	Route(publicRoutes, "/", PublicRoutes)
@@ -29,8 +31,8 @@ func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 func PublicRoutes(r fiber.Router) {
 	Route(r, "/health", HealthRoutes)
 	Route(r, "/auth", AuthRoutes)
-	Route(r, "/swagger", SwaggerRoutes)
 	r.Get("/current", userhandler.HandleGetCurrentUser)
+	r.Get("/book", bookhandler.HandleList)
 }
 
 func PrivateRoutes(r fiber.Router) {

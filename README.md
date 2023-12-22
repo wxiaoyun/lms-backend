@@ -29,8 +29,3 @@ captain-githook init
 ```bash
 make run
 ```
-
-### Documentation
-
-- Run the server with `make run` and go to the following url:
-- `http://localhost:<port_defined_in.env>/swagger/`

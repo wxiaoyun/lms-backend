@@ -12,18 +12,16 @@ var (
 
 const (
 	CookieKey = "token"
-	MaxAge    = time.Hour * 24 * 7 // 7 days
 	UserIDKey = "UserID"
+	MaxAge    = time.Hour * 24 * 7 // 7 days
 )
 
 func SetupStore() {
 	Store = session.New(session.Config{
-		Expiration:     MaxAge,
 		KeyLookup:      "cookie:token",
-		CookieSameSite: "None",
+		CookieSameSite: "Strict",
 		CookieSecure:   true,
 		CookieHTTPOnly: true,
-		// CookiePath:     "/",
-		// CookieDomain: ".app.localhost",
+		Expiration:     MaxAge,
 	})
 }

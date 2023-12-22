@@ -23,7 +23,7 @@ const (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[loanview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/loan/book [get]
+// @Router /v1/loan/book [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, listBookLoanAction, loanpolicy.ReadBookPolicy())
 	if err != nil {

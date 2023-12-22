@@ -10,7 +10,6 @@ import (
 
 func BookRoutes(r fiber.Router) {
 	r.Post("/", bookhandler.HandleCreate)
-	r.Get("/", bookhandler.HandleList)
 
 	Route(r, "/:book_id", func(r fiber.Router) {
 		r.Get("/", bookhandler.HandleRead)
@@ -21,7 +20,7 @@ func BookRoutes(r fiber.Router) {
 		Route(r, "/reservation", BookReservationRoutes)
 	})
 
-	Route(r, "/autocomplete", func(r fiber.Router) {
+	CachedRoute(r, "/autocomplete", func(r fiber.Router) {
 		r.Get("/:value", bookhandler.HandleAutoComplete)
 	})
 }

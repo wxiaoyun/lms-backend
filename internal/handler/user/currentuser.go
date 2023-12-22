@@ -18,7 +18,7 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[userview.CurrentUserView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/current [get]
+// @Router /v1/current [get]
 func HandleGetCurrentUser(c *fiber.Ctx) error {
 	if !session.HasSession(c) {
 		return c.JSON(api.Response{

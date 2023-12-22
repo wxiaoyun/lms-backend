@@ -30,7 +30,7 @@ const (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[loanview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/loan/{loan_id}/renew [patch]
+// @Router /v1/loan/{loan_id}/renew [patch]
 func HandleRenew(c *fiber.Ctx) error {
 	param2 := c.Params("loan_id")
 	loanID, err := strconv.ParseInt(param2, 10, 64)

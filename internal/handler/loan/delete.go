@@ -29,7 +29,7 @@ const (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[loanview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/loan/{loan_id}/ [delete]
+// @Router /v1/loan/{loan_id}/ [delete]
 func HandleDelete(c *fiber.Ctx) error {
 	err := policy.Authorize(c, deleteLoanAction, loanpolicy.DeletePolicy())
 	if err != nil {

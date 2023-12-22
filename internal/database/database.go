@@ -14,10 +14,10 @@ import (
 
 var DB *gorm.DB
 
-func OpenDataBase(cf *config.Config) error {
+func OpenDataBase(cfg *config.Config) error {
 	var err error
 
-	dsn, err := DSNBuilder(cf)
+	dsn, err := DSNBuilder(cfg)
 	if err != nil {
 		return err
 	}
@@ -34,10 +34,10 @@ func GetDB() *gorm.DB {
 	return DB.Session(&gorm.Session{NewDB: true})
 }
 
-func ConnectToDB(cf *config.Config) (*sql.DB, error) {
+func ConnectToDB(cfg *config.Config) (*sql.DB, error) {
 	var err error
 
-	dsn, err := DSNBuilder(cf)
+	dsn, err := DSNBuilder(cfg)
 	if err != nil {
 		return nil, err
 	}

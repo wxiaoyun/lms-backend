@@ -43,11 +43,11 @@ func SetupAndRunApp() error {
 
 // LoadEnvAndConnectToDB loads the environment variables and connects to the database
 func LoadEnvAndConnectToDB() error {
-	cf, err := config.LoadEnvAndGetConfig()
+	cfg, err := config.LoadEnvAndGetConfig()
 	if err != nil {
 		panic(err)
 	}
-	err = database.OpenDataBase(cf)
+	err = database.OpenDataBase(cfg)
 	if err != nil {
 		return err
 	}

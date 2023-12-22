@@ -14,13 +14,17 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgMsgResponse
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/auth/logout [get]
+// @Router /v1/auth/logout [get]
 func HandleSignOut(c *fiber.Ctx) error {
-	sess, err := session.Store.Get(c)
-	if err != nil {
+	if !session.HasSession(c) {
 		return c.Status(fiber.StatusOK).JSON(api.Response{
 			Messages: []api.Message{api.ErrorMessage("User is not logged in")},
 		})
+	}
+
+	sess, err := session.Store.Get(c)
+	if err != nil {
+		return err
 	}
 
 	err = sess.Destroy()

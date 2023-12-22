@@ -27,7 +27,7 @@ const (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[loanview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/loan/ [post]
+// @Router /v1/loan/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createLoanAction, loanpolicy.CreatePolicy())
 	if err != nil {

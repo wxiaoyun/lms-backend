@@ -18,7 +18,7 @@ func UserRoutes(r fiber.Router) {
 		r.Patch("/role", userhandler.HandleChangeRole)
 	})
 
-	Route(r, "/autocomplete", func(r fiber.Router) {
+	CachedRoute(r, "/autocomplete", func(r fiber.Router) {
 		r.Get("/:value", userhandler.HandleAutoComplete)
 	})
 }
