@@ -10,6 +10,7 @@ import (
 	"lms-backend/internal/view/userview"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
 )
 
 // @Summary sign in a user
@@ -22,14 +23,10 @@ import (
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
-	sess, err := session.Store.Get(c)
-	if err != nil {
-		return err
-	}
-
-	err = sess.Destroy()
-	if err != nil {
-		return err
+	if handler, ok := c.Locals(csrf.ConfigDefault.HandlerContextKey).(*csrf.CSRFHandler); ok {
+		if err := handler.DeleteToken(c); err != nil {
+			return err
+		}
 	}
 
 	var params userparams.SignInParams
@@ -43,7 +40,7 @@ func HandleSignIn(c *fiber.Ctx) error {
 
 	userModel := params.ToModel()
 	db := database.GetDB()
-	userModel, err = user.Login(db, userModel)
+	userModel, err := user.Login(db, userModel)
 	if err != nil {
 		return err
 	}
@@ -53,7 +50,7 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
-	sess, err = session.Store.Get(c)
+	sess, err := session.Store.Get(c)
 	if err != nil {
 		return err
 	}

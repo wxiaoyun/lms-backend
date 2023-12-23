@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"lms-backend/internal/config"
-	"lms-backend/internal/session"
 	"strings"
 	"time"
 
@@ -26,7 +25,7 @@ func SetupCSRF(app *fiber.App, cfg *config.Config) {
 			CookieDomain:      domain(cfg),
 			Expiration:        MaxAge,
 			Extractor:         csrf.CsrfFromHeader(csrf.HeaderName),
-			Session:           session.Store,
+			// Session:           session.Store,
 		}))
 }
 
