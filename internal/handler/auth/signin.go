@@ -22,6 +22,16 @@ import (
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
+	sess, err := session.Store.Get(c)
+	if err != nil {
+		return err
+	}
+
+	err = sess.Destroy()
+	if err != nil {
+		return err
+	}
+
 	var params userparams.SignInParams
 	if err := c.BodyParser(&params); err != nil {
 		return err
@@ -33,7 +43,7 @@ func HandleSignIn(c *fiber.Ctx) error {
 
 	userModel := params.ToModel()
 	db := database.GetDB()
-	userModel, err := user.Login(db, userModel)
+	userModel, err = user.Login(db, userModel)
 	if err != nil {
 		return err
 	}
@@ -43,7 +53,7 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
-	sess, err := session.Store.Get(c)
+	sess, err = session.Store.Get(c)
 	if err != nil {
 		return err
 	}
