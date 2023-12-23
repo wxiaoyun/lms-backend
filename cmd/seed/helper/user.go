@@ -15,10 +15,12 @@ const (
 )
 
 var (
-	Users []model.User = make([]model.User, 10)
+	Users []model.User = []model.User{}
 )
 
-func SeedUsersAndPeople(db *gorm.DB) error {
+func SeedUsersAndPeople(db *gorm.DB, num int64) error {
+	Users = make([]model.User, num)
+
 	var count int64
 
 	result := db.Model(&model.User{}).Count(&count)
@@ -26,7 +28,7 @@ func SeedUsersAndPeople(db *gorm.DB) error {
 		return result.Error
 	}
 
-	if count >= 100 {
+	if count >= num {
 		return nil
 	}
 
@@ -62,7 +64,7 @@ func SeedUsersAndPeople(db *gorm.DB) error {
 		},
 	}
 
-	for i := 4; i <= 10; i++ {
+	for i := 4; i <= int(num); i++ {
 		Users[i-1] = model.User{
 			Username:          fmt.Sprintf("user%d", i),
 			Email:             fmt.Sprintf("user%d@gmail.com", i),

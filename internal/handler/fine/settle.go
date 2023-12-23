@@ -29,7 +29,7 @@ const (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[fineview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/fine/{fine_id}/settle [patch]
+// @Router /v1/fine/{fine_id}/settle [patch]
 func HandleSettle(c *fiber.Ctx) error {
 	param3 := c.Params("fine_id")
 	fineID, err := strconv.ParseInt(param3, 10, 64)
@@ -65,7 +65,7 @@ func HandleSettle(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: fineview.ToView(fn),
+		Data: fineview.ToDetailedView(fn),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Fine id - \"%d\" is settled.", fineID,

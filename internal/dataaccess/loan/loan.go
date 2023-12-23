@@ -16,6 +16,17 @@ func preloadAssociations(db *gorm.DB) *gorm.DB {
 		Preload("Fines")
 }
 
+func preloadBookUserAssociations(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("Book").
+		Preload("User").
+		Preload("User.Person")
+}
+
+func preloadAllAssociations(db *gorm.DB) *gorm.DB {
+	return db.Scopes(preloadAssociations, preloadBookUserAssociations)
+}
+
 func Read(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	var loan model.Loan
 
@@ -37,7 +48,7 @@ func ReadDetailed(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	var loan model.Loan
 
 	result := db.Model(&model.Loan{}).
-		Scopes(preloadAssociations).
+		Scopes(preloadAllAssociations).
 		Where("id = ?", loanID).
 		First(&loan)
 
@@ -61,7 +72,7 @@ func Delete(db *gorm.DB, loanID int64) (*model.Loan, error) {
 		return nil, err
 	}
 
-	return ln, nil
+	return ReadDetailed(db, loanID)
 }
 
 func Count(db *gorm.DB) (int64, error) {
@@ -87,6 +98,35 @@ func List(db *gorm.DB) ([]model.Loan, error) {
 	}
 
 	return lns, nil
+}
+
+func ListWithBookUser(db *gorm.DB) ([]model.Loan, error) {
+	var lns []model.Loan
+
+	result := db.Model(&model.Loan{}).
+		Scopes(preloadBookUserAssociations).
+		Find(&lns)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return lns, nil
+}
+
+// Returns the outstanding loan for the given book, sorted by create date.
+func ReadByBookID(db *gorm.DB, bookID int64) ([]model.Loan, error) {
+	var loans []model.Loan
+
+	result := db.Model(&model.Loan{}).
+		Where("book_id = ?", bookID).
+		Order("created_at DESC").
+		Find(&loans)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return loans, nil
 }
 
 // Returns the outstanding loan for the given book, sorted by create date.
@@ -187,7 +227,7 @@ func LoanBook(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
 		return nil, err
 	}
 
-	return &ln, nil
+	return ReadDetailed(db, int64(ln.ID))
 }
 
 func ReturnBook(db *gorm.DB, loanID int64) (*model.Loan, error) {
@@ -214,7 +254,7 @@ func ReturnBook(db *gorm.DB, loanID int64) (*model.Loan, error) {
 		return nil, err
 	}
 
-	return ln, nil
+	return ReadDetailed(db, loanID)
 }
 
 func RenewLoan(db *gorm.DB, loanID int64) (*model.Loan, error) {
@@ -237,5 +277,5 @@ func RenewLoan(db *gorm.DB, loanID int64) (*model.Loan, error) {
 		return nil, err
 	}
 
-	return ln, nil
+	return ReadDetailed(db, loanID)
 }

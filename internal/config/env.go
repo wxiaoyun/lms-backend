@@ -14,11 +14,6 @@ func LoadENV() error {
 		if err != nil {
 			return err
 		}
-	} else if goEnv == "production" {
-		err := godotenv.Load(".env.production")
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

@@ -28,9 +28,9 @@ const (
 // @Accept */*
 // @Param loan_id path int true "loan ID to renew"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[loanview.View]
+// @Success 200 {object} api.SwgResponse[loanview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/loan/{loan_id}/renew [patch]
+// @Router /v1/loan/{loan_id}/renew [patch]
 func HandleRenew(c *fiber.Ctx) error {
 	param2 := c.Params("loan_id")
 	loanID, err := strconv.ParseInt(param2, 10, 64)
@@ -66,7 +66,7 @@ func HandleRenew(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: loanview.ToView(ln),
+		Data: loanview.ToDetailedView(ln),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Loan id \"%d\" has been extended to %s.", loanID,

@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func SeedBooks(db *gorm.DB) error {
+func SeedBooks(db *gorm.DB, num int64) error {
 	var count int64
 
 	result := db.Model(&model.Book{}).Count(&count)
@@ -16,12 +16,12 @@ func SeedBooks(db *gorm.DB) error {
 		return result.Error
 	}
 
-	if count >= 1000 {
+	if count >= num {
 		return nil
 	}
 
-	books := make([]model.Book, 3000)
-	for i := 1; i <= 3000; i++ {
+	books := make([]model.Book, num)
+	for i := 1; i <= int(num); i++ {
 		books[i-1] = model.Book{
 			Title:           random.RandWords(random.RandInt(4, 11)),
 			Author:          random.RandWords(random.RandInt(2, 5)),

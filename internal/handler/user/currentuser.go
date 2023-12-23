@@ -16,29 +16,60 @@ import (
 // @Tags user
 // @Accept */*
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[userview.View]
+// @Success 200 {object} api.SwgResponse[userview.CurrentUserView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/user/currentuser [get]
+// @Router /v1/current [get]
 func HandleGetCurrentUser(c *fiber.Ctx) error {
-	userID, err := session.GetLoginSession(c)
+	sess, err := session.Store.Get(c)
 	if err != nil {
 		return err
 	}
+
+	token := sess.Get(session.CookieKey)
+	if token == nil {
+		return c.JSON(api.Response{
+			Data: userview.ToCurrentUserView(nil),
+			Messages: api.Messages(
+				api.SuccessMessage("Welcome guest!"),
+			),
+		})
+	}
+
+	userID, ok := token.(uint)
+	if !ok {
+		return c.JSON(api.Response{
+			Data: userview.ToCurrentUserView(nil),
+			Messages: api.Messages(
+				api.SuccessMessage("Welcome guest!"),
+			),
+		})
+	}
+
+	if userID == 0 {
+		return c.JSON(api.Response{
+			Data: userview.ToCurrentUserView(nil),
+			Messages: api.Messages(
+				api.SuccessMessage("Welcome guest!"),
+			),
+		})
+	}
+
+	id := int64(userID)
 
 	db := database.GetDB()
 
-	usr, err := user.Read(db, userID)
+	usr, err := user.Read(db, id)
 	if err != nil {
 		return err
 	}
 
-	abilites, err := user.GetAbilities(db, userID)
+	abilites, err := user.GetAbilities(db, id)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(api.Response{
-		Data: userview.ToView(usr, abilites...),
+		Data: userview.ToCurrentUserView(usr, abilites...),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf("Welcome back, %s!", usr.Username)),
 		),

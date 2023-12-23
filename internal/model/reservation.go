@@ -14,7 +14,9 @@ type Reservation struct {
 	gorm.Model
 
 	UserID          uint              `gorm:"not null"`
+	User            *User             `gorm:"->"`
 	BookID          uint              `gorm:"not null"`
+	Book            *Book             `gorm:"->"`
 	Status          ReservationStatus `gorm:"not null"`
 	ReservationDate time.Time         `gorm:"not null"` // Date before which the book is reserved
 }

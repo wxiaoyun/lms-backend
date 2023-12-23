@@ -252,3 +252,24 @@ func HasExceededMaxReservation(db *gorm.DB, userID int64) (bool, error) {
 
 	return len(reservations) > model.MaximumReservations, nil
 }
+
+func AutoComplete(db *gorm.DB, value string) ([]model.User, error) {
+	if len(value) == 0 {
+		return []model.User{}, nil
+	}
+
+	var users []model.User
+
+	result := db.Model(&model.User{}).
+		Joins(JoinPerson).
+		Where("username ILIKE ?", "%%"+value+"%%").
+		Or("people.full_name ILIKE ?", "%%"+value+"%%").
+		Or("people.preferred_name ILIKE ?", "%%"+value+"%%").
+		Limit(5).
+		Find(&users)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return users, nil
+}

@@ -48,7 +48,8 @@ type FilterMap map[string]Filter
 //		"JOIN users ON users.id = posts.user_id",
 //
 //	}
-func (q *Query) Filter(db *gorm.DB, filters FilterMap) *gorm.DB {
+func (q *Query) Filter(db *gorm.DB, filters FilterMap, joinQueries ...string) *gorm.DB {
+	db = db.Scopes(orm.JoinAllIfNotJoined(joinQueries))
 	// Key should be the column name and value should be the value to filter by
 	for key, value := range q.Queries {
 		// Test if the key is a filter key (filter[...])

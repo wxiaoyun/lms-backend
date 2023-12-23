@@ -265,7 +265,7 @@ func (u *User) UpdateRoles(db *gorm.DB, roleIDs []int64) error {
 	// Remove all existing roles
 	result := db.
 		Where("user_id = ?", u.ID).
-		Delete(&UserRoles{})
+		Delete(&UserRole{})
 	if result.Error != nil {
 		return result.Error
 	}

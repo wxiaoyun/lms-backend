@@ -6,7 +6,9 @@ import (
 
 func Filters() collection.FilterMap {
 	return map[string]collection.Filter{
-		"action": collection.StringLikeFilter("action"),
+		"username": collection.StringLikeFilter("users.username", JoinUser),
+		"action":   collection.StringLikeFilter("action"),
+		"value":    collection.MultipleColumnStringLikeFilter([]string{"action", "users.username"}, JoinUser),
 	}
 }
 

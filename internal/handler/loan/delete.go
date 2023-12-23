@@ -27,9 +27,9 @@ const (
 // @Accept */*
 // @Param loan_id path int true "loan ID to delete"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[loanview.View]
+// @Success 200 {object} api.SwgResponse[loanview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/loan/{loan_id}/ [delete]
+// @Router /v1/loan/{loan_id}/ [delete]
 func HandleDelete(c *fiber.Ctx) error {
 	err := policy.Authorize(c, deleteLoanAction, loanpolicy.DeletePolicy())
 	if err != nil {
@@ -65,7 +65,7 @@ func HandleDelete(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: loanview.ToView(ln),
+		Data: loanview.ToDetailedView(ln),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Loan id - \"%d\" has been deleted", loanID,

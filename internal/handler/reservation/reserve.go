@@ -28,9 +28,9 @@ const (
 // @Accept */*
 // @Param book_id path int true "Book ID for reservation"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[reservationview.View]
+// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id}/reservation/ [post]
+// @Router /v1/book/{book_id}/reservation/ [post]
 func HandleReserve(c *fiber.Ctx) error {
 	err := policy.Authorize(c, reserveBookAction, reservationpolicy.ReservePolicy())
 	if err != nil {
@@ -71,7 +71,7 @@ func HandleReserve(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: reservationview.ToView(res),
+		Data: reservationview.ToDetailedView(res),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" has been reserved until %s.", bookTitle,

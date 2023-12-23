@@ -6,10 +6,16 @@ import (
 	audit "lms-backend/internal/auditlog"
 	audlog "lms-backend/internal/dataaccess/auditlog"
 	"lms-backend/internal/params/auditlogparams"
+	"lms-backend/internal/policy"
+	"lms-backend/internal/policy/auditlogpolicy"
 	"lms-backend/internal/session"
 	"lms-backend/internal/view/auditlogview"
 
 	"github.com/gofiber/fiber/v2"
+)
+
+const (
+	createAuditLogAction = "create audit log entry"
 )
 
 // @Summary list audit logs
@@ -20,8 +26,13 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgMsgResponse[auditlogview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/audit_log/ [post]
+// @Router /v1/audit_log/ [post]
 func HandleCreate(c *fiber.Ctx) error {
+	err := policy.Authorize(c, createAuditLogAction, auditlogpolicy.CreatePolicy())
+	if err != nil {
+		return err
+	}
+
 	var params auditlogparams.BaseParams
 	if err := c.BodyParser(&params); err != nil {
 		return err
@@ -37,7 +48,7 @@ func HandleCreate(c *fiber.Ctx) error {
 	}
 
 	log := params.ToModel(userID)
-	tx, rollBackOrCommit := audit.Begin(c, log.Action)
+	tx, rollBackOrCommit := audit.Begin(c, fmt.Sprintf("User id - /'%d/' creating an entry in audit log", userID))
 	defer func() { rollBackOrCommit(err) }()
 
 	log, err = audlog.Create(tx, log)
@@ -46,7 +57,7 @@ func HandleCreate(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(api.Response{
-		Data: auditlogview.ToView(log),
+		Data: auditlogview.ToDetailedView(log),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"Entry in audit log created successfully: %s", log.Action,

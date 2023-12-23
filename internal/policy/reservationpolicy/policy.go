@@ -22,7 +22,7 @@ func ReadBookPolicy() policy.Policy {
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
 		),
-		AllowIfLoanSelf(),
+		AllowIfSelf(),
 	)
 }
 
@@ -37,6 +37,14 @@ func DeletePolicy() policy.Policy {
 }
 
 func ReservePolicy() policy.Policy {
+	return commonpolicy.Any(
+		commonpolicy.HasAnyAbility(
+			abilities.CanCreateReservation.Name,
+		),
+	)
+}
+
+func CreatePolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,

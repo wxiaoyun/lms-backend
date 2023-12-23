@@ -7,7 +7,6 @@ import (
 )
 
 func UserRoutes(r fiber.Router) {
-	r.Get("/current", userhandler.HandleGetCurrentUser)
 	r.Get("/", userhandler.HandleList)
 	r.Post("/", userhandler.HandleCreate)
 
@@ -17,5 +16,9 @@ func UserRoutes(r fiber.Router) {
 		r.Delete("/", userhandler.HandleDelete)
 
 		r.Patch("/role", userhandler.HandleChangeRole)
+	})
+
+	CachedRoute(r, "/autocomplete", func(r fiber.Router) {
+		r.Get("/:value", userhandler.HandleAutoComplete)
 	})
 }

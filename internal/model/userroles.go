@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type UserRoles struct {
+type UserRole struct {
 	ID        uint `gorm:"primarykey"`
 	CreatedAt time.Time
 

@@ -56,10 +56,30 @@ func (p *Person) ValidateName() error {
 	return nil
 }
 
+func (p *Person) ValidateLang() error {
+	if p.LanguagePreference == "" {
+		return externalerrors.BadRequest("language_preference is required")
+	}
+
+	if len(p.LanguagePreference) != 2 {
+		return externalerrors.BadRequest("language_preference must be 2 characters long")
+	}
+
+	return nil
+}
+
+func (p *Person) Validate() error {
+	if err := p.ValidateName(); err != nil {
+		return err
+	}
+
+	return p.ValidateLang()
+}
+
 func (p *Person) BeforeCreate(_ *gorm.DB) error {
-	return p.ValidateName()
+	return p.Validate()
 }
 
 func (p *Person) BeforeUpdate(_ *gorm.DB) error {
-	return p.ValidateName()
+	return p.Validate()
 }

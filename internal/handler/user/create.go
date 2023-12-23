@@ -20,7 +20,7 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[userview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/user/ [post]
+// @Router /v1/user/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	var params userparams.CreateParams
 	err := c.BodyParser(&params)

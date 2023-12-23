@@ -29,7 +29,7 @@ const (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[userview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/user/{user_id}/role [patch]
+// @Router /v1/user/{user_id}/role [patch]
 func HandleChangeRole(c *fiber.Ctx) error {
 	param := c.Params("user_id")
 	userID, err := strconv.ParseInt(param, 10, 64)

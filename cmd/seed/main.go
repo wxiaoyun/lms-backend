@@ -8,6 +8,11 @@ import (
 	"log"
 )
 
+const (
+	NumberOfUsers = 10
+	NumberOfBooks = 3000
+)
+
 func main() {
 	var err error
 	lgr := logger.StdoutLogger()
@@ -45,19 +50,25 @@ func main() {
 	}
 
 	lgr.Println("Seeding users and people...")
-	err = shelper.SeedUsersAndPeople(tx)
+	err = shelper.SeedUsersAndPeople(tx, NumberOfUsers)
 	if err != nil {
 		panic(err)
 	}
 
 	lgr.Println("Seeding books...")
-	err = shelper.SeedBooks(tx)
+	err = shelper.SeedBooks(tx, NumberOfBooks)
 	if err != nil {
 		panic(err)
 	}
 
 	lgr.Println("Linking user with roles...")
 	err = shelper.LinkUserWithRoles(tx)
+	if err != nil {
+		panic(err)
+	}
+
+	lgr.Println("Seeding loans and reservations...")
+	err = shelper.SeedLoanAndReservations(tx, NumberOfUsers, NumberOfBooks)
 	if err != nil {
 		panic(err)
 	}

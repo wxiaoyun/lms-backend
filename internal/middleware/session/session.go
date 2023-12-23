@@ -3,27 +3,11 @@ package sessionmiddleware
 import (
 	"lms-backend/internal/api"
 	"lms-backend/internal/session"
-	"lms-backend/util/sliceutil"
-	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func SessionMiddleware(c *fiber.Ctx) error {
-	paths := strings.Split(c.Path(), "/")
-	if sliceutil.Contains(paths, "swagger") {
-		return c.Next()
-	}
-	if sliceutil.Contains(paths, "signin") {
-		return c.Next()
-	}
-	if sliceutil.Contains(paths, "signup") {
-		return c.Next()
-	}
-	if sliceutil.Contains(paths, "health") {
-		return c.Next()
-	}
-
 	sess, err := session.Store.Get(c)
 	if err != nil {
 		return err
@@ -42,6 +26,13 @@ func SessionMiddleware(c *fiber.Ctx) error {
 		}
 		return fiber.NewError(fiber.StatusUnauthorized, "User is not logged in")
 	}
+
+	err = sess.Save()
+	if err != nil {
+		return err
+	}
+
+	c.Locals(session.UserIDKey, token)
 
 	return c.Next()
 }

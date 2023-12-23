@@ -8,7 +8,6 @@ import (
 	"lms-backend/internal/config"
 	"lms-backend/internal/cron"
 	"lms-backend/internal/database"
-	"lms-backend/internal/middleware"
 	"lms-backend/internal/router"
 
 	"github.com/gofiber/fiber/v2"
@@ -32,14 +31,8 @@ func SetupAndRunApp() error {
 		ErrorHandler: api.ErrorHandler,
 	})
 
-	// attach app middleware
-	middleware.SetupAppMiddleware(app, cfg)
-
 	// setup routes
-	router.SetUpRoutes(app)
-
-	// attach swagger
-	AddSwaggerRoutes(app)
+	router.SetUpRoutes(app, cfg)
 
 	c := cron.RunJobs()
 	defer c.Stop()
@@ -50,11 +43,11 @@ func SetupAndRunApp() error {
 
 // LoadEnvAndConnectToDB loads the environment variables and connects to the database
 func LoadEnvAndConnectToDB() error {
-	cf, err := config.LoadEnvAndGetConfig()
+	cfg, err := config.LoadEnvAndGetConfig()
 	if err != nil {
 		panic(err)
 	}
-	err = database.OpenDataBase(cf)
+	err = database.OpenDataBase(cfg)
 	if err != nil {
 		return err
 	}

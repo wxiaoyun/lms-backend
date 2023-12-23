@@ -272,33 +272,22 @@ func CheckOutReservation(db *gorm.DB, userID, resID int64) (*model.Reservation, 
 	return res, nil
 }
 
-func ListWithLoan(db *gorm.DB) ([]model.Book, error) {
-	books, err := List(db)
-	if err != nil {
-		return nil, err
+func AutoComplete(db *gorm.DB, value string) ([]model.Book, error) {
+	if len(value) == 0 {
+		return []model.Book{}, nil
 	}
 
-	for i := range books {
-		books[i].Loans, err = loan.ReadOutstandingLoansByBookID(orm.NewSession(db), int64(books[i].ID))
-		if err != nil {
-			return nil, err
-		}
-	}
+	var books []model.Book
 
-	return books, nil
-}
-
-func ListWithReservation(db *gorm.DB) ([]model.Book, error) {
-	books, err := List(db)
-	if err != nil {
-		return nil, err
-	}
-
-	for i := range books {
-		books[i].Reservations, err = reservation.ReadOutstandingReservationsByBookID(orm.NewSession(db), int64(books[i].ID))
-		if err != nil {
-			return nil, err
-		}
+	result := db.Model(&model.Book{}).
+		Where("title ILIKE ?", "%%"+value+"%%").
+		Or("author ILIKE ?", "%%"+value+"%%").
+		Or("publisher ILIKE ?", "%%"+value+"%%").
+		Or("isbn ILIKE ?", "%%"+value+"%%").
+		Limit(5).
+		Find(&books)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 
 	return books, nil

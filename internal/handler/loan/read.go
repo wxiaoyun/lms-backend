@@ -24,9 +24,9 @@ const (
 // @Accept */*
 // @Param loan_id path int true "loan ID to read"
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[loanview.View]
+// @Success 200 {object} api.SwgResponse[loanview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1//loan/{loan_id}/ [get]
+// @Router /v1//loan/{loan_id}/ [get]
 func HandleRead(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readLoanAction, loanpolicy.ReadPolicy())
 	if err != nil {
@@ -52,7 +52,7 @@ func HandleRead(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(api.Response{
-		Data: loanview.ToView(loanModel),
+		Data: loanview.ToDetailedView(loanModel),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"Loan %d retrieved", loanID,

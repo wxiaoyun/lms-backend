@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	readBookAction = "create book"
+	readBookAction = "read book"
 )
 
 // @Summary Read book
@@ -26,7 +26,7 @@ const (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[bookview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/book/{book_id} [get]
+// @Router /v1/book/{book_id} [get]
 func HandleRead(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readBookAction, bookpolicy.ReadPolicy())
 	if err != nil {

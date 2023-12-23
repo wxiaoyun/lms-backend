@@ -12,21 +12,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary List reservations
-// @Description List reservations in the library depending on the collection query
-// @Tags reservation
-// @Accept application/json
-// @Param offset query int false "Offset for pagination"
-// @Param limit query int false "Limit for pagination"
-// @Param filter[user_id] query int false "Filter by user ID"
-// @Param sortBy query string false "Sort by column name"
-// @Param orderBy query string false "Order by direction (asc or desc)"
+const (
+	listBookReservationAction = "list book on reservation"
+)
+
+// @Summary List books on reservation
+// @Description Lists books on reservation
+// @Tags loan
+// @Accept */*
 // @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]reservationview.View]
+// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/reservation [get]
+// @Router /v1/reservation/book [get]
 func HandleList(c *fiber.Ctx) error {
-	err := policy.Authorize(c, readReservationAction, reservationpolicy.ReadPolicy())
+	err := policy.Authorize(c, listBookReservationAction, reservationpolicy.ReadBookPolicy())
 	if err != nil {
 		return err
 	}
@@ -39,7 +38,7 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	dbFiltered := cq.Filter(db, reservation.Filters())
+	dbFiltered := cq.Filter(db, reservation.Filters(), reservation.JoinBook)
 
 	filteredCount, err := reservation.Count(dbFiltered)
 	if err != nil {
@@ -49,15 +48,15 @@ func HandleList(c *fiber.Ctx) error {
 	dbSorted := cq.Sort(dbFiltered, reservation.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
 
-	rvs, err := reservation.List(dbPaginated)
+	res, err := reservation.ListWithBookUser(dbPaginated)
 	if err != nil {
 		return err
 	}
 
-	var view = []*reservationview.View{}
-	for _, r := range rvs {
+	var view = []reservationview.DetailedView{}
+	for _, r := range res {
 		//nolint:gosec // loop does not modify struct
-		view = append(view, reservationview.ToView(&r))
+		view = append(view, *reservationview.ToDetailedView(&r))
 	}
 
 	return c.JSON(api.Response{
@@ -67,7 +66,7 @@ func HandleList(c *fiber.Ctx) error {
 			FilteredCount: filteredCount,
 		},
 		Messages: api.Messages(
-			api.SilentMessage("reservations listed successfully"),
+			api.SilentMessage("books listed successfully"),
 		),
 	})
 }

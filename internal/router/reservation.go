@@ -8,7 +8,7 @@ import (
 
 func ReservationRoutes(r fiber.Router) {
 	r.Get("/", reservationhandler.HandleList)
-	r.Get("/book", reservationhandler.HandleListBook)
+	r.Post("/", reservationhandler.HandleCreate)
 
 	Route(r, "/:reservation_id", func(r fiber.Router) {
 		r.Get("/", reservationhandler.HandleRead)

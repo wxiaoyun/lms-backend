@@ -27,7 +27,7 @@ const (
 // Sets the default value if none is provided
 func GetCollectionQueryFromParam(c *fiber.Ctx) *Query {
 	offset := c.QueryInt(offsetKey, 0)
-	limit := c.QueryInt(limitKey, 25)
+	limit := c.QueryInt(limitKey, 10)
 
 	orderBy := c.Query(orderByKey, DESC)
 	if orderBy != ASC && orderBy != DESC {

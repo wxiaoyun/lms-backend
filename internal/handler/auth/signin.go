@@ -20,8 +20,14 @@ import (
 // @Produce application/json
 // @Success 200 {object} api.SwgResponse[userview.View]
 // @Failure 400 {object} api.SwgErrResponse
-// @Router /api/v1/auth/login [post]
+// @Router /v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
+	// if handler, ok := c.Locals(csrf.ConfigDefault.HandlerContextKey).(*csrf.CSRFHandler); ok {
+	// 	if err := handler.DeleteToken(c); err != nil {
+	// 		return err
+	// 	}
+	// }
+
 	var params userparams.SignInParams
 	if err := c.BodyParser(&params); err != nil {
 		return err
@@ -44,6 +50,11 @@ func HandleSignIn(c *fiber.Ctx) error {
 	}
 
 	sess, err := session.Store.Get(c)
+	if err != nil {
+		return err
+	}
+
+	err = sess.Regenerate()
 	if err != nil {
 		return err
 	}

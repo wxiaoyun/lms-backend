@@ -19,7 +19,7 @@ func (q *Query) Sort(db *gorm.DB, sorters SortMap, joinQueries ...string) *gorm.
 		return db
 	}
 
-	db = db.Scopes(orm.JoinAll(joinQueries))
+	db = db.Scopes(orm.JoinAllIfNotJoined(joinQueries))
 
 	sorter, ok := sorters[q.sortBy]
 	if !ok {
@@ -29,10 +29,11 @@ func (q *Query) Sort(db *gorm.DB, sorters SortMap, joinQueries ...string) *gorm.
 	return db.Scopes(sorter(q.orderBy))
 }
 
-func SortBy(columnName string) Sorter {
+func SortBy(columnName string, joinQueries ...string) Sorter {
 	return func(order string) func(db *gorm.DB) *gorm.DB {
 		return func(db *gorm.DB) *gorm.DB {
-			return db.Order(fmt.Sprintf("%s %s", columnName, order))
+			return db.Scopes(orm.JoinAllIfNotJoined(joinQueries)).
+				Order(fmt.Sprintf("%s %s", columnName, order))
 		}
 	}
 }
