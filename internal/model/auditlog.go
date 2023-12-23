@@ -12,8 +12,14 @@ type AuditLog struct {
 	CreatedAt time.Time
 
 	UserID uint   `gorm:"not null"`
+	User   *User  `gorm:"->"`
 	Action string `gorm:"not null"`
 }
+
+const (
+	AuditLogModelName = "audit_log"
+	AuditLogTableName = "audit_logs"
+)
 
 func (a *AuditLog) Create(db *gorm.DB) error {
 	return db.Create(a).Error
