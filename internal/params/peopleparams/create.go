@@ -25,5 +25,9 @@ func (b *CreateParams) Validate() error {
 		return fiber.NewError(fiber.StatusBadRequest, "full_name is required")
 	}
 
+	if len(b.LanguagePreference) != 2 {
+		return fiber.NewError(fiber.StatusBadRequest, "language_preference must be 2 characters long")
+	}
+
 	return nil
 }
