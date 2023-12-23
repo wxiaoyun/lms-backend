@@ -40,7 +40,7 @@ func SeedUsersAndPeople(db *gorm.DB, num int64) error {
 		Person: &model.Person{
 			FullName:           "Admin",
 			PreferredName:      "Admin",
-			LanguagePreference: "English",
+			LanguagePreference: "en",
 		},
 	}
 	Users[1] = model.User{
@@ -50,7 +50,7 @@ func SeedUsersAndPeople(db *gorm.DB, num int64) error {
 		Person: &model.Person{
 			FullName:           "Library Admin",
 			PreferredName:      "Library Admin",
-			LanguagePreference: "English",
+			LanguagePreference: "en",
 		},
 	}
 	Users[2] = model.User{
@@ -60,7 +60,7 @@ func SeedUsersAndPeople(db *gorm.DB, num int64) error {
 		Person: &model.Person{
 			FullName:           "Staff",
 			PreferredName:      "Staff",
-			LanguagePreference: "English",
+			LanguagePreference: "en",
 		},
 	}
 
@@ -72,7 +72,7 @@ func SeedUsersAndPeople(db *gorm.DB, num int64) error {
 			Person: &model.Person{
 				FullName:           random.RandWords(random.RandInt(2, 10)),
 				PreferredName:      random.RandWords(random.RandInt(2, 10)),
-				LanguagePreference: random.RandWords(random.RandInt(1, 3)),
+				LanguagePreference: "km",
 			},
 		}
 	}
