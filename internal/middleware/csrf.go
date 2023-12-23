@@ -31,7 +31,7 @@ func SetupCSRF(app *fiber.App, cfg *config.Config) {
 }
 
 func domain(cfg *config.Config) string {
-	if strings.HasPrefix(cfg.FrontendURL, "wxiaoyun.com") {
+	if strings.HasSuffix(cfg.FrontendURL, "wxiaoyun.com") {
 		return ".wxiaoyun.com"
 	}
 
