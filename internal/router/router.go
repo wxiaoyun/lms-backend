@@ -13,7 +13,7 @@ import (
 
 func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 	middleware.SetupCors(app, cfg)
-	// middleware.SetupCSRF(app)
+	middleware.SetupCSRF(app, cfg)
 	middleware.SetupRecover(app)
 	middleware.SetupLogger(app)
 	session.SetupStore()

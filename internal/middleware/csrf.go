@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"lms-backend/internal/config"
 	"lms-backend/internal/session"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,17 +14,26 @@ const (
 	MaxAge = time.Hour * 1 // 1 hour
 )
 
-func SetupCSRF(app *fiber.App) {
+func SetupCSRF(app *fiber.App, cfg *config.Config) {
 	app.Use(csrf.New(
 		csrf.Config{
 			KeyLookup:         "header:" + csrf.HeaderName,
-			CookieName:        "__Host-csrf_",
+			CookieName:        "__Secure-csrf_",
 			CookieSameSite:    "None",
 			CookieSecure:      true,
 			CookieSessionOnly: true,
 			CookieHTTPOnly:    false,
+			CookieDomain:      domain(cfg),
 			Expiration:        MaxAge,
 			Extractor:         csrf.CsrfFromHeader(csrf.HeaderName),
 			Session:           session.Store,
 		}))
+}
+
+func domain(cfg *config.Config) string {
+	if strings.HasPrefix(cfg.FrontendURL, "wxiaoyun.com") {
+		return ".wxiaoyun.com"
+	}
+
+	return ""
 }
