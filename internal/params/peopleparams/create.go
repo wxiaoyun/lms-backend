@@ -7,15 +7,16 @@ import (
 )
 
 type CreateParams struct {
-	FullName      string `json:"full_name"`
-	PreferredName string `json:"preferred_name"`
+	FullName           string `json:"full_name"`
+	PreferredName      string `json:"preferred_name"`
+	LanguagePreference string `json:"language_preference"`
 }
 
 func (b *CreateParams) ToModel() *model.Person {
 	return &model.Person{
 		FullName:           b.FullName,
 		PreferredName:      b.PreferredName,
-		LanguagePreference: "EN",
+		LanguagePreference: b.LanguagePreference,
 	}
 }
 
