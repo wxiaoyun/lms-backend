@@ -27,6 +27,11 @@ func SessionMiddleware(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusUnauthorized, "User is not logged in")
 	}
 
+	err = sess.Save()
+	if err != nil {
+		return err
+	}
+
 	c.Locals(session.UserIDKey, token)
 
 	return c.Next()

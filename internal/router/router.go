@@ -13,7 +13,6 @@ import (
 
 func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 	middleware.SetupCors(app, cfg)
-	middleware.SetupCSRF(app, cfg)
 	middleware.SetupRecover(app)
 	middleware.SetupLogger(app)
 	session.SetupStore()
@@ -23,8 +22,7 @@ func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 	publicRoutes := v1Routes.Group("/")
 	Route(publicRoutes, "/", PublicRoutes)
 
-	privateRoutes := v1Routes.Group("/")
-	privateRoutes.Use(sessionmiddleware.SessionMiddleware)
+	privateRoutes := v1Routes.Group("/", sessionmiddleware.SessionMiddleware)
 	Route(privateRoutes, "/", PrivateRoutes)
 }
 
