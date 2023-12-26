@@ -25,6 +25,15 @@ The LMS backend is built using a range of powerful technologies:
   - [**Postgres**](https://www.postgresql.org/): A versatile and reliable relational database system.
   - [**Redis**](https://redis.io/): A fast key-value store, excellent for caching and session storage.
 
+## Accessing a Deployed Version
+
+For those interested in exploring a deployed version of this setup, it is available for viewing and interaction:
+
+- **Deployed on Railway**:
+  - Visit the deployed version on Railway at [this link](https://railway.app/project/d296ea6f-2941-4176-8b32-ef7e210cf56a).
+
+This deployed instance provides a convenient way to see the PostgreSQL and Redis services in action without the need for local installation.
+
 ## Setup Instructions
 
 ### 1. Install Go
