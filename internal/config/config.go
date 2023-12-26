@@ -28,10 +28,15 @@ type Config struct {
 //
 // Must be ran after loading env
 func GetConfig() (*Config, error) {
+	var redisPort int
 	rp := os.Getenv("REDIS_PORT")
-	redisPort, err := strconv.Atoi(rp)
-	if err != nil {
-		return nil, internalerror.InternalServerError("Bad Redis Port: " + rp)
+
+	if rp != "" {
+		port, err := strconv.Atoi(rp)
+		if err != nil {
+			return nil, internalerror.InternalServerError("Bad Redis Port: " + rp)
+		}
+		redisPort = port
 	}
 
 	return &Config{
