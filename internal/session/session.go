@@ -1,6 +1,7 @@
 package session
 
 import (
+	"lms-backend/internal/database"
 	"time"
 
 	"github.com/gofiber/fiber/v2/middleware/session"
@@ -23,5 +24,6 @@ func SetupStore() {
 		CookieSecure:   true,
 		CookieHTTPOnly: true,
 		Expiration:     MaxAge,
+		Storage:        database.GetRedisStore(),
 	})
 }

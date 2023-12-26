@@ -32,5 +32,8 @@ setupDB: createDB migrateDB seedDB
 
 resetDB: dropDB setupDB
 
+runRedis:
+	docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+
 count:
 	git ls-files '*.go' | grep -v '^docs/' | xargs wc -l
