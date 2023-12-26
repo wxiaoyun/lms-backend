@@ -8,6 +8,7 @@ import (
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/bookpolicy"
 	"lms-backend/internal/view/bookview"
+	"lms-backend/util"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,6 +22,7 @@ import (
 // @Failure 400 {object} api.SwgErrResponse
 // @Router /v1/book/autocomplete [get]
 func HandleAutoComplete(c *fiber.Ctx) error {
+	util.Debug("Cache Miss")
 	err := policy.Authorize(c, readBookAction, bookpolicy.ListPolicy())
 	if err != nil {
 		return err

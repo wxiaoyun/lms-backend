@@ -6,29 +6,12 @@ import (
 	"lms-backend/internal/config"
 	"log"
 
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	_ "github.com/lib/pq" // postgres driver
 )
 
 var DB *gorm.DB
-
-func OpenDataBase(cfg *config.Config) error {
-	var err error
-
-	dsn, err := DSNBuilder(cfg)
-	if err != nil {
-		return err
-	}
-
-	DB, err = gorm.Open(postgres.Open(dsn), GetConfig())
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func GetDB() *gorm.DB {
 	return DB.Session(&gorm.Session{NewDB: true})
@@ -37,7 +20,7 @@ func GetDB() *gorm.DB {
 func ConnectToDB(cfg *config.Config) (*sql.DB, error) {
 	var err error
 
-	dsn, err := DSNBuilder(cfg)
+	dsn, err := PGDSNBuilder(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -53,9 +36,9 @@ func ConnectToDB(cfg *config.Config) (*sql.DB, error) {
 func ConnectToDefaultDB(cf *config.Config) (*sql.DB, error) {
 	var err error
 
-	cf.DBName = "" // connect to default database
+	cf.PGDatabase = "" // connect to default database
 
-	dsn, err := DSNBuilder(cf)
+	dsn, err := PGDSNBuilder(cf)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +52,7 @@ func ConnectToDefaultDB(cf *config.Config) (*sql.DB, error) {
 }
 
 func CreateDB(cf *config.Config) error {
-	dbName := cf.DBName // Note that CREATE DATABASE cannot be executed within a transaction block.
+	dbName := cf.PGDatabase // Note that CREATE DATABASE cannot be executed within a transaction block.
 
 	pgdb, err := ConnectToDefaultDB(cf)
 	if err != nil {
@@ -87,7 +70,7 @@ func CreateDB(cf *config.Config) error {
 }
 
 func DropDB(cf *config.Config) error {
-	dbName := cf.DBName
+	dbName := cf.PGDatabase
 
 	pgdb, err := ConnectToDefaultDB(cf)
 	if err != nil {

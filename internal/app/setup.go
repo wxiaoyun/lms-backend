@@ -20,7 +20,8 @@ func SetupAndRunApp() error {
 		return err
 	}
 
-	err = database.OpenDataBase(cfg)
+	database.SetupRedis(cfg)
+	err = database.SetupPostgres(cfg)
 	if err != nil {
 		return err
 	}
@@ -42,12 +43,13 @@ func SetupAndRunApp() error {
 }
 
 // LoadEnvAndConnectToDB loads the environment variables and connects to the database
+// Used for running sql migrations and seeding data
 func LoadEnvAndConnectToDB() error {
 	cfg, err := config.LoadEnvAndGetConfig()
 	if err != nil {
-		panic(err)
+		return err
 	}
-	err = database.OpenDataBase(cfg)
+	err = database.SetupPostgres(cfg)
 	if err != nil {
 		return err
 	}

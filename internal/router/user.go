@@ -2,12 +2,13 @@ package router
 
 import (
 	userhandler "lms-backend/internal/handler/user"
+	"lms-backend/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func UserRoutes(r fiber.Router) {
-	r.Get("/", userhandler.HandleList)
+	r.Get("/", middleware.CacheMiddleware(middleware.ShortExp), userhandler.HandleList)
 	r.Post("/", userhandler.HandleCreate)
 
 	Route(r, "/:user_id", func(r fiber.Router) {
@@ -18,7 +19,7 @@ func UserRoutes(r fiber.Router) {
 		r.Patch("/role", userhandler.HandleChangeRole)
 	})
 
-	CachedRoute(r, "/autocomplete", func(r fiber.Router) {
-		r.Get("/:value", userhandler.HandleAutoComplete)
+	Route(r, "/autocomplete", func(r fiber.Router) {
+		r.Get("/:value", middleware.CacheMiddleware(middleware.ShortExp), userhandler.HandleAutoComplete)
 	})
 }

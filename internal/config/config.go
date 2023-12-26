@@ -1,17 +1,25 @@
 package config
 
 import (
+	"lms-backend/pkg/error/internalerror"
 	"os"
+	"strconv"
 )
 
 type Config struct {
-	AppName     string
-	DBUsername  string
-	DBPassword  string
-	DBHost      string
-	DBPort      string
-	DBName      string
-	SSLMode     string
+	AppName       string
+	PGHost        string
+	PGPort        string
+	PGUsername    string
+	PGPassword    string
+	PGDatabase    string
+	SSLMode       string
+	REDISHost     string
+	REDISPort     int
+	REDISUser     string
+	REDISPassword string
+	// URL standard format Redis URL. If this is set all other config options, Host, Port, Username, Password, Database have no effect.
+	REDISURL    string
 	Port        string
 	FrontendURL string
 }
@@ -19,25 +27,36 @@ type Config struct {
 // Returns a Config struct with the values from the environment variables
 //
 // Must be ran after loading env
-func GetConfig() *Config {
-	return &Config{
-		AppName:     os.Getenv("APP_NAME"),
-		DBUsername:  os.Getenv("DB_USERNAME"),
-		DBPassword:  os.Getenv("DB_PASSWORD"),
-		DBHost:      os.Getenv("DB_HOST"),
-		DBPort:      os.Getenv("DB_PORT"),
-		DBName:      os.Getenv("DB_NAME"),
-		SSLMode:     os.Getenv("SSL_MODE"),
-		Port:        os.Getenv("PORT"),
-		FrontendURL: os.Getenv("FRONTEND_URL"),
+func GetConfig() (*Config, error) {
+	rp := os.Getenv("REDIS_PORT")
+	redisPort, err := strconv.Atoi(rp)
+	if err != nil {
+		return nil, internalerror.InternalServerError("Bad Redis Port: " + rp)
 	}
+
+	return &Config{
+		AppName:       os.Getenv("APP_NAME"),
+		PGHost:        os.Getenv("PG_HOST"),
+		PGPort:        os.Getenv("PG_PORT"),
+		PGUsername:    os.Getenv("PG_USERNAME"),
+		PGPassword:    os.Getenv("PG_PASSWORD"),
+		PGDatabase:    os.Getenv("PG_DATABASE"),
+		SSLMode:       os.Getenv("SSL_MODE"),
+		REDISHost:     os.Getenv("REDIS_HOST"),
+		REDISPort:     redisPort,
+		REDISUser:     os.Getenv("REDIS_USER"),
+		REDISPassword: os.Getenv("REDIS_PASSWORD"),
+		REDISURL:      os.Getenv("REDIS_URL"),
+		Port:          os.Getenv("PORT"),
+		FrontendURL:   os.Getenv("FRONTEND_URL"),
+	}, nil
 }
 
 func LoadEnvAndGetConfig() (*Config, error) {
-	err := LoadENV()
+	err := LoadEnv()
 	if err != nil {
 		return nil, err
 	}
 
-	return GetConfig(), nil
+	return GetConfig()
 }
