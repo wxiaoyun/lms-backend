@@ -1,31 +1,66 @@
-# Library Management System
+# Library Management System Backend
 
-## Setup
+Welcome to the backend of our Library Management System (LMS). Designed for efficiency and scalability, this system forms the backbone of a simple digital library management solution. Leveraging cutting-edge technologies and robust architectures, our LMS backend efficiently handles complex library operations, ensuring reliability and high performance.
 
-### Install Go
+## Key Features
 
-`https://golang.google.cn/doc/install`
+- **Robust Digital Library Management**: Manages digital assets with advanced backend functionalities.
+- **Full CRUD Operations**: Supports Create, Read, Update, and Delete (CRUD) operations for books, loans, reservations, fines, and user accounts.
+- **Advanced Admin Capabilities**: Provides administrative tools for efficient and effective library management.
+- **Role-Based Access Control (RBAC)**: Implements fine-grained access control for secure and efficient management of library resources.
+- **Cross-Origin Resource Sharing (CORS)**: Enables secure management of resources accessed from different domains.
+- **Session-Based Authentication**: Ensures secure user authentication and management.
+- **CSRF Protection (In Progress)**: Enhancing security with upcoming support for Cross-Site Request Forgery (CSRF) protection.
+- **Scalable Data Storage with Postgres**: Utilizes PostgreSQL for robust and scalable data storage.
+- **Redis for Performance**: Leverages Redis for high-speed caching and session storage, ensuring a responsive and efficient system.
 
-### Updating Environment Variables
+## Core Technologies
 
-- Make a copy of .env.example and rename to .env.development
-- Edit the variables in .env.development accordingly
+The LMS backend is built using a range of powerful technologies:
 
-### Setting up Backend
+- **Language**: [Go (Golang)](https://go.dev/doc/install) - Renowned for its efficiency and scalability in backend development.
+- **ORM**: [GORM](https://gorm.io/index.html) - Offers a developer-friendly ORM library for Go.
+- **Framework**: [Fiber](https://docs.gofiber.io/) - An Express-inspired, high-performance web framework for Go.
+- **Databases**:
+  - [**Postgres**](https://www.postgresql.org/): A versatile and reliable relational database system.
+  - [**Redis**](https://redis.io/): A fast key-value store, excellent for caching and session storage.
+
+## Setup Instructions
+
+### 1. Install Go
+
+Download and install Go from [here](https://go.dev/doc/install).
+
+### 2. Update Environment Variables
+
+- Copy `.env.example` to `.env.development`.
+- Modify the variables in `.env.development` to suit your environment.
+
+### 3. Setup Backend
+
+To set up the main Postgres database, run:
 
 ```bash
 make setupDB
 ```
 
-### Additional Setup for development
+### 4. Additional Development Setup
+
+Install necessary Go packages and initialize Git hooks:
 
 ```bash
 go get -u github.com/swellaby/captain-githook
 captain-githook init
 ```
 
-### Running the Server
+### 5. Running the Server
+
+Start the server with:
 
 ```bash
 make run
 ```
+
+---
+
+Our Library Management System Backend is designed to meet the needs of simple libraries, offering a perfect blend of performance, security, and ease of maintenance. Whether for academic, public, or private libraries, it provides the essential infrastructure to manage library operations effectively and efficiently.
