@@ -14,8 +14,8 @@ func Route(parent fiber.Router, prefix string, r Router, handlers ...fiber.Handl
 	r(router)
 }
 
-func CachedRoute(parent fiber.Router, prefix string, r Router, handlers ...fiber.Handler) {
-	handlers = append(handlers, middleware.CacheMiddleware(time.Minute))
+func CachedRoute(parent fiber.Router, prefix string, t time.Duration, r Router, handlers ...fiber.Handler) {
+	handlers = append(handlers, middleware.CacheMiddleware(t))
 	router := parent.Group(prefix, handlers...)
 	r(router)
 }

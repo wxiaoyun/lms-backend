@@ -5,39 +5,39 @@ import (
 	"strings"
 )
 
-func DSNBuilder(cf *config.Config) (string, error) {
+func PGDSNBuilder(cf *config.Config) (string, error) {
 	dsn := strings.Builder{}
 
-	if cf.DBUsername != "" {
-		_, err := dsn.WriteString("user=" + cf.DBUsername)
+	if cf.PGUsername != "" {
+		_, err := dsn.WriteString("user=" + cf.PGUsername)
 		if err != nil {
 			return "", err
 		}
 	}
 
-	if cf.DBPassword != "" {
-		_, err := dsn.WriteString(" password=" + cf.DBPassword)
+	if cf.PGPassword != "" {
+		_, err := dsn.WriteString(" password=" + cf.PGPassword)
 		if err != nil {
 			return "", err
 		}
 	}
 
-	if cf.DBHost != "" {
-		_, err := dsn.WriteString(" host=" + cf.DBHost)
+	if cf.PGHost != "" {
+		_, err := dsn.WriteString(" host=" + cf.PGHost)
 		if err != nil {
 			return "", err
 		}
 	}
 
-	if cf.DBName != "" {
-		_, err := dsn.WriteString(" dbname=" + cf.DBName)
+	if cf.PGDatabase != "" {
+		_, err := dsn.WriteString(" dbname=" + cf.PGDatabase)
 		if err != nil {
 			return "", err
 		}
 	}
 
-	if cf.DBPort != "" {
-		_, err := dsn.WriteString(" port=" + cf.DBPort)
+	if cf.PGPort != "" {
+		_, err := dsn.WriteString(" port=" + cf.PGPort)
 		if err != nil {
 			return "", err
 		}
