@@ -11,7 +11,6 @@ import (
 )
 
 type FineBelongsToUser struct {
-	LoanID int64
 	FineID int64
 }
 

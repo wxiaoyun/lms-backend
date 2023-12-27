@@ -12,10 +12,10 @@ import (
 )
 
 func SetUpRoutes(app *fiber.App, cfg *config.Config) {
+	session.SetupStore()
 	middleware.SetupCors(app, cfg)
 	middleware.SetupRecover(app)
 	middleware.SetupLogger(app)
-	session.SetupStore()
 
 	v1Routes := app.Group("/v1")
 
@@ -36,6 +36,7 @@ func PublicRoutes(r fiber.Router) {
 func PrivateRoutes(r fiber.Router) {
 	Route(r, "/user", UserRoutes)
 	Route(r, "/book", BookRoutes)
+	Route(r, "/bookmark", BookmarkRoutes)
 	Route(r, "/loan", LoanRoutes)
 	Route(r, "/reservation", ReservationRoutes)
 	Route(r, "/fine", FineRoutes)

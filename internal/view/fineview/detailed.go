@@ -31,16 +31,16 @@ type BookView struct {
 
 type DetailedView struct {
 	BaseView
-	Book BookView      `json:"book"`
-	Loan LoanView      `json:"loan"`
-	User userview.View `json:"user"`
+	Book *BookView      `json:"book"`
+	Loan *LoanView      `json:"loan"`
+	User *userview.View `json:"user"`
 }
 
 func ToDetailedView(fine *model.Fine) *DetailedView {
 	return &DetailedView{
 		BaseView: *ToBaseView(fine),
-		User:     *userview.ToView(fine.User),
-		Loan: LoanView{
+		User:     userview.ToView(fine.User),
+		Loan: &LoanView{
 			ID:         int64(fine.Loan.ID),
 			UserID:     int64(fine.Loan.UserID),
 			BookID:     int64(fine.Loan.BookID),
@@ -51,7 +51,7 @@ func ToDetailedView(fine *model.Fine) *DetailedView {
 				Then(&fine.Loan.ReturnDate.Time).
 				Else(nil),
 		},
-		Book: BookView{
+		Book: &BookView{
 			ID:              fine.Loan.Book.ID,
 			Title:           fine.Loan.Book.Title,
 			Author:          fine.Loan.Book.Author,

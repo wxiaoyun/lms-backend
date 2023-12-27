@@ -8,8 +8,8 @@ import (
 
 type DetailedView struct {
 	BaseView
-	User userview.View `json:"user"`
-	Book BookView      `json:"book"`
+	User *userview.View `json:"user"`
+	Book *BookView      `json:"book"`
 }
 
 type BookView struct {
@@ -26,8 +26,8 @@ type BookView struct {
 func ToDetailedView(res *model.Reservation) *DetailedView {
 	return &DetailedView{
 		BaseView: *ToView(res),
-		User:     *userview.ToView(res.User),
-		Book: BookView{
+		User:     userview.ToView(res.User),
+		Book: &BookView{
 			ID:              res.Book.ID,
 			Title:           res.Book.Title,
 			Author:          res.Book.Author,

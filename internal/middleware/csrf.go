@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"lms-backend/internal/session"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,39 +12,16 @@ const (
 	MaxAge = time.Hour * 1 // 1 hour
 )
 
-var CSRFMiddleware = csrf.New(
-	csrf.Config{
+// fiber csrf middleware cannot be used as it enforces referer and host to be the same.
+// since we are hosting backend and frontend on different domains, we need to use custom csrf middleware.
+func SetupCSRF(app *fiber.App) {
+	app.Use(csrf.New(csrf.Config{
 		KeyLookup:      "header:" + csrf.HeaderName,
 		CookieName:     "__Secure-csrf_",
-		CookieSameSite: "None",
+		CookieSameSite: "Strict",
 		CookieSecure:   true,
 		CookieHTTPOnly: false,
 		Expiration:     MaxAge,
-		// Session:           session.Store,
-	},
-)
-
-func SetupCSRF(app *fiber.App) {
-	app.Use(csrf.New(
-	// csrf.Config{
-	// 	KeyLookup:         "header:" + csrf.HeaderName,
-	// 	CookieName:        "__Secure-csrf_",
-	// 	CookieSameSite:    "None",
-	// 	CookieSecure:      true,
-	// 	CookieSessionOnly: true,
-	// 	CookieHTTPOnly:    false,
-	// 	CookieDomain:      domain(cfg),
-	// 	Expiration:        MaxAge,
-	// 	Extractor:         csrf.CsrfFromHeader(csrf.HeaderName),
-	// 	// Session:           session.Store,
-	// },
-	))
+		Session:        session.Store,
+	}))
 }
-
-// func domain(cfg *config.Config) string {
-// 	if strings.HasSuffix(cfg.FrontendURL, "wxiaoyun.com") {
-// 		return ".wxiaoyun.com"
-// 	}
-
-// 	return ""
-// }

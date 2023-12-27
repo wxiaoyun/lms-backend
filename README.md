@@ -8,9 +8,7 @@ Welcome to the backend of our Library Management System (LMS). Designed for effi
 - **Full CRUD Operations**: Supports Create, Read, Update, and Delete (CRUD) operations for books, loans, reservations, fines, and user accounts.
 - **Advanced Admin Capabilities**: Provides administrative tools for efficient and effective library management.
 - **Role-Based Access Control (RBAC)**: Implements fine-grained access control for secure and efficient management of library resources.
-- **Cross-Origin Resource Sharing (CORS)**: Enables secure management of resources accessed from different domains.
 - **Session-Based Authentication**: Ensures secure user authentication and management.
-- **CSRF Protection (In Progress)**: Enhancing security with upcoming support for Cross-Site Request Forgery (CSRF) protection.
 - **Scalable Data Storage with Postgres**: Utilizes PostgreSQL for robust and scalable data storage.
 - **Redis for Performance**: Leverages Redis for high-speed caching and session storage, ensuring a responsive and efficient system.
 
