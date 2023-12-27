@@ -12,15 +12,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary sign in a user
-// @Description signs in a user and creates a session
-// @Tags auth
-// @Accept application/json
-// @Param user body userparams.SignInParams true "User creation request"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[userview.View]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/auth/login [post]
 func HandleSignIn(c *fiber.Ctx) error {
 	// if handler, ok := c.Locals(csrf.ConfigDefault.HandlerContextKey).(*csrf.CSRFHandler); ok {
 	// 	if err := handler.DeleteToken(c); err != nil {

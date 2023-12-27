@@ -1,20 +1,18 @@
 package reservation
 
 import (
-	"lms-backend/internal/dataaccess/loan"
 	"lms-backend/internal/model"
 	"lms-backend/internal/orm"
 	"lms-backend/pkg/error/externalerrors"
 	"time"
-
-	"github.com/ForAeons/ternary"
 
 	"gorm.io/gorm"
 )
 
 func preloadBookUserAssociations(db *gorm.DB) *gorm.DB {
 	return db.
-		Preload("Book").
+		Preload("BookCopy").
+		Preload("BookCopy.Book").
 		Preload("User").
 		Preload("User.Person")
 }
@@ -156,23 +154,34 @@ func ReadOutstandingReservationsByUserID(db *gorm.DB, userID int64) ([]model.Res
 	return reservations, nil
 }
 
-func ReserveBook(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) {
-	// Check if book has outstanding loans
-	loans, err := loan.ReadOutstandingLoansByBookID(db, bookID)
-	if err != nil {
-		return nil, err
+func CountOutstandingReservationsByUserID(db *gorm.DB, userID int64) (int64, error) {
+	var count int64
+
+	result := db.Model(&model.Reservation{}).
+		Where("user_id = ?", userID).
+		Where("status = ?", model.ReservationStatusPending).
+		Where("reservation_date >= NOW()").
+		Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
 	}
 
+	return count, nil
+}
+
+// Assumes that the book is available.
+//
+// Relevant checks should be done before calling this function.
+//
+// User should not have more than maximum reservations and loans.
+//
+// Book should be neither on loan nor on reserve.
+func ReserveBook(db *gorm.DB, userID, copyID int64) (*model.Reservation, error) {
 	reservation := &model.Reservation{
-		UserID: uint(userID),
-		BookID: uint(bookID),
-		Status: model.ReservationStatusPending,
-		ReservationDate: ternary.If[time.Time](len(loans) > 0). // If there are outstanding loans
-			// Set reservation date to the return date of the first outstanding loan
-			LThen(func() time.Time { return loans[0].DueDate }).
-			//nolint Else set reservation date to now
-			LElse(func() time.Time { return time.Now() }).
-			Add(model.ReservationDuration),
+		UserID:          uint(userID),
+		BookCopyID:      uint(copyID),
+		Status:          model.ReservationStatusPending,
+		ReservationDate: time.Now().Add(model.ReservationDuration),
 	}
 
 	if err := reservation.Create(db); err != nil {
@@ -186,7 +195,7 @@ func ReserveBook(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) 
 //
 // This can either be the user retrieving the book or canceling the reservation.
 func FullfilReservation(db *gorm.DB, reservationID int64) (*model.Reservation, error) {
-	reservation, err := Read(db, reservationID)
+	reservation, err := ReadDetailed(db, reservationID)
 	if err != nil {
 		return nil, err
 	}
@@ -200,5 +209,5 @@ func FullfilReservation(db *gorm.DB, reservationID int64) (*model.Reservation, e
 		return nil, err
 	}
 
-	return ReadDetailed(db, reservationID)
+	return reservation, nil
 }

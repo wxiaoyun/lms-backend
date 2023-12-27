@@ -5,6 +5,7 @@ import (
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/dataaccess/book"
+	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/bookpolicy"
 	"lms-backend/internal/view/bookview"
@@ -14,15 +15,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary Delete a book
-// @Description deletes a book from the library
-// @Tags book
-// @Accept */*
-// @Param book_id path int true "Book ID to delete"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[bookview.BaseView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/book/{book_id} [delete]
 func HandleDelete(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createBookAction, bookpolicy.DeletePolicy())
 	if err != nil {
@@ -35,8 +27,15 @@ func HandleDelete(c *fiber.Ctx) error {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
 	}
 
+	db := database.GetDB()
+
+	bookTitle, err := book.GetBookTitle(db, bookID)
+	if err != nil {
+		return err
+	}
+
 	tx, rollBackOrCommit := audit.Begin(
-		c, fmt.Sprintf("Deleting a book in library - ID: %d", bookID),
+		c, fmt.Sprintf("Deleting book \"%s\"", bookTitle),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

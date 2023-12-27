@@ -17,7 +17,7 @@ func ToView(reservation *model.Reservation) *BaseView {
 	return &BaseView{
 		ID:              int64(reservation.ID),
 		UserID:          int64(reservation.UserID),
-		BookID:          int64(reservation.BookID),
+		BookID:          int64(reservation.BookCopyID),
 		Status:          reservation.Status,
 		ReservationDate: reservation.ReservationDate,
 	}

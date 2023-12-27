@@ -1,7 +1,7 @@
 package shelper
 
 import (
-	"lms-backend/internal/dataaccess/book"
+	"lms-backend/internal/dataaccess/bookcopy"
 	"lms-backend/internal/model"
 	"math/rand"
 
@@ -23,10 +23,10 @@ func SeedLoanAndReservations(db *gorm.DB, userNum, bookNum int64) error {
 				return nil
 			}
 
-			bookID := ids[0]
+			copyID := ids[0]
 			ids = ids[1:]
 
-			_, err := book.LoanBook(db, int64(userID), bookID)
+			_, err := bookcopy.LoanCopy(db, int64(userID), copyID)
 			if err != nil {
 				return err
 			}
@@ -37,10 +37,10 @@ func SeedLoanAndReservations(db *gorm.DB, userNum, bookNum int64) error {
 				return nil
 			}
 
-			bookID := ids[0]
+			copyID := ids[0]
 			ids = ids[1:]
 
-			_, err := book.ReserveBook(db, int64(userID), bookID)
+			_, err := bookcopy.ReserveCopy(db, int64(userID), copyID)
 			if err != nil {
 				return err
 			}

@@ -12,19 +12,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary List users
-// @Description List users depending on the collection query
-// @Tags user
-// @Accept */*
-// @Produce application/json
-// @Param offset query int false "Offset for pagination" default(0)
-// @Param limit query int false "Limit for pagination" default(25)
-// @Param filter[user_id] query int false "Filter by user ID" default(1)
-// @Param sortBy query string false "Sort by column name" default("created_at")
-// @Param orderBy query string false "Order by asc or desc" default("desc")
-// @Success 200 {object} api.SwgResponse[[]userview.View]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/user [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readUserAction, userpolicy.ListPolicy())
 	if err != nil {

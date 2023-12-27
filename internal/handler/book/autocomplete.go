@@ -13,14 +13,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary Autocomplete 10 books based on input value
-// @Description Autocomplete 10 books based on input value
-// @Tags user
-// @Accept */*
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]userview.SimpleView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/book/autocomplete [get]
 func HandleAutoComplete(c *fiber.Ctx) error {
 	util.Debug("Cache Miss")
 	err := policy.Authorize(c, readBookAction, bookpolicy.ListPolicy())

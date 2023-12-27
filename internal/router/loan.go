@@ -13,7 +13,6 @@ func LoanRoutes(r fiber.Router) {
 
 	Route(r, "/:loan_id", func(r fiber.Router) {
 		r.Get("/", loanhandler.HandleRead)
-		r.Delete("/", loanhandler.HandleDelete)
 		r.Patch("/return", loanhandler.HandleReturn)
 		r.Patch("/renew", loanhandler.HandleRenew)
 	})

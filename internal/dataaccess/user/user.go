@@ -236,21 +236,21 @@ func GetRoles(db *gorm.DB, userID int64) ([]model.Role, error) {
 }
 
 func HasExceededMaxLoan(db *gorm.DB, userID int64) (bool, error) {
-	loans, err := loan.ReadOutstandingLoansByUserID(db, userID)
+	count, err := loan.CountOutstandingLoansByUserID(db, userID)
 	if err != nil {
 		return false, err
 	}
 
-	return len(loans) >= model.MaximumLoans, nil
+	return count >= model.MaximumLoans, nil
 }
 
 func HasExceededMaxReservation(db *gorm.DB, userID int64) (bool, error) {
-	reservations, err := reservation.ReadOutstandingReservationsByUserID(db, userID)
+	count, err := reservation.CountOutstandingReservationsByUserID(db, userID)
 	if err != nil {
 		return false, err
 	}
 
-	return len(reservations) > model.MaximumReservations, nil
+	return count > model.MaximumReservations, nil
 }
 
 func AutoComplete(db *gorm.DB, value string) ([]model.User, error) {

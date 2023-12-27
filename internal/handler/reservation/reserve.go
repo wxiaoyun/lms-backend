@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/dataaccess/book"
+	"lms-backend/internal/dataaccess/bookcopy"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
@@ -22,15 +22,6 @@ const (
 	reserveBookAction = "reserve book"
 )
 
-// @Summary Create a reservation
-// @Description Creates a reservation for a book
-// @Tags reservation
-// @Accept */*
-// @Param book_id path int true "Book ID for reservation"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/book/{book_id}/reservation/ [post]
 func HandleReserve(c *fiber.Ctx) error {
 	err := policy.Authorize(c, reserveBookAction, reservationpolicy.ReservePolicy())
 	if err != nil {
@@ -42,10 +33,10 @@ func HandleReserve(c *fiber.Ctx) error {
 		return err
 	}
 
-	param := c.Params("book_id")
-	bookID, err := strconv.ParseInt(param, 10, 64)
+	param := c.Params("book_copy_id")
+	copyID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book id.", param))
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book copy id.", param))
 	}
 
 	db := database.GetDB()
@@ -55,7 +46,7 @@ func HandleReserve(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, bookID)
+	bookTitle, err := bookcopy.GetBookTitle(db, copyID)
 	if err != nil {
 		return err
 	}
@@ -65,7 +56,7 @@ func HandleReserve(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	res, err := book.ReserveBook(tx, userID, bookID)
+	res, err := bookcopy.ReserveCopy(tx, userID, copyID)
 	if err != nil {
 		return err
 	}

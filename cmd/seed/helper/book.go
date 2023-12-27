@@ -30,6 +30,7 @@ func SeedBooks(db *gorm.DB, num int64) error {
 			PublicationDate: random.RandomDate(time.Now().AddDate(-10, 0, 0), time.Now()),
 			Genre:           random.RandWords(random.RandInt(1, 3)),
 			Language:        random.RandWords(random.RandInt(1, 3)),
+			BookCopies:      []model.BookCopy{{}},
 		}
 	}
 

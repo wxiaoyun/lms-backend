@@ -12,14 +12,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary Autocomplete 10 users based on input value
-// @Description Autocomplete 10 users based on input value
-// @Tags user
-// @Accept */*
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]userview.SimpleView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/user/autocomplete [get]
 func HandleAutoComplete(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readUserAction, userpolicy.ListPolicy())
 	if err != nil {

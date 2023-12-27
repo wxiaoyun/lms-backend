@@ -18,15 +18,6 @@ const (
 	readUserAction = "update user"
 )
 
-// @Summary Read an existing user
-// @Description Retrieves an existing user from the system
-// @Tags user
-// @Accept */*
-// @Produce application/json
-// @Param user_id path int true "User ID to retrieve"
-// @Success 200 {object} api.SwgResponse[userview.View]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/user/{user_id} [get]
 func HandleRead(c *fiber.Ctx) error {
 	param := c.Params("user_id")
 	userID, err := strconv.ParseInt(param, 10, 64)

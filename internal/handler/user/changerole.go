@@ -20,16 +20,6 @@ const (
 	changeRoleAction = "change role"
 )
 
-// @Summary Update user role
-// @Description Update user role of a user
-// @Tags user
-// @Accept application/json
-// @Param user_id path int true "User ID to update role"
-// @Param updateroleparam body userparams.UpdateRoleParams true "User update role request"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[userview.View]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/user/{user_id}/role [patch]
 func HandleChangeRole(c *fiber.Ctx) error {
 	param := c.Params("user_id")
 	userID, err := strconv.ParseInt(param, 10, 64)

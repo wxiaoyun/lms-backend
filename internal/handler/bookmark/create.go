@@ -20,14 +20,6 @@ const (
 	createBookmarkAction = "create book mark"
 )
 
-// @Summary Create bookmark
-// @Description Create bookmark
-// @Tags bookmark
-// @Accept application/json
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]bookmarkview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/bookmark [post]
 func HandleCreate(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createBookmarkAction, bookmarkpolicy.CreatePolicy())
 	if err != nil {

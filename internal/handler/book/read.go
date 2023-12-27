@@ -18,15 +18,6 @@ const (
 	readBookAction = "read book"
 )
 
-// @Summary Read book
-// @Description reads a book in the library
-// @Tags book
-// @Accept */*
-// @Param book_id path int true "Book ID to read"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[bookview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/book/{book_id} [get]
 func HandleRead(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readBookAction, bookpolicy.ReadPolicy())
 	if err != nil {
@@ -41,13 +32,13 @@ func HandleRead(c *fiber.Ctx) error {
 
 	db := database.GetDB()
 
-	bookModel, err := book.ReadDetailed(db, bookID)
+	bookModel, err := book.Read(db, bookID)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(api.Response{
-		Data: bookview.ToDetailedView(bookModel),
+		Data: bookview.ToView(bookModel),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"\"%s\" retrieved.", bookModel.Title,

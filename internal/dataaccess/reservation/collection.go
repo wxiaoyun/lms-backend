@@ -6,12 +6,12 @@ import (
 
 func Filters() collection.FilterMap {
 	return map[string]collection.Filter{
-		"status":         collection.StringEqualFilter("status"),
-		"user_id":        collection.MultipleIntEqualFilter("user_id"),
-		"book_id":        collection.MultipleIntEqualFilter("book_id"),
+		"status":         collection.StringEqualFilter("reservations.status"),
+		"user_id":        collection.MultipleIntEqualFilter("reservations.user_id"),
+		"book_id":        collection.MultipleIntEqualFilter("reservations.book_id"),
 		"users.username": collection.StringLikeFilter("users.username", JoinUser),
-		"books.value":    collection.MultipleColumnStringLikeFilter([]string{"books.title", "books.author", "books.isbn", "books.publisher"}, JoinBook),
-		"value":          collection.MultipleColumnStringLikeFilter([]string{"books.title", "books.author", "books.isbn", "books.publisher", "users.username"}, JoinBook, JoinUser),
+		"books.value":    collection.MultipleColumnStringLikeFilter([]string{"books.title", "books.author", "books.isbn", "books.publisher"}, JoinBookCopy, JoinBook),
+		"value":          collection.MultipleColumnStringLikeFilter([]string{"books.title", "books.author", "books.isbn", "books.publisher", "users.username"}, JoinBookCopy, JoinBook, JoinUser),
 	}
 }
 

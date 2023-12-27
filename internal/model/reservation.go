@@ -15,8 +15,8 @@ type Reservation struct {
 
 	UserID          uint              `gorm:"not null"`
 	User            *User             `gorm:"->"`
-	BookID          uint              `gorm:"not null"`
-	Book            *Book             `gorm:"->"`
+	BookCopyID      uint              `gorm:"not null"`
+	BookCopy        *BookCopy         `gorm:"->"`
 	Status          ReservationStatus `gorm:"not null"`
 	ReservationDate time.Time         `gorm:"not null"` // Date before which the book is reserved
 }
@@ -66,19 +66,21 @@ func (r *Reservation) ensureUserExistsAndPresent(db *gorm.DB) error {
 	return nil
 }
 
-func (r *Reservation) ensureBookExistsAndPresent(db *gorm.DB) error {
-	if r.BookID == 0 {
-		return externalerrors.BadRequest("book id is required")
+func (r *Reservation) ensureBookCopyExistsAndPresent(db *gorm.DB) error {
+	if r.BookCopyID == 0 {
+		return externalerrors.BadRequest("book copy id is required")
 	}
 
 	var exists int64
-	result := db.Model(&Book{}).Where("id = ?", r.BookID).Count(&exists)
+	result := db.Model(&BookCopy{}).
+		Where("id = ?", r.BookCopyID).
+		Count(&exists)
 	if err := result.Error; err != nil {
 		return err
 	}
 
 	if exists == 0 {
-		return externalerrors.BadRequest("book does not exist")
+		return externalerrors.BadRequest("book copy does not exist")
 	}
 
 	return nil
@@ -104,7 +106,7 @@ func (r *Reservation) Validate(db *gorm.DB) error {
 		return err
 	}
 
-	if err := r.ensureBookExistsAndPresent(db); err != nil {
+	if err := r.ensureBookCopyExistsAndPresent(db); err != nil {
 		return err
 	}
 

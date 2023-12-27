@@ -13,7 +13,6 @@ func ReservationRoutes(r fiber.Router) {
 
 	Route(r, "/:reservation_id", func(r fiber.Router) {
 		r.Get("/", reservationhandler.HandleRead)
-		r.Delete("/", reservationhandler.HandleDelete)
 		r.Patch("/cancel", reservationhandler.HandleCancel)
 		r.Patch("/checkout", reservationhandler.HandleCheckout)
 	})

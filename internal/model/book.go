@@ -7,21 +7,19 @@ import (
 	"gorm.io/gorm"
 )
 
-type BookStatus = string
 type UserStatus = string
 
 type Book struct {
 	gorm.Model
 
-	Title           string        `gorm:"not null"`
-	Author          string        `gorm:"not null"`
-	ISBN            string        `gorm:"not null"`
-	Publisher       string        `gorm:"not null"`
-	PublicationDate time.Time     `gorm:"not null"`
-	Genre           string        `gorm:"not null"`
-	Language        string        `gorm:"not null"`
-	Loans           []Loan        `gorm:"->"`
-	Reservations    []Reservation `gorm:"->"`
+	Title           string     `gorm:"not null"`
+	Author          string     `gorm:"not null"`
+	ISBN            string     `gorm:"not null"`
+	Publisher       string     `gorm:"not null"`
+	PublicationDate time.Time  `gorm:"not null"`
+	Genre           string     `gorm:"not null"`
+	Language        string     `gorm:"not null"`
+	BookCopies      []BookCopy `gorm:"->;<-:create"`
 }
 
 const (
@@ -29,34 +27,20 @@ const (
 	BookTableName = "books"
 )
 
-const (
-	BookStatusAvailable   BookStatus = "available"
-	BookStatusUnavailable BookStatus = "unavailable"
-	BookStatusOnLoan      BookStatus = "on loan"
-	BookStatusOnReserve   BookStatus = "on reserve"
-)
-
 func (b *Book) Create(db *gorm.DB) error {
 	return db.Create(b).Error
 }
 
-// Loans and reservation should not be updated/created here.
 func (b *Book) Update(db *gorm.DB) error {
 	return db.Updates(b).Error
 }
 
-// All loans associated with this book will be deleted.
+// All copies associated with this book will be deleted.
 //
 // Need to call preloadAssociations	before calling this method.
 func (b *Book) Delete(db *gorm.DB) error {
-	for _, loan := range b.Loans {
-		if err := loan.Delete(db); err != nil {
-			return err
-		}
-	}
-
-	for _, reserve := range b.Reservations {
-		if err := reserve.Delete(db); err != nil {
+	for _, copy := range b.BookCopies {
+		if err := copy.Delete(db); err != nil {
 			return err
 		}
 	}

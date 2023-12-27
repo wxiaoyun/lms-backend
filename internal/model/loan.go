@@ -16,8 +16,8 @@ type Loan struct {
 
 	UserID        uint          `gorm:"not null"`
 	User          *User         `gorm:"->"`
-	BookID        uint          `gorm:"not null"`
-	Book          *Book         `gorm:"->"`
+	BookCopyID    uint          `gorm:"not null"`
+	BookCopy      *BookCopy     `gorm:"->"`
 	Status        LoanStatus    `gorm:"not null"`
 	BorrowDate    time.Time     `gorm:"not null"` // Date when the book is borrowed
 	DueDate       time.Time     `gorm:"not null"` // Date when the book is due
@@ -37,8 +37,9 @@ const (
 )
 
 const (
-	LoanDuration = 7 * 24 * time.Hour
-	MaximumLoans = 5
+	LoanDuration        = 7 * 24 * time.Hour
+	MaximumLoanDuration = 30 * 24 * time.Hour
+	MaximumLoans        = 5
 )
 
 func (l *Loan) Create(db *gorm.DB) error {
@@ -92,19 +93,21 @@ func (l *Loan) ensureUserExistsAndPresent(db *gorm.DB) error {
 	return nil
 }
 
-func (l *Loan) ensureBookExistsAndPresent(db *gorm.DB) error {
-	if l.BookID == 0 {
-		return externalerrors.BadRequest("book id is required")
+func (l *Loan) ensureBookCopyExistsAndPresent(db *gorm.DB) error {
+	if l.BookCopyID == 0 {
+		return externalerrors.BadRequest("book copy id is required")
 	}
 
 	var exists int64
-	result := db.Model(&Book{}).Where("id = ?", l.BookID).Count(&exists)
+	result := db.Model(&BookCopy{}).
+		Where("id = ?", l.BookCopyID).
+		Count(&exists)
 	if err := result.Error; err != nil {
 		return err
 	}
 
 	if exists == 0 {
-		return externalerrors.BadRequest("book does not exist")
+		return externalerrors.BadRequest("book copy does not exist")
 	}
 
 	return nil
@@ -150,7 +153,7 @@ func (l *Loan) Validate(db *gorm.DB) error {
 		return err
 	}
 
-	if err := l.ensureBookExistsAndPresent(db); err != nil {
+	if err := l.ensureBookCopyExistsAndPresent(db); err != nil {
 		return err
 	}
 

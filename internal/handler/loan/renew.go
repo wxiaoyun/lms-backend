@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/dataaccess/book"
+	"lms-backend/internal/dataaccess/bookcopy"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
@@ -22,20 +22,11 @@ const (
 	renewLoanAction = "renew loan"
 )
 
-// @Summary Renew a loan
-// @Description Renews a loan from the library
-// @Tags loan
-// @Accept */*
-// @Param loan_id path int true "loan ID to renew"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[loanview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/loan/{loan_id}/renew [patch]
 func HandleRenew(c *fiber.Ctx) error {
-	param2 := c.Params("loan_id")
-	loanID, err := strconv.ParseInt(param2, 10, 64)
+	param := c.Params("loan_id")
+	loanID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param2))
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param))
 	}
 
 	err = policy.Authorize(c, renewLoanAction, loanpolicy.RenewPolicy(loanID))
@@ -60,7 +51,7 @@ func HandleRenew(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	ln, err := book.RenewLoan(tx, loanID)
+	ln, err := bookcopy.RenewCopy(tx, loanID)
 	if err != nil {
 		return err
 	}
