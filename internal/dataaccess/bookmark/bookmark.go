@@ -9,7 +9,7 @@ import (
 
 func preloadAssociations(db *gorm.DB) *gorm.DB {
 	return db.
-		Preload("Books")
+		Preload("Book")
 }
 
 func Read(db *gorm.DB, id int64) (*model.Bookmark, error) {
@@ -77,8 +77,8 @@ func Count(db *gorm.DB) (int64, error) {
 	return count, nil
 }
 
-func List(db *gorm.DB) ([]*model.Bookmark, error) {
-	var bookmarks []*model.Bookmark
+func List(db *gorm.DB) ([]model.Bookmark, error) {
+	var bookmarks []model.Bookmark
 	result := db.Model(&model.Bookmark{}).
 		Find(&bookmarks)
 	if err := result.Error; err != nil {
@@ -88,8 +88,8 @@ func List(db *gorm.DB) ([]*model.Bookmark, error) {
 	return bookmarks, nil
 }
 
-func ListDetailed(db *gorm.DB) ([]*model.Bookmark, error) {
-	var bookmarks []*model.Bookmark
+func ListDetailed(db *gorm.DB) ([]model.Bookmark, error) {
+	var bookmarks []model.Bookmark
 	result := db.Model(&model.Bookmark{}).
 		Scopes(preloadAssociations).
 		Find(&bookmarks)

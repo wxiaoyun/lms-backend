@@ -61,7 +61,7 @@ func HandleList(c *fiber.Ctx) error {
 	var view = []bookmarkview.DetailedView{}
 	for _, f := range fns {
 		//nolint:gosec // loop does not modify struct
-		view = append(view, *bookmarkview.ToDetailedView(f))
+		view = append(view, *bookmarkview.ToDetailedView(&f))
 	}
 
 	return c.JSON(api.Response{

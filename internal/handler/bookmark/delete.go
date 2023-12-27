@@ -66,7 +66,7 @@ func HandleDelete(c *fiber.Ctx) error {
 	return c.JSON(api.Response{
 		Data: bookmarkview.ToDetailedView(b),
 		Messages: api.Messages(
-			api.SilentMessage("bookmarks listed successfully"),
+			api.SilentMessage("bookmark deleted successfully"),
 		),
 	})
 }
