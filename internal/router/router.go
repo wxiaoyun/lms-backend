@@ -30,7 +30,11 @@ func PublicRoutes(r fiber.Router) {
 	Route(r, "/health", HealthRoutes)
 	Route(r, "/auth", AuthRoutes)
 	r.Get("/current", userhandler.HandleGetCurrentUser)
-	r.Get("/book", middleware.CacheMiddleware(middleware.VLongExp), bookhandler.HandleList)
+
+	Route(r, "book", func(r fiber.Router) {
+		r.Get("/", bookhandler.HandleList)
+		r.Get("/:book_id", bookhandler.HandleRead)
+	}, middleware.CacheMiddleware(middleware.VLongExp))
 }
 
 func PrivateRoutes(r fiber.Router) {

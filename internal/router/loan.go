@@ -8,7 +8,7 @@ import (
 )
 
 func LoanRoutes(r fiber.Router) {
-	r.Get("/", middleware.CacheMiddleware(middleware.ShortExp), loanhandler.HandleList)
+	r.Get("/", middleware.CacheMiddleware(middleware.VShortExp), loanhandler.HandleList)
 	r.Post("/", loanhandler.HandleCreate)
 
 	Route(r, "/:loan_id", func(r fiber.Router) {

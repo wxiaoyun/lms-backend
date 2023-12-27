@@ -35,15 +35,15 @@ func HandleList(c *fiber.Ctx) error {
 
 	dbSorted := cq.Sort(dbFiltered, book.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
-	books, err := book.List(dbPaginated)
+	books, err := book.ListWithCopies(dbPaginated)
 	if err != nil {
 		return err
 	}
 
-	var view = []bookview.View{}
+	var view = []bookview.DetailedView{}
 	for _, w := range books {
 		//nolint:gosec // loop does not modify struct
-		view = append(view, *bookview.ToView(&w))
+		view = append(view, *bookview.ToDetailedView(&w))
 	}
 
 	return c.JSON(api.Response{

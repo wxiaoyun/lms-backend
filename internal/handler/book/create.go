@@ -38,13 +38,13 @@ func HandleCreate(c *fiber.Ctx) error {
 	defer func() { rollBackOrCommit(err) }()
 
 	bookModel := bookParams.ToModel()
-	bookModel, err = book.Create(tx, bookModel)
+	bookModel, err = book.CreateWithCopy(tx, bookModel)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(api.Response{
-		Data: bookview.ToView(bookModel),
+		Data: bookview.ToDetailedView(bookModel),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" added to library.", bookModel.Title,
