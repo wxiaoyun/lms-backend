@@ -12,10 +12,10 @@ import (
 )
 
 func SetUpRoutes(app *fiber.App, cfg *config.Config) {
+	session.SetupStore()
 	middleware.SetupCors(app, cfg)
 	middleware.SetupRecover(app)
 	middleware.SetupLogger(app)
-	session.SetupStore()
 
 	v1Routes := app.Group("/v1")
 
