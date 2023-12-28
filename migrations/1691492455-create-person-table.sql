@@ -10,5 +10,7 @@ CREATE TABLE
     deleted_at deleted_at
   );
 
+CREATE INDEX idx_people_deleted_at ON people (deleted_at);
+
 -- +migrate Down 
 DROP TABLE people;

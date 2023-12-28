@@ -14,5 +14,7 @@ CREATE TABLE
     deleted_at deleted_at
   );
 
+CREATE INDEX idx_books_deleted_at ON books (deleted_at);
+
 -- +migrate Down
 DROP TABLE books;

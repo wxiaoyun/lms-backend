@@ -9,5 +9,7 @@ CREATE TABLE
     deleted_at deleted_at
   );
 
+CREATE INDEX idx_bookmarks_deleted_at ON bookmarks (deleted_at);
+
 -- +migrate Down
 DROP TABLE bookmarks;
