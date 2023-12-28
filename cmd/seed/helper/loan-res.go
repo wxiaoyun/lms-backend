@@ -3,12 +3,25 @@ package shelper
 import (
 	"lms-backend/internal/dataaccess/bookcopy"
 	"lms-backend/internal/model"
+	"lms-backend/util/random"
 	"math/rand"
 
 	"gorm.io/gorm"
 )
 
-func SeedLoanAndReservations(db *gorm.DB, userNum, bookNum int64) error {
+func SeedLoanAndReservations(db *gorm.DB) error {
+	var bookNum int64
+	result := db.Model(&model.BookCopy{}).Count(&bookNum)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	var userNum int64
+	result = db.Model(&model.User{}).Count(&userNum)
+	if result.Error != nil {
+		return result.Error
+	}
+
 	ids := make([]int64, bookNum)
 	for i := 1; i <= int(bookNum); i++ {
 		ids[i-1] = int64(i)
@@ -18,7 +31,7 @@ func SeedLoanAndReservations(db *gorm.DB, userNum, bookNum int64) error {
 	rand.Shuffle(len(ids), func(i, j int) { ids[i], ids[j] = ids[j], ids[i] })
 
 	for userID := 1; userID <= int(userNum); userID++ {
-		for j := 1; j <= model.MaximumLoans; j++ {
+		for j := 1; j <= random.RandInt(0, model.MaximumLoans+1); j++ {
 			if len(ids) == 0 {
 				return nil
 			}
@@ -32,7 +45,7 @@ func SeedLoanAndReservations(db *gorm.DB, userNum, bookNum int64) error {
 			}
 		}
 
-		for j := 1; j <= model.MaximumReservations; j++ {
+		for j := 1; j <= random.RandInt(0, model.MaximumReservations+1); j++ {
 			if len(ids) == 0 {
 				return nil
 			}

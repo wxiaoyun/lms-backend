@@ -55,8 +55,8 @@ func main() {
 		panic(err)
 	}
 
-	lgr.Println("Seeding books...")
-	err = shelper.SeedBooks(tx, NumberOfBooks)
+	lgr.Println("Seeding books and copies...")
+	err = shelper.SeedBookAndCopies(tx, NumberOfBooks)
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +68,7 @@ func main() {
 	}
 
 	lgr.Println("Seeding loans and reservations...")
-	err = shelper.SeedLoanAndReservations(tx, NumberOfUsers, NumberOfBooks)
+	err = shelper.SeedLoanAndReservations(tx)
 	if err != nil {
 		panic(err)
 	}
