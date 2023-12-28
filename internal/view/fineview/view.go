@@ -2,23 +2,16 @@ package fineview
 
 import (
 	"lms-backend/internal/model"
+	"lms-backend/internal/view/sharedview"
 )
 
 type BaseView struct {
-	ID     int64   `json:"id,omitempty"`
-	UserID int64   `json:"user_id"`
-	LoanID int64   `json:"loan_id"`
-	Status string  `json:"status"`
-	Amount float64 `json:"amount"`
+	sharedview.FineView
 }
 
 func ToBaseView(fine *model.Fine) *BaseView {
 	return &BaseView{
-		ID:     int64(fine.ID),
-		UserID: int64(fine.UserID),
-		LoanID: int64(fine.LoanID),
-		Status: fine.Status,
-		Amount: fine.Amount,
+		FineView: *sharedview.ToFineView(fine),
 	}
 }
 

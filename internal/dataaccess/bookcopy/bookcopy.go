@@ -265,9 +265,53 @@ func CheckOutCopy(db *gorm.DB, userID, resID int64) (*model.Reservation, error) 
 		return nil, err
 	}
 
-	// Loan the book to the user
-	_, err = LoanCopy(db, userID, int64(res.BookCopyID))
+	hasExceededMaxLoan, err := user.HasExceededMaxLoan(db, userID)
 	if err != nil {
+		return nil, err
+	}
+	if hasExceededMaxLoan {
+		return nil, externalerrors.BadRequest("You have reached the maximum number of loans")
+	}
+
+	_, err = loan.Loan(db, userID, int64(b.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	// Update book status
+	b.Status = model.BookStatusOnLoan
+	if err := b.Update(db); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+// CancelReservationCopy cancels the reservation
+func CancelReservationCopy(db *gorm.DB, resID int64) (*model.Reservation, error) {
+	res, err := reservation.Read(db, resID)
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := Read(db, int64(res.BookCopyID))
+	if err != nil {
+		return nil, err
+	}
+
+	if b.Status != model.BookStatusOnReserve {
+		return nil, externalerrors.BadRequest("Book is not on reserve")
+	}
+
+	// Fulfill the reservation
+	res, err = reservation.FullfilReservation(db, resID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update book status
+	b.Status = model.BookStatusAvailable
+	if err := b.Update(db); err != nil {
 		return nil, err
 	}
 

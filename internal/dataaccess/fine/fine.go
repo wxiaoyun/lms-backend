@@ -15,6 +15,12 @@ func preloadAssociations(db *gorm.DB) *gorm.DB {
 		Preload("Loan.Book")
 }
 
+func preloadBook(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("Loan").
+		Preload("Loan.Book")
+}
+
 func Read(db *gorm.DB, fineID int64) (*model.Fine, error) {
 	var fine model.Fine
 	result := db.Model(&model.Fine{}).
@@ -44,6 +50,22 @@ func ReadDetailed(db *gorm.DB, fineID int64) (*model.Fine, error) {
 	}
 
 	return &fine, nil
+}
+
+func ListOutstandingFineByUserID(db *gorm.DB, userID int64) ([]model.Fine, error) {
+	var fines []model.Fine
+	result := db.Model(&model.Fine{}).
+		Scopes(preloadBook).
+		Where("user_id = ? AND status = ?", userID, model.FineStatusOutstanding).
+		Find(&fines)
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, orm.ErrRecordNotFound(model.FineModelName)
+		}
+		return nil, err
+	}
+
+	return fines, nil
 }
 
 func Create(db *gorm.DB, userID, loanID int64, amount float64) (*model.Fine, error) {

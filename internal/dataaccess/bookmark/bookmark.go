@@ -43,6 +43,22 @@ func ReadDetailed(db *gorm.DB, id int64) (*model.Bookmark, error) {
 	return &b, nil
 }
 
+func ListByUserID(db *gorm.DB, userID int64) ([]model.Bookmark, error) {
+	var b []model.Bookmark
+	result := db.Model(&model.Bookmark{}).
+		Scopes(preloadAssociations).
+		Where("user_id = ?", userID).
+		Find(&b)
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, orm.ErrRecordNotFound(model.BookmarkModelName)
+		}
+		return nil, err
+	}
+
+	return b, nil
+}
+
 func Create(db *gorm.DB, b *model.Bookmark) (*model.Bookmark, error) {
 	if err := b.Create(db); err != nil {
 		return nil, err

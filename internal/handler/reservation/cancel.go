@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/dataaccess/reservation"
+	"lms-backend/internal/dataaccess/bookcopy"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
@@ -50,7 +50,7 @@ func HandleCancel(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	res, err := reservation.FullfilReservation(tx, resID)
+	res, err := bookcopy.CancelReservationCopy(tx, resID)
 	if err != nil {
 		return err
 	}
