@@ -11,14 +11,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary Retrieve current user
-// @Description Retrieves the current user if logged in
-// @Tags user
-// @Accept */*
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[userview.CurrentUserView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/current [get]
 func HandleGetCurrentUser(c *fiber.Ctx) error {
 	sess, err := session.Store.Get(c)
 	if err != nil {

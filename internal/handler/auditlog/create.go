@@ -18,15 +18,6 @@ const (
 	createAuditLogAction = "create audit log entry"
 )
 
-// @Summary list audit logs
-// @Description list relevang audit logs
-// @Tags audit log
-// @Accept application/json
-// @Param audit_log body auditlogparams.BaseParams true "Audit log creation request"
-// @Produce application/json
-// @Success 200 {object} api.SwgMsgResponse[auditlogview.View]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/audit_log/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createAuditLogAction, auditlogpolicy.CreatePolicy())
 	if err != nil {

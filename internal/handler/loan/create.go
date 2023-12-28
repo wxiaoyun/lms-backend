@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/dataaccess/book"
+	"lms-backend/internal/dataaccess/bookcopy"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/params/sharedparams"
@@ -20,14 +20,6 @@ const (
 	createLoanAction = "loan book"
 )
 
-// @Summary Admin loans a book on behalf of a user
-// @Description Admin loans a book on behalf of a user
-// @Tags loan
-// @Accept */*
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[loanview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/loan/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createLoanAction, loanpolicy.CreatePolicy())
 	if err != nil {
@@ -50,7 +42,7 @@ func HandleCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, params.BookID)
+	bookTitle, err := bookcopy.GetBookTitle(db, params.BookCopyID)
 	if err != nil {
 		return err
 	}
@@ -60,7 +52,7 @@ func HandleCreate(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	ln, err := book.LoanBook(tx, params.UserID, params.BookID)
+	ln, err := bookcopy.LoanCopy(tx, params.UserID, params.BookCopyID)
 	if err != nil {
 		return err
 	}

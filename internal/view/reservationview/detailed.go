@@ -2,40 +2,19 @@ package reservationview
 
 import (
 	"lms-backend/internal/model"
-	"lms-backend/internal/view/userview"
-	"time"
+	"lms-backend/internal/view/sharedview"
 )
 
 type DetailedView struct {
-	BaseView
-	User *userview.View `json:"user"`
-	Book *BookView      `json:"book"`
-}
-
-type BookView struct {
-	ID              uint   `json:"id,omitempty"`
-	Title           string `json:"title"`
-	Author          string `json:"author"`
-	ISBN            string `json:"isbn"`
-	Publisher       string `json:"publisher"`
-	PublicationDate string `json:"publication_date"`
-	Genre           string `json:"genre"`
-	Language        string `json:"language"`
+	View
+	User *sharedview.UserView `json:"user"`
+	Book *sharedview.BookView `json:"book"`
 }
 
 func ToDetailedView(res *model.Reservation) *DetailedView {
 	return &DetailedView{
-		BaseView: *ToView(res),
-		User:     userview.ToView(res.User),
-		Book: &BookView{
-			ID:              res.Book.ID,
-			Title:           res.Book.Title,
-			Author:          res.Book.Author,
-			ISBN:            res.Book.ISBN,
-			Publisher:       res.Book.Publisher,
-			PublicationDate: res.Book.PublicationDate.Format(time.RFC3339),
-			Genre:           res.Book.Genre,
-			Language:        res.Book.Language,
-		},
+		View: *ToView(res),
+		User: sharedview.ToUserView(res.User),
+		Book: sharedview.ToBookView(res.BookCopy.Book),
 	}
 }

@@ -16,14 +16,6 @@ const (
 	listBookReservationAction = "list book on reservation"
 )
 
-// @Summary List books on reservation
-// @Description Lists books on reservation
-// @Tags loan
-// @Accept */*
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/reservation/book [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, listBookReservationAction, reservationpolicy.ReadBookPolicy())
 	if err != nil {
@@ -38,7 +30,7 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	dbFiltered := cq.Filter(db, reservation.Filters(), reservation.JoinBook)
+	dbFiltered := cq.Filter(db, reservation.Filters(), reservation.JoinBookCopy, reservation.JoinBook)
 
 	filteredCount, err := reservation.Count(dbFiltered)
 	if err != nil {

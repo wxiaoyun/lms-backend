@@ -12,15 +12,6 @@ import (
 	"lms-backend/internal/view/userview"
 )
 
-// @Summary Create a new user
-// @Description Creates a new user in the system
-// @Tags auth
-// @Accept application/json
-// @Param createuserparam body userparams.CreateParams true "User creation request"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[userview.View]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/user/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	var params userparams.CreateParams
 	err := c.BodyParser(&params)

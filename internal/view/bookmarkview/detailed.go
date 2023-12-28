@@ -2,17 +2,17 @@ package bookmarkview
 
 import (
 	"lms-backend/internal/model"
-	"lms-backend/internal/view/bookview"
+	"lms-backend/internal/view/sharedview"
 )
 
 type DetailedView struct {
 	BaseView
-	Book *bookview.BaseView `json:"book"`
+	Book *sharedview.BookView `json:"book"`
 }
 
 func ToDetailedView(bookmark *model.Bookmark) *DetailedView {
 	return &DetailedView{
 		BaseView: *ToView(bookmark),
-		Book:     bookview.ToView(bookmark.Book),
+		Book:     sharedview.ToBookView(bookmark.Book),
 	}
 }

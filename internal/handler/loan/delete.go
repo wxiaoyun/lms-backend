@@ -21,15 +21,7 @@ const (
 	deleteLoanAction = "delete loan"
 )
 
-// @Summary Delete a loan
-// @Description Deletes an existing loan in the library
-// @Tags loan
-// @Accept */*
-// @Param loan_id path int true "loan ID to delete"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[loanview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/loan/{loan_id}/ [delete]
+// Deleting loans is deprecated. As it will not properly update state of book copies.
 func HandleDelete(c *fiber.Ctx) error {
 	err := policy.Authorize(c, deleteLoanAction, loanpolicy.DeletePolicy())
 	if err != nil {

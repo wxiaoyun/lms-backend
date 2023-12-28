@@ -5,6 +5,7 @@ import (
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/dataaccess/book"
+	"lms-backend/internal/dataaccess/bookcopy"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/params/sharedparams"
@@ -20,14 +21,6 @@ const (
 	createReservationAction = "create reservation"
 )
 
-// @Summary Admin reservations a book on behalf of a user
-// @Description Admin reservations a book on behalf of a user
-// @Tags loan
-// @Accept */*
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/reservation/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createReservationAction, reservationpolicy.CreatePolicy())
 	if err != nil {
@@ -50,7 +43,7 @@ func HandleCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, params.BookID)
+	bookTitle, err := book.GetBookTitle(db, params.BookCopyID)
 	if err != nil {
 		return err
 	}
@@ -60,7 +53,7 @@ func HandleCreate(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	res, err := book.ReserveBook(tx, params.UserID, params.BookID)
+	res, err := bookcopy.ReserveCopy(tx, params.UserID, params.BookCopyID)
 	if err != nil {
 		return err
 	}

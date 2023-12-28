@@ -21,14 +21,6 @@ const (
 	deleteBookmarkAction = "delete book mark"
 )
 
-// @Summary Delete bookmark
-// @Description Delete bookmark
-// @Tags bookmark
-// @Accept application/json
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]bookmarkview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/bookmark/:bookmark_id [delete]
 func HandleDelete(c *fiber.Ctx) error {
 	err := policy.Authorize(c, deleteBookmarkAction, bookmarkpolicy.CreatePolicy())
 	if err != nil {

@@ -17,15 +17,6 @@ const (
 	createBookAction = "create book"
 )
 
-// @Summary Create a book
-// @Description creates a new book in the library
-// @Tags book
-// @Accept application/json
-// @Param book body bookparams.CreateParams true "Book creation request"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[bookview.BaseView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/book/ [post]
 func HandleCreate(c *fiber.Ctx) error {
 	err := policy.Authorize(c, createBookAction, bookpolicy.CreatePolicy())
 	if err != nil {
@@ -47,13 +38,13 @@ func HandleCreate(c *fiber.Ctx) error {
 	defer func() { rollBackOrCommit(err) }()
 
 	bookModel := bookParams.ToModel()
-	bookModel, err = book.Create(tx, bookModel)
+	bookModel, err = book.CreateWithCopy(tx, bookModel)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(api.Response{
-		Data: bookview.ToView(bookModel),
+		Data: bookview.ToDetailedView(bookModel),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf(
 				"\"%s\" added to library.", bookModel.Title,

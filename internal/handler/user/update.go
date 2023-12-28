@@ -20,16 +20,6 @@ const (
 	updateUserAction = "update user"
 )
 
-// @Summary Update an existing user
-// @Description Updates an existing user in the system. This only includes username, first name, last name, preferred name, language
-// @Tags user
-// @Accept application/json
-// @Param user_id path int true "User ID to update"
-// @Param createuserparam body userparams.UpdateParams true "User update request"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[userview.View]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/user/{user_id} [patch]
 func HandleUpdate(c *fiber.Ctx) error {
 	param := c.Params("user_id")
 	userID, err := strconv.ParseInt(param, 10, 64)

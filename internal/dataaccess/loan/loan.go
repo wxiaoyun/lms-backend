@@ -18,7 +18,8 @@ func preloadAssociations(db *gorm.DB) *gorm.DB {
 
 func preloadBookUserAssociations(db *gorm.DB) *gorm.DB {
 	return db.
-		Preload("Book").
+		Preload("BookCopy").
+		Preload("BookCopy.Book").
 		Preload("User").
 		Preload("User.Person")
 }
@@ -165,6 +166,21 @@ func ReadOutstandingLoansByUserID(db *gorm.DB, userID int64) ([]model.Loan, erro
 	return loans, nil
 }
 
+func CountOutstandingLoansByUserID(db *gorm.DB, userID int64) (int64, error) {
+	var count int64
+
+	result := db.Model(&model.Loan{}).
+		Where("user_id = ?", userID).
+		Where("status = ?", model.LoanStatusBorrowed).
+		Where("return_date IS NULL").
+		Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
+}
+
 // Returns the overdue loan for the given book, sorted by create date.
 func ReadOverdueLoansByBookID(db *gorm.DB, bookID int64) ([]model.Loan, error) {
 	var loans []model.Loan
@@ -210,10 +226,10 @@ func ReadOverdueLoansByUserID(db *gorm.DB, userID int64) ([]model.Loan, error) {
 // User should not have more than maximum reservations and loans.
 //
 // Book should be neither on loan nor on reserve.
-func LoanBook(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
+func Loan(db *gorm.DB, userID, copyID int64) (*model.Loan, error) {
 	ln := model.Loan{
 		UserID:     uint(userID),
-		BookID:     uint(bookID),
+		BookCopyID: uint(copyID),
 		Status:     model.LoanStatusBorrowed,
 		BorrowDate: time.Now(),
 		DueDate:    time.Now().Add(model.LoanDuration),
@@ -230,7 +246,7 @@ func LoanBook(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
 	return ReadDetailed(db, int64(ln.ID))
 }
 
-func ReturnBook(db *gorm.DB, loanID int64) (*model.Loan, error) {
+func ReturnLoan(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	ln, err := ReadDetailed(db, loanID)
 	if err != nil {
 		return nil, err
@@ -254,7 +270,7 @@ func ReturnBook(db *gorm.DB, loanID int64) (*model.Loan, error) {
 		return nil, err
 	}
 
-	return ReadDetailed(db, loanID)
+	return ln, nil
 }
 
 func RenewLoan(db *gorm.DB, loanID int64) (*model.Loan, error) {
@@ -268,6 +284,11 @@ func RenewLoan(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	}
 
 	ln.DueDate = ln.DueDate.Add(model.LoanDuration)
+	// check if the loaned duration exceeds maximum
+	if ln.DueDate.Sub(ln.BorrowDate) > model.MaximumLoanDuration {
+		return nil, externalerrors.BadRequest("loan duration exceeds maximum")
+	}
+
 	ln.LoanHistories = append(ln.LoanHistories, model.LoanHistory{
 		LoanID: ln.ID,
 		Action: model.LoanHistoryActionExtend,
@@ -277,5 +298,5 @@ func RenewLoan(db *gorm.DB, loanID int64) (*model.Loan, error) {
 		return nil, err
 	}
 
-	return ReadDetailed(db, loanID)
+	return ln, nil
 }

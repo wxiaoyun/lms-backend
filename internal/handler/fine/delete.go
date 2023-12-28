@@ -21,15 +21,6 @@ const (
 	deleteFineAction = "delete fine"
 )
 
-// @Summary Delete fine
-// @Description deletes a fine belonging to a loan
-// @Tags fine
-// @Accept */*
-// @Param fine_id path int true "fine ID to delete"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[fineview.View]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/fine/{fine_id} [delete]
 func HandleDelete(c *fiber.Ctx) error {
 	err := policy.Authorize(c, deleteFineAction, finepolicy.DeletePolicy())
 	if err != nil {

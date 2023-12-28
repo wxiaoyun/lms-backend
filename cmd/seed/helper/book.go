@@ -8,6 +8,17 @@ import (
 	"gorm.io/gorm"
 )
 
+var (
+	languages = []string{
+		"en",
+		"km",
+	}
+)
+
+func randomLanguage() string {
+	return languages[random.RandInt(0, len(languages))]
+}
+
 func SeedBooks(db *gorm.DB, num int64) error {
 	var count int64
 
@@ -29,7 +40,8 @@ func SeedBooks(db *gorm.DB, num int64) error {
 			Publisher:       random.RandWords(random.RandInt(4, 7)),
 			PublicationDate: random.RandomDate(time.Now().AddDate(-10, 0, 0), time.Now()),
 			Genre:           random.RandWords(random.RandInt(1, 3)),
-			Language:        random.RandWords(random.RandInt(1, 3)),
+			Language:        randomLanguage(),
+			BookCopies:      []model.BookCopy{{}},
 		}
 	}
 

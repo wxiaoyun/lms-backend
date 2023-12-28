@@ -12,19 +12,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary List books
-// @Description Lists books in the library
-// @Tags book
-// @Accept application/json
-// @Param offset query int false "Offset for pagination"
-// @Param limit query int false "Limit for pagination"
-// @Param filter[value] query string false "Filter by value"
-// @Param sortBy query string false "Sort by column name (e.g. title)"
-// @Param orderBy query string false "Order by direction (asc or desc)"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]bookview.BaseView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/book [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readBookAction, bookpolicy.ListPolicy())
 	if err != nil {
@@ -48,15 +35,15 @@ func HandleList(c *fiber.Ctx) error {
 
 	dbSorted := cq.Sort(dbFiltered, book.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
-	books, err := book.List(dbPaginated)
+	books, err := book.ListWithCopies(dbPaginated)
 	if err != nil {
 		return err
 	}
 
-	var view = []*bookview.BaseView{}
+	var view = []bookview.DetailedView{}
 	for _, w := range books {
 		//nolint:gosec // loop does not modify struct
-		view = append(view, bookview.ToView(&w))
+		view = append(view, *bookview.ToDetailedView(&w))
 	}
 
 	return c.JSON(api.Response{

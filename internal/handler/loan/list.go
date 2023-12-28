@@ -16,14 +16,6 @@ const (
 	listBookLoanAction = "list book on loan"
 )
 
-// @Summary List books on loan by current user
-// @Description Lists books on loan by current user
-// @Tags loan
-// @Accept */*
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[loanview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/loan/book [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, listBookLoanAction, loanpolicy.ListPolicy())
 	if err != nil {
@@ -38,7 +30,7 @@ func HandleList(c *fiber.Ctx) error {
 		return err
 	}
 
-	dbFiltered := cq.Filter(db, loan.Filters(), loan.JoinBook)
+	dbFiltered := cq.Filter(db, loan.Filters(), loan.JoinBookCopy, loan.JoinBook)
 
 	filteredCount, err := loan.Count(dbFiltered)
 	if err != nil {

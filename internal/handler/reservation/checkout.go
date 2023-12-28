@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
-	"lms-backend/internal/dataaccess/book"
+	"lms-backend/internal/dataaccess/bookcopy"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/policy"
@@ -21,20 +21,11 @@ const (
 	checkoutBookAction = "checkout book"
 )
 
-// @Summary Checkout a book
-// @Description Checks out a book for a given reservation
-// @Tags reservation
-// @Accept */*
-// @Param reservation_id path int true "reservation ID to checkout"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/reservation/{reservation_id}/checkout [patch]
 func HandleCheckout(c *fiber.Ctx) error {
-	param2 := c.Params("reservation_id")
-	resID, err := strconv.ParseInt(param2, 10, 64)
+	param := c.Params("reservation_id")
+	resID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid reservation id.", param2))
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid reservation id.", param))
 	}
 
 	err = policy.Authorize(c, checkoutBookAction, reservationpolicy.CheckoutPolicy(resID))
@@ -59,7 +50,7 @@ func HandleCheckout(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	res, err := book.CheckOutReservation(tx, userID, resID)
+	res, err := bookcopy.CheckOutCopy(tx, userID, resID)
 	if err != nil {
 		return err
 	}

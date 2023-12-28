@@ -21,20 +21,11 @@ const (
 	cancelReservationAction = "cancel reservation"
 )
 
-// @Summary Cancel a reservation
-// @Description Cancels a reservation for a book
-// @Tags reservation
-// @Accept */*
-// @Param reservation_id path int true "reservation ID to cancel"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[reservationview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/reservation/{reservation_id}/cancel [patch]
 func HandleCancel(c *fiber.Ctx) error {
-	param2 := c.Params("reservation_id")
-	resID, err := strconv.ParseInt(param2, 10, 64)
+	param := c.Params("reservation_id")
+	resID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid reservation id.", param2))
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid reservation id.", param))
 	}
 
 	err = policy.Authorize(c, cancelReservationAction, reservationpolicy.CancelPolicy(resID))

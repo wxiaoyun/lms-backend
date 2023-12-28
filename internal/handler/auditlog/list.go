@@ -16,19 +16,6 @@ const (
 	readAuditLogAction = "read audit logs"
 )
 
-// @Summary List audit logs
-// @Description List relevant audit logs
-// @Tags audit log
-// @Accept application/json
-// @Param offset query int false "Offset for pagination"
-// @Param limit query int false "Limit for pagination"
-// @Param filter[action] query string false "Filter by action"
-// @Param sortBy query string false "Sort by column name"
-// @Param orderBy query string false "Order by direction (asc or desc)"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]auditlogview.View]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/audit_log [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, readAuditLogAction, auditlogpolicy.ReadPolicy())
 	if err != nil {

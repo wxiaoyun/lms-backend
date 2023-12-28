@@ -16,19 +16,6 @@ const (
 	listBookmarkAction = "list book mark"
 )
 
-// @Summary List bookmarks
-// @Description List bookmarks
-// @Tags bookmark
-// @Accept application/json
-// @Param offset query int false "Offset for pagination"
-// @Param limit query int false "Limit for pagination"
-// @Param filter[user_id] query int false "Filter by user ID"
-// @Param sortBy query string false "Sort by column name"
-// @Param orderBy query string false "Order by direction (asc or desc)"
-// @Produce application/json
-// @Success 200 {object} api.SwgResponse[[]bookmarkview.DetailedView]
-// @Failure 400 {object} api.SwgErrResponse
-// @Router /v1/bookmark [get]
 func HandleList(c *fiber.Ctx) error {
 	err := policy.Authorize(c, listBookmarkAction, bookmarkpolicy.ListPolicy())
 	if err != nil {

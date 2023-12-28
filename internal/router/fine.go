@@ -8,7 +8,7 @@ import (
 )
 
 func FineRoutes(r fiber.Router) {
-	r.Get("/", middleware.CacheMiddleware(middleware.ShortExp), finehandler.HandleList)
+	r.Get("/", middleware.CacheMiddleware(middleware.VShortExp), finehandler.HandleList)
 
 	Route(r, "/:fine_id", func(r fiber.Router) {
 		r.Patch("/settle", finehandler.HandleSettle)
