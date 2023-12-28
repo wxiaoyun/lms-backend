@@ -33,10 +33,10 @@ func HandleDelete(c *fiber.Ctx) error {
 		return err
 	}
 
-	param2 := c.Params("loan_id")
-	loanID, err := strconv.ParseInt(param2, 10, 64)
+	param := c.Params("loan_id")
+	loanID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
-		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param2))
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param))
 	}
 
 	db := database.GetDB()

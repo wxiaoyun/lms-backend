@@ -24,6 +24,12 @@ func preloadBookUserAssociations(db *gorm.DB) *gorm.DB {
 		Preload("User.Person")
 }
 
+func preloadBook(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("BookCopy").
+		Preload("BookCopy.Book")
+}
+
 func preloadAllAssociations(db *gorm.DB) *gorm.DB {
 	return db.Scopes(preloadAssociations, preloadBookUserAssociations)
 }
@@ -61,6 +67,19 @@ func ReadDetailed(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	}
 
 	return &loan, nil
+}
+
+func ListBorrowedLoanByUserID(db *gorm.DB, userID int64) ([]model.Loan, error) {
+	var loans []model.Loan
+	result := db.Model(&model.Loan{}).
+		Scopes(preloadBook).
+		Where("user_id = ? AND status = ?", userID, model.LoanStatusBorrowed).
+		Find(&loans)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return loans, nil
 }
 
 func Delete(db *gorm.DB, loanID int64) (*model.Loan, error) {

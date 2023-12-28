@@ -5,19 +5,26 @@ import (
 )
 
 type CurrentUserView struct {
-	IsLoggedIn bool  `json:"is_logged_in"`
-	User       *View `json:"user"`
+	IsLoggedIn bool `json:"is_logged_in"`
+	LoginView
 }
 
-func ToCurrentUserView(user *model.User, abilities ...model.Ability) *CurrentUserView {
-	if user == nil {
-		return &CurrentUserView{
-			IsLoggedIn: false,
-		}
+func ToGuestView() *CurrentUserView {
+	return &CurrentUserView{
+		IsLoggedIn: false,
 	}
+}
 
+func ToCurrentUserView(
+	user *model.User,
+	abilities []model.Ability,
+	bookmarks []model.Bookmark,
+	loans []model.Loan,
+	reservations []model.Reservation,
+	fines []model.Fine,
+) *CurrentUserView {
 	return &CurrentUserView{
 		IsLoggedIn: true,
-		User:       ToView(user, abilities...),
+		LoginView:  *ToLoginView(user, abilities, bookmarks, loans, reservations, fines),
 	}
 }

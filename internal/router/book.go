@@ -18,6 +18,7 @@ func BookRoutes(r fiber.Router) {
 
 		Route(r, "/loan", BookLoanRoutes)
 		Route(r, "/reservation", BookReservationRoutes)
+		Route(r, "/bookmark", BookmarkRoutes)
 	})
 
 	Route(r, "/autocomplete", func(r fiber.Router) {

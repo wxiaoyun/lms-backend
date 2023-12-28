@@ -11,7 +11,7 @@ type DetailedView struct {
 }
 
 func ToDetailedView(b *model.Book) *DetailedView {
-	var copies []sharedview.BookCopyView
+	copies := []sharedview.BookCopyView{}
 	for _, copy := range b.BookCopies {
 		//nolint:gosec // loop does not modify struct
 		copies = append(copies, *sharedview.ToBookCopyView(&copy))

@@ -17,6 +17,12 @@ func preloadBookUserAssociations(db *gorm.DB) *gorm.DB {
 		Preload("User.Person")
 }
 
+func preloadBook(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("BookCopy").
+		Preload("BookCopy.Book")
+}
+
 func Read(db *gorm.DB, reservationID int64) (*model.Reservation, error) {
 	var reservation model.Reservation
 
@@ -50,6 +56,22 @@ func ReadDetailed(db *gorm.DB, reservationID int64) (*model.Reservation, error) 
 	}
 
 	return &reservation, nil
+}
+
+func ListPendingReservationByUserID(db *gorm.DB, userID int64) ([]model.Reservation, error) {
+	var r []model.Reservation
+	result := db.Model(&model.Reservation{}).
+		Scopes(preloadBook).
+		Where("user_id = ? AND status = ?", userID, model.ReservationStatusPending).
+		Find(&r)
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, orm.ErrRecordNotFound(model.ReservationModelName)
+		}
+		return nil, err
+	}
+
+	return r, nil
 }
 
 func Delete(db *gorm.DB, reservationID int64) (*model.Reservation, error) {
@@ -125,7 +147,6 @@ func ReadOutstandingReservationsByBookID(db *gorm.DB, bookID int64) ([]model.Res
 	result := db.Model(&model.Reservation{}).
 		Where("book_id = ?", bookID).
 		Where("status = ?", model.ReservationStatusPending).
-		Where("reservation_date >= NOW()").
 		Order("created_at DESC").
 		Find(&reservations)
 
@@ -143,7 +164,6 @@ func ReadOutstandingReservationsByUserID(db *gorm.DB, userID int64) ([]model.Res
 	result := db.Model(&model.Reservation{}).
 		Where("user_id = ?", userID).
 		Where("status = ?", model.ReservationStatusPending).
-		Where("reservation_date >= NOW()").
 		Order("created_at DESC").
 		Find(&reservations)
 
@@ -160,7 +180,6 @@ func CountOutstandingReservationsByUserID(db *gorm.DB, userID int64) (int64, err
 	result := db.Model(&model.Reservation{}).
 		Where("user_id = ?", userID).
 		Where("status = ?", model.ReservationStatusPending).
-		Where("reservation_date >= NOW()").
 		Count(&count)
 	if result.Error != nil {
 		return 0, result.Error
