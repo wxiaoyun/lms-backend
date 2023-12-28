@@ -9,7 +9,8 @@ import (
 
 func preloadAssociations(db *gorm.DB) *gorm.DB {
 	return db.
-		Preload("Book")
+		Preload("Book").
+		Preload("Book.BookCopies")
 }
 
 func Read(db *gorm.DB, id int64) (*model.Bookmark, error) {
@@ -44,11 +45,11 @@ func ReadDetailed(db *gorm.DB, id int64) (*model.Bookmark, error) {
 }
 
 func ListByUserID(db *gorm.DB, userID int64) ([]model.Bookmark, error) {
-	var b []model.Bookmark
+	var bookmarks []model.Bookmark
 	result := db.Model(&model.Bookmark{}).
 		Scopes(preloadAssociations).
 		Where("user_id = ?", userID).
-		Find(&b)
+		Find(&bookmarks)
 	if err := result.Error; err != nil {
 		if orm.IsRecordNotFound(err) {
 			return nil, orm.ErrRecordNotFound(model.BookmarkModelName)
@@ -56,7 +57,19 @@ func ListByUserID(db *gorm.DB, userID int64) ([]model.Bookmark, error) {
 		return nil, err
 	}
 
-	return b, nil
+	for i, bm := range bookmarks {
+		var copies []model.BookCopy
+		result := db.Model(&model.BookCopy{}).
+			Where("book_id = ?", bm.BookID).
+			Find(&copies)
+		if err := result.Error; err != nil {
+			return nil, err
+		}
+
+		bookmarks[i].Book.BookCopies = copies
+	}
+
+	return bookmarks, nil
 }
 
 func Create(db *gorm.DB, b *model.Bookmark) (*model.Bookmark, error) {

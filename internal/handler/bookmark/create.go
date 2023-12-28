@@ -8,10 +8,13 @@ import (
 	"lms-backend/internal/dataaccess/bookmark"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
-	"lms-backend/internal/params/bookmarkparams"
+	"lms-backend/internal/model"
 	"lms-backend/internal/policy"
 	"lms-backend/internal/policy/bookmarkpolicy"
+	"lms-backend/internal/session"
 	"lms-backend/internal/view/bookmarkview"
+	"lms-backend/pkg/error/externalerrors"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -26,25 +29,27 @@ func HandleCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	var params bookmarkparams.BaseParams
-	if err := c.BodyParser(&params); err != nil {
-		return err
+	param := c.Params("book_id")
+	bookID, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param))
 	}
 
-	if err := params.Validate(); err != nil {
-		return err
-	}
-
-	bm := params.ToModel()
-
-	db := database.GetDB()
-
-	username, err := user.GetUserName(db, params.UserID)
+	userID, err := session.GetLoginSession(c)
 	if err != nil {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, params.BookID)
+	bm := model.Bookmark{BookID: uint(bookID), UserID: uint(userID)}
+
+	db := database.GetDB()
+
+	username, err := user.GetUserName(db, userID)
+	if err != nil {
+		return err
+	}
+
+	bookTitle, err := book.GetBookTitle(db, bookID)
 	if err != nil {
 		return err
 	}
@@ -54,7 +59,7 @@ func HandleCreate(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	b, err := bookmark.Create(tx, bm)
+	b, err := bookmark.Create(tx, &bm)
 	if err != nil {
 		return err
 	}

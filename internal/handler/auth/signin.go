@@ -3,6 +3,10 @@ package auth
 import (
 	"fmt"
 	"lms-backend/internal/api"
+	"lms-backend/internal/dataaccess/bookmark"
+	"lms-backend/internal/dataaccess/fine"
+	"lms-backend/internal/dataaccess/loan"
+	"lms-backend/internal/dataaccess/reservation"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/params/userparams"
@@ -28,14 +32,9 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
-	userModel := params.ToModel()
+	usr := params.ToModel()
 	db := database.GetDB()
-	userModel, err := user.Login(db, userModel)
-	if err != nil {
-		return err
-	}
-
-	abilites, err := user.GetAbilities(db, int64(userModel.ID))
+	usr, err := user.Login(db, usr)
 	if err != nil {
 		return err
 	}
@@ -50,17 +49,43 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
-	sess.Set(session.CookieKey, userModel.ID)
+	sess.Set(session.CookieKey, usr.ID)
 	err = sess.Save()
 	if err != nil {
 		return err
 	}
 
+	id := int64(usr.ID)
+
+	abilities, err := user.GetAbilities(db, int64(usr.ID))
+	if err != nil {
+		return err
+	}
+	bookmarks, err := bookmark.ListByUserID(db, id)
+	if err != nil {
+		return err
+	}
+
+	loans, err := loan.ListBorrowedLoanByUserID(db, id)
+	if err != nil {
+		return err
+	}
+
+	reservations, err := reservation.ListPendingReservationByUserID(db, id)
+	if err != nil {
+		return err
+	}
+
+	fines, err := fine.ListOutstandingFineByUserID(db, id)
+	if err != nil {
+		return err
+	}
+
 	return c.Status(fiber.StatusOK).JSON(api.Response{
-		Data: userview.ToView(userModel, abilites...),
+		Data: userview.ToLoginView(usr, abilities, bookmarks, loans, reservations, fines),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
-				"%s is logged in successfully", userModel.Username,
+				"%s is logged in successfully", usr.Username,
 			))),
 	})
 }

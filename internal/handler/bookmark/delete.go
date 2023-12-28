@@ -22,11 +22,6 @@ const (
 )
 
 func HandleDelete(c *fiber.Ctx) error {
-	err := policy.Authorize(c, deleteBookmarkAction, bookmarkpolicy.CreatePolicy())
-	if err != nil {
-		return err
-	}
-
 	userID, err := session.GetLoginSession(c)
 	if err != nil {
 		return err
@@ -36,6 +31,11 @@ func HandleDelete(c *fiber.Ctx) error {
 	bmID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid bookmark id.", id))
+	}
+
+	err = policy.Authorize(c, deleteBookmarkAction, bookmarkpolicy.DeletePolicy(bmID))
+	if err != nil {
+		return err
 	}
 
 	db := database.GetDB()

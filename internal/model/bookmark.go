@@ -22,7 +22,7 @@ const (
 )
 
 const (
-	MaximumBookmarkPerUser = 10
+	MaximumBookmarkPerUser = 30
 )
 
 func (b *Bookmark) Create(db *gorm.DB) error {
