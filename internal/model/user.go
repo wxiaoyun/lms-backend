@@ -3,7 +3,6 @@ package model
 import (
 	"lms-backend/internal/orm"
 	"lms-backend/pkg/error/externalerrors"
-	"regexp"
 	"time"
 	"unicode/utf8"
 
@@ -28,7 +27,7 @@ type User struct {
 }
 
 var (
-	emailReg    = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+	// emailReg    = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	passwordReg = regexp2.MustCompile(`^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,32}$`, regexp2.None)
 )
 

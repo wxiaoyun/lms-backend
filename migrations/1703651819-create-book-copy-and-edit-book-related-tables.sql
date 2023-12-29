@@ -12,11 +12,11 @@ CREATE TABLE
 CREATE INDEX idx_book_copies_deleted_at ON book_copies (deleted_at);
 
 ALTER TABLE loans
-ADD COLUMN book_copy_id BIGINT REFERENCES book_copies (id),
+ADD COLUMN book_copy_id BIGINT NOT NULL REFERENCES book_copies (id),
 DROP COLUMN book_id;
 
 ALTER TABLE reservations
-ADD COLUMN book_copy_id BIGINT REFERENCES book_copies (id),
+ADD COLUMN book_copy_id BIGINT NOT NULL REFERENCES book_copies (id),
 DROP COLUMN book_id;
 
 -- +migrate Down
