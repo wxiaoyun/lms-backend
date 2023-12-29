@@ -4,7 +4,7 @@ CREATE TABLE
     id BIGSERIAL PRIMARY KEY,
     person_id BIGINT NOT NULL REFERENCES people (id),
     username VARCHAR UNIQUE NOT NULL,
-    email VARCHAR UNIQUE,
+    -- email VARCHAR UNIQUE,
     encrypted_password VARCHAR NOT NULL,
     sign_in_count INTEGER NOT NULL DEFAULT 0,
     current_sign_in_at timestamptz,

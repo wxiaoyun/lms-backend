@@ -22,9 +22,9 @@ func (p *SignInParams) Validate() error {
 		return externalerrors.BadRequest("Password is required")
 	}
 
-	if p.Email == "" && p.Username == "" {
-		return externalerrors.BadRequest("Email or Username is required")
-	}
+	// if p.Email == "" && p.Username == "" {
+	// 	return externalerrors.BadRequest("Email or Username is required")
+	// }
 
 	return nil
 }

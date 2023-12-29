@@ -10,9 +10,8 @@ import (
 type Person struct {
 	gorm.Model
 
-	FullName           string `gorm:"not null"`
-	PreferredName      string
-	LanguagePreference string `gorm:"not null"`
+	FullName      string `gorm:"not null"`
+	PreferredName string
 }
 
 const (
@@ -56,24 +55,8 @@ func (p *Person) ValidateName() error {
 	return nil
 }
 
-func (p *Person) ValidateLang() error {
-	if p.LanguagePreference == "" {
-		return externalerrors.BadRequest("language_preference is required")
-	}
-
-	if len(p.LanguagePreference) != 2 {
-		return externalerrors.BadRequest("language_preference must be 2 characters long")
-	}
-
-	return nil
-}
-
 func (p *Person) Validate() error {
-	if err := p.ValidateName(); err != nil {
-		return err
-	}
-
-	return p.ValidateLang()
+	return p.ValidateName()
 }
 
 func (p *Person) BeforeCreate(_ *gorm.DB) error {

@@ -50,7 +50,7 @@ func HandleChangeRole(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	usr, err := user.UpdateRoles(tx, userID, []int64{params.RoleID})
+	usr, err := user.UpdateRoles(tx, userID, params.RoleID)
 	if err != nil {
 		return err
 	}

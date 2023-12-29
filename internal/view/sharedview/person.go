@@ -5,17 +5,15 @@ import (
 )
 
 type PersonView struct {
-	ID                 uint   `json:"id,omitempty"`
-	FullName           string `json:"full_name"`
-	PreferredName      string `json:"preferred_name"`
-	LanguagePreference string `json:"language_preference"`
+	ID            uint   `json:"id,omitempty"`
+	FullName      string `json:"full_name"`
+	PreferredName string `json:"preferred_name"`
 }
 
 func ToPersonView(person *model.Person) *PersonView {
 	return &PersonView{
-		ID:                 person.ID,
-		FullName:           person.FullName,
-		PreferredName:      person.PreferredName,
-		LanguagePreference: person.LanguagePreference,
+		ID:            person.ID,
+		FullName:      person.FullName,
+		PreferredName: person.PreferredName,
 	}
 }

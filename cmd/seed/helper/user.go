@@ -8,11 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	SystemAdminEmail  = "admin@gmail.com"
-	LibraryAdminEmail = "libadmin@gmail.com"
-	StaffEmail        = "staff@gmail.com"
-)
+// const (
+// 	SystemAdminEmail  = "admin@gmail.com"
+// 	LibraryAdminEmail = "libadmin@gmail.com"
+// 	StaffEmail        = "staff@gmail.com"
+// )
 
 var (
 	Users []model.User = []model.User{}
@@ -34,45 +34,41 @@ func SeedUsersAndPeople(db *gorm.DB, num int64) error {
 
 	// Generate 100 users
 	Users[0] = model.User{
-		Username:          "admin",
-		Email:             SystemAdminEmail,
+		Username: "admin",
+		// Email:             SystemAdminEmail,
 		EncryptedPassword: "P4ssw0rd!",
 		Person: &model.Person{
-			FullName:           "Admin",
-			PreferredName:      "Admin",
-			LanguagePreference: "en",
+			FullName:      "Admin",
+			PreferredName: "Admin",
 		},
 	}
 	Users[1] = model.User{
-		Username:          "libadmin",
-		Email:             LibraryAdminEmail,
+		Username: "libadmin",
+		// Email:             LibraryAdminEmail,
 		EncryptedPassword: "P4ssw0rd!",
 		Person: &model.Person{
-			FullName:           "Library Admin",
-			PreferredName:      "Library Admin",
-			LanguagePreference: "en",
+			FullName:      "Library Admin",
+			PreferredName: "Library Admin",
 		},
 	}
 	Users[2] = model.User{
-		Username:          "staff",
-		Email:             StaffEmail,
+		Username: "staff",
+		// Email:             StaffEmail,
 		EncryptedPassword: "P4ssw0rd!",
 		Person: &model.Person{
-			FullName:           "Staff",
-			PreferredName:      "Staff",
-			LanguagePreference: "en",
+			FullName:      "Staff",
+			PreferredName: "Staff",
 		},
 	}
 
 	for i := 4; i <= int(num); i++ {
 		Users[i-1] = model.User{
-			Username:          fmt.Sprintf("user%d", i),
-			Email:             fmt.Sprintf("user%d@gmail.com", i),
+			Username: fmt.Sprintf("user%d", i),
+			// Email:             fmt.Sprintf("user%d@gmail.com", i),
 			EncryptedPassword: "P4ssw0rd!",
 			Person: &model.Person{
-				FullName:           random.RandWords(random.RandInt(2, 10)),
-				PreferredName:      random.RandWords(random.RandInt(2, 10)),
-				LanguagePreference: "km",
+				FullName:      random.RandWords(random.RandInt(2, 10)),
+				PreferredName: random.RandWords(random.RandInt(2, 10)),
 			},
 		}
 	}
