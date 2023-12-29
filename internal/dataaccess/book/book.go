@@ -3,6 +3,8 @@ package book
 import (
 	"lms-backend/internal/model"
 	"lms-backend/internal/orm"
+	"lms-backend/internal/viewmodel"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -161,4 +163,26 @@ func AutoComplete(db *gorm.DB, value string) ([]model.Book, error) {
 	}
 
 	return books, nil
+}
+
+func ListPopularBooks(db *gorm.DB) ([]viewmodel.BookLoanCount, error) {
+	// Calculate the date 3 months ago from now
+	threeMonthsAgo := time.Now().AddDate(0, -3, 0)
+
+	var bookLoanCounts []viewmodel.BookLoanCount
+
+	result := db.Model(&model.Book{}).
+		Select("books.id, books.title, COUNT(loans.id) AS loan_count").
+		Joins("INNER JOIN book_copies ON books.id = book_copies.book_id").
+		Joins("INNER JOIN loans ON book_copies.id = loans.book_copy_id AND loans.created_at >= ?", threeMonthsAgo).
+		Group("books.id, books.title").
+		Order("loan_count DESC").
+		Limit(10).
+		Find(&bookLoanCounts)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return bookLoanCounts, nil
 }

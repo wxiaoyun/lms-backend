@@ -33,7 +33,7 @@ func HandleLoan(c *fiber.Ctx) error {
 		return err
 	}
 
-	param := c.Params("book_copy_id")
+	param := c.Params("book_id") // This is actually book copy id
 	copyID, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book copy id.", param))
