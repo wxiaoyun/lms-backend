@@ -38,6 +38,7 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 				abilities.CanReadAuditLog.Name,
 				abilities.CanCreateAuditLog.Name,
 
+				abilities.CanCreateUser.Name,
 				abilities.CanReadUser.Name,
 				abilities.CanUpdateUser.Name,
 				abilities.CanDeleteUser.Name,
@@ -59,10 +60,8 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 			},
 
 			roles.Staff.Name: {
-				abilities.CanReadAuditLog.Name,
-
 				abilities.CanReadUser.Name,
-				abilities.CanCreatePerson.Name,
+				abilities.CanCreateUser.Name,
 
 				abilities.CanReadBook.Name,
 
@@ -126,7 +125,7 @@ func LinkUserWithRoles(db *gorm.DB) error {
 	// Assign all abilities to sysadmin
 	if _, err := user.UpdateRoles(db,
 		int64(Users[0].ID),
-		[]int64{sysAdminRoleID},
+		sysAdminRoleID,
 	); err != nil {
 		return err
 	}
@@ -145,7 +144,7 @@ func LinkUserWithRoles(db *gorm.DB) error {
 	// Assign all abilities to libadmin
 	if _, err := user.UpdateRoles(db,
 		int64(Users[1].ID),
-		[]int64{libAdminRoleID},
+		libAdminRoleID,
 	); err != nil {
 		return err
 	}
@@ -164,7 +163,7 @@ func LinkUserWithRoles(db *gorm.DB) error {
 	// Assign all abilities to staff
 	if _, err := user.UpdateRoles(db,
 		int64(Users[2].ID),
-		[]int64{staffRoleID},
+		staffRoleID,
 	); err != nil {
 		return err
 	}
@@ -172,7 +171,7 @@ func LinkUserWithRoles(db *gorm.DB) error {
 	for _, usr := range Users[3:] {
 		if _, err := user.UpdateRoles(db,
 			int64(usr.ID),
-			[]int64{4},
+			model.MemberRole,
 		); err != nil {
 			return err
 		}

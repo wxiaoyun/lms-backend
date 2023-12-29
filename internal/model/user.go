@@ -15,8 +15,8 @@ import (
 type User struct {
 	gorm.Model
 
-	Username          string `gorm:"unique;not null"`
-	Email             string `gorm:"unique"`
+	Username string `gorm:"unique;not null"`
+	// Email             string `gorm:"unique"`
 	EncryptedPassword string `gorm:"not null"`
 	SignInCount       int    `gorm:"not null;default:0"`
 	CurrentSignInAt   time.Time
@@ -68,28 +68,28 @@ func (u *User) ensureUsernameIsNew(db *gorm.DB) error {
 	return nil
 }
 
-func (u *User) ensureEmailIsUniqueIfPresent(db *gorm.DB) error {
-	if u.Email == "" {
-		return nil
-	}
+// func (u *User) ensureEmailIsUniqueIfPresent(db *gorm.DB) error {
+// 	if u.Email == "" {
+// 		return nil
+// 	}
 
-	var exists int64
+// 	var exists int64
 
-	result := db.Model(&User{}).
-		Where("email = ?", u.Email).
-		Count(&exists)
-	if err := result.Error; err != nil {
-		if !orm.IsRecordNotFound(err) {
-			return err
-		}
-	}
+// 	result := db.Model(&User{}).
+// 		Where("email = ?", u.Email).
+// 		Count(&exists)
+// 	if err := result.Error; err != nil {
+// 		if !orm.IsRecordNotFound(err) {
+// 			return err
+// 		}
+// 	}
 
-	if exists > 0 {
-		return externalerrors.BadRequest("email already exists")
-	}
+// 	if exists > 0 {
+// 		return externalerrors.BadRequest("email already exists")
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func (u *User) ensurePersonIsNewOrBelongsToUser(db *gorm.DB) error {
 	if u.PersonID == 0 {
@@ -170,33 +170,33 @@ func (u *User) ValidateUsername(db *gorm.DB) error {
 	return nil
 }
 
-func (u *User) ValidateEmail(db *gorm.DB) error {
-	if u.Email != "" && !emailReg.MatchString(u.Email) {
-		return externalerrors.BadRequest("invalid email")
-	}
+// func (u *User) ValidateEmail(db *gorm.DB) error {
+// 	if u.Email != "" && !emailReg.MatchString(u.Email) {
+// 		return externalerrors.BadRequest("invalid email")
+// 	}
 
-	// New user
-	if u.ID == 0 {
-		return u.ensureEmailIsUniqueIfPresent(db)
-	}
+// 	// New user
+// 	if u.ID == 0 {
+// 		return u.ensureEmailIsUniqueIfPresent(db)
+// 	}
 
-	// Updating user
-	var originalUser User
-	result := db.Model(&User{}).
-		Where("id = ?", u.ID).
-		First(&originalUser)
-	if err := result.Error; err != nil {
-		return err
-	}
+// 	// Updating user
+// 	var originalUser User
+// 	result := db.Model(&User{}).
+// 		Where("id = ?", u.ID).
+// 		First(&originalUser)
+// 	if err := result.Error; err != nil {
+// 		return err
+// 	}
 
-	if u.Email != originalUser.Email {
-		if err := u.ensureEmailIsUniqueIfPresent(db); err != nil {
-			return err
-		}
-	}
+// 	if u.Email != originalUser.Email {
+// 		if err := u.ensureEmailIsUniqueIfPresent(db); err != nil {
+// 			return err
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func (u *User) Validate(db *gorm.DB) error {
 	return u.ensurePersonIsNewOrBelongsToUser(db)
@@ -227,9 +227,9 @@ func (u *User) BeforeCreate(db *gorm.DB) error {
 		return err
 	}
 
-	if err := u.ValidateEmail(db); err != nil {
-		return err
-	}
+	// if err := u.ValidateEmail(db); err != nil {
+	// 	return err
+	// }
 
 	return u.Validate(db)
 }
@@ -244,9 +244,9 @@ func (u *User) BeforeUpdate(db *gorm.DB) error {
 		return err
 	}
 
-	if err := u.ValidateEmail(db); err != nil {
-		return err
-	}
+	// if err := u.ValidateEmail(db); err != nil {
+	// 	return err
+	// }
 
 	return u.Validate(db)
 }

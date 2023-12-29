@@ -8,6 +8,7 @@ import (
 	"lms-backend/internal/api"
 	audit "lms-backend/internal/auditlog"
 	"lms-backend/internal/dataaccess/user"
+	"lms-backend/internal/model"
 	"lms-backend/internal/params/userparams"
 	"lms-backend/internal/view/userview"
 )
@@ -30,6 +31,11 @@ func HandleCreate(c *fiber.Ctx) error {
 	defer func() { rollBackOrCommit(err) }()
 
 	usr, err = user.Create(tx, usr)
+	if err != nil {
+		return err
+	}
+
+	_, err = user.UpdateRoles(tx, int64(usr.ID), model.MemberRole)
 	if err != nil {
 		return err
 	}

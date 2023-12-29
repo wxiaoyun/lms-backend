@@ -21,25 +21,32 @@ func ReadPolicy(userID int64) policy.Policy {
 
 func UpdatePolicy(userID int64) policy.Policy {
 	return commonpolicy.Any(
-		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanUpdateUser.Name),
+		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name),
 		AllowIfIsSelf(userID),
+		commonpolicy.All(
+			commonpolicy.HasAnyAbility(abilities.CanUpdateUser.Name),
+			AllowIfSubjectBelowOwnRank(userID),
+		),
 	)
 }
 
 func DeletePolicy(userID int64) policy.Policy {
 	return commonpolicy.Any(
-		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanDeleteUser.Name),
-		AllowIfIsSelf(userID),
+		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name),
+		commonpolicy.All(
+			commonpolicy.HasAnyAbility(abilities.CanDeleteUser.Name),
+			AllowIfSubjectBelowOwnRank(userID),
+		),
 	)
 }
 
 func UpdateRolePolicy(userID, roleID int64) policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name),
-
 		commonpolicy.All(
 			commonpolicy.HasAnyAbility(abilities.CanUpdateUserRole.Name),
 			AllowIfIsNotSelf(userID),
+			AllowIfSubjectBelowOwnRank(userID),
 			AllowIfPromoteBelowOwnRank(userID, roleID),
 		),
 	)

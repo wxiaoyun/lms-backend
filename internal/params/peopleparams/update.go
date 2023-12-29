@@ -17,9 +17,8 @@ func (p *UpdateParams) ToModel() *model.Person {
 		Model: gorm.Model{
 			ID: p.ID,
 		},
-		FullName:           p.FullName,
-		PreferredName:      p.PreferredName,
-		LanguagePreference: p.LanguagePreference,
+		FullName:      p.FullName,
+		PreferredName: p.PreferredName,
 	}
 }
 

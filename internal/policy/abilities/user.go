@@ -17,6 +17,10 @@ var (
 		Name:        "canDeleteUser",
 		Description: "can delete user",
 	}
+	CanCreateUser model.Ability = model.Ability{
+		Name:        "canCreateUser",
+		Description: "can create user",
+	}
 	CanUpdateUserRole model.Ability = model.Ability{
 		Name:        "canUpdateRole",
 		Description: "can update role",

@@ -7,16 +7,14 @@ import (
 )
 
 type BaseParams struct {
-	FullName           string `json:"full_name"`
-	PreferredName      string `json:"preferred_name"`
-	LanguagePreference string `json:"language_preference"`
+	FullName      string `json:"full_name"`
+	PreferredName string `json:"preferred_name"`
 }
 
 func (b *BaseParams) ToModel() *model.Person {
 	return &model.Person{
-		FullName:           b.FullName,
-		PreferredName:      b.PreferredName,
-		LanguagePreference: b.LanguagePreference,
+		FullName:      b.FullName,
+		PreferredName: b.PreferredName,
 	}
 }
 

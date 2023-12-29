@@ -30,6 +30,7 @@ func PublicRoutes(r fiber.Router) {
 	Route(r, "/health", HealthRoutes)
 	Route(r, "/auth", AuthRoutes)
 	r.Get("/current", userhandler.HandleGetCurrentUser)
+	r.Post("/user", userhandler.HandleCreate)
 
 	Route(r, "book", func(r fiber.Router) {
 		r.Get("/", bookhandler.HandleList)

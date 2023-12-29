@@ -14,6 +14,6 @@ func ToUserView(user *model.User) *UserView {
 	return &UserView{
 		ID:       user.ID,
 		Username: user.Username,
-		Email:    user.Email,
+		// Email:    user.Email,
 	}
 }

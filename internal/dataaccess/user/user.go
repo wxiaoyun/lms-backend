@@ -149,12 +149,6 @@ func Login(db *gorm.DB, user *model.User) (*model.User, error) {
 			return nil, err
 		}
 		userInDB = *usr
-	} else if user.Email != "" {
-		usr, err := ReadByEmail(db, user.Email)
-		if err != nil {
-			return nil, err
-		}
-		userInDB = *usr
 	} else {
 		return nil, externalerrors.BadRequest("Email or Username is required")
 	}
@@ -187,7 +181,7 @@ func GetUserName(db *gorm.DB, id int64) (string, error) {
 	return name, nil
 }
 
-func UpdateRoles(db *gorm.DB, userID int64, roleIDs []int64) (*model.User, error) {
+func UpdateRoles(db *gorm.DB, userID int64, roleIDs ...int64) (*model.User, error) {
 	usr, err := Read(db, userID)
 	if err != nil {
 		return nil, err
