@@ -11,9 +11,10 @@ type AuditLog struct {
 	ID        uint `gorm:"primarykey"`
 	CreatedAt time.Time
 
-	UserID uint   `gorm:"not null"`
-	User   *User  `gorm:"->"`
-	Action string `gorm:"not null"`
+	UserID uint      `gorm:"not null"`
+	User   *User     `gorm:"->"`
+	Action string    `gorm:"not null"`
+	Date   time.Time `gorm:"not null"`
 }
 
 const (
@@ -49,5 +50,9 @@ func (a *AuditLog) Validate(db *gorm.DB) error {
 }
 
 func (a *AuditLog) BeforeCreate(db *gorm.DB) error {
+	if (time.Time{}).Equal(a.Date) {
+		a.Date = time.Now()
+	}
+
 	return a.Validate(db)
 }

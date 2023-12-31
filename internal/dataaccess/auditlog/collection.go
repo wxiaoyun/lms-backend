@@ -15,6 +15,7 @@ func Filters() collection.FilterMap {
 func Sorters() collection.SortMap {
 	return map[string]collection.Sorter{
 		"action":     collection.SortBy("action"),
+		"date":       collection.SortBy("date"),
 		"created_at": collection.SortBy("created_at"),
 	}
 }
