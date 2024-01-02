@@ -36,7 +36,8 @@ func PublicRoutes(r fiber.Router) {
 		r.Get("/", bookhandler.HandleList)
 		r.Get("/popular", bookhandler.HandlePopular)
 		r.Get("/:book_id", bookhandler.HandleRead)
-	}, middleware.CacheMiddleware(middleware.VLongExp))
+	})
+	// middleware.CacheMiddleware(middleware.VLongExp)
 }
 
 func PrivateRoutes(r fiber.Router) {

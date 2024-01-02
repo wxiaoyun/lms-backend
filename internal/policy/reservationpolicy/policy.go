@@ -39,6 +39,8 @@ func DeletePolicy() policy.Policy {
 func ReservePolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
+			abilities.CanManageAll.Name,
+			abilities.CanCreateReservation.Name,
 			abilities.CanCreateReservation.Name,
 		),
 	)
@@ -49,7 +51,6 @@ func CreatePolicy() policy.Policy {
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
-			abilities.CanCreateReservation.Name,
 		),
 	)
 }
