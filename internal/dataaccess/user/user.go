@@ -12,11 +12,37 @@ import (
 	"gorm.io/gorm"
 )
 
-func preloadAssociations(db *gorm.DB) *gorm.DB {
+func preloadPerson(db *gorm.DB) *gorm.DB {
 	return db.Preload("Person")
 }
 
+func preloadAssociations(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("Person").
+		Preload("Roles").
+		Preload("Loans").
+		Preload("Reservations").
+		Preload("Bookmarks").
+		Preload("Fines")
+}
+
 func Read(db *gorm.DB, id int64) (*model.User, error) {
+	var user model.User
+	result := db.Model(&model.User{}).
+		Scopes(preloadPerson).
+		Where("id = ?", id).
+		First(&user)
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, orm.ErrRecordNotFound(model.UserModelName)
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func ReadDetailed(db *gorm.DB, id int64) (*model.User, error) {
 	var user model.User
 	result := db.Model(&model.User{}).
 		Scopes(preloadAssociations).
@@ -35,7 +61,7 @@ func Read(db *gorm.DB, id int64) (*model.User, error) {
 func ReadByUsername(db *gorm.DB, username string) (*model.User, error) {
 	var user model.User
 	result := db.Model(&model.User{}).
-		Scopes(preloadAssociations).
+		Scopes(preloadPerson).
 		Where("username = ?", username).
 		First(&user)
 	if err := result.Error; err != nil {
@@ -51,7 +77,7 @@ func ReadByUsername(db *gorm.DB, username string) (*model.User, error) {
 func ReadByEmail(db *gorm.DB, email string) (*model.User, error) {
 	var user model.User
 	result := db.Model(&model.User{}).
-		Scopes(preloadAssociations).
+		Scopes(preloadPerson).
 		Where("email = ?", email).
 		First(&user)
 	if err := result.Error; err != nil {
@@ -102,9 +128,37 @@ func UpdateParticulars(db *gorm.DB, user *model.User) (*model.User, error) {
 }
 
 func Delete(db *gorm.DB, id int64) (*model.User, error) {
-	usr, err := Read(db, id)
+	usr, err := ReadDetailed(db, id)
 	if err != nil {
 		return nil, err
+	}
+
+	if err := usr.Person.Delete(db); err != nil {
+		return nil, err
+	}
+
+	for _, l := range usr.Loans {
+		if err := l.Delete(db); err != nil {
+			return nil, err
+		}
+	}
+
+	for _, r := range usr.Reservations {
+		if err := r.Delete(db); err != nil {
+			return nil, err
+		}
+	}
+
+	for _, b := range usr.Bookmarks {
+		if err := b.Delete(db); err != nil {
+			return nil, err
+		}
+	}
+
+	for _, f := range usr.Fines {
+		if err := f.Delete(db); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := usr.Delete(db); err != nil {
@@ -131,7 +185,7 @@ func List(db *gorm.DB) ([]model.User, error) {
 	var urs []model.User
 
 	result := db.Model(&model.User{}).
-		Scopes(preloadAssociations).
+		Scopes(preloadPerson).
 		Find(&urs)
 	if result.Error != nil {
 		return nil, result.Error

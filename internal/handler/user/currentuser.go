@@ -3,10 +3,6 @@ package userhandler
 import (
 	"fmt"
 	"lms-backend/internal/api"
-	"lms-backend/internal/dataaccess/bookmark"
-	"lms-backend/internal/dataaccess/fine"
-	"lms-backend/internal/dataaccess/loan"
-	"lms-backend/internal/dataaccess/reservation"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
 	"lms-backend/internal/session"
@@ -46,28 +42,8 @@ func HandleGetCurrentUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookmarks, err := bookmark.ListByUserID(db, id)
-	if err != nil {
-		return err
-	}
-
-	loans, err := loan.ListBorrowedLoanByUserID(db, id)
-	if err != nil {
-		return err
-	}
-
-	reservations, err := reservation.ListPendingReservationByUserID(db, id)
-	if err != nil {
-		return err
-	}
-
-	fines, err := fine.ListOutstandingFineByUserID(db, id)
-	if err != nil {
-		return err
-	}
-
 	return c.JSON(api.Response{
-		Data: userview.ToCurrentUserView(usr, abilites, bookmarks, loans, reservations, fines),
+		Data: userview.ToCurrentUserView(usr, abilites),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf("Welcome back, %s!", usr.Username)),
 		),

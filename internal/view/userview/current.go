@@ -12,19 +12,18 @@ type CurrentUserView struct {
 func ToGuestView() *CurrentUserView {
 	return &CurrentUserView{
 		IsLoggedIn: false,
+		LoginView: LoginView{
+			Abilities: []string{},
+		},
 	}
 }
 
 func ToCurrentUserView(
 	user *model.User,
 	abilities []model.Ability,
-	bookmarks []model.Bookmark,
-	loans []model.Loan,
-	reservations []model.Reservation,
-	fines []model.Fine,
 ) *CurrentUserView {
 	return &CurrentUserView{
 		IsLoggedIn: true,
-		LoginView:  *ToLoginView(user, abilities, bookmarks, loans, reservations, fines),
+		LoginView:  *ToLoginView(user, abilities),
 	}
 }

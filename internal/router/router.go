@@ -2,6 +2,7 @@ package router
 
 import (
 	"lms-backend/internal/config"
+	"lms-backend/internal/handler/auth"
 	bookhandler "lms-backend/internal/handler/book"
 	userhandler "lms-backend/internal/handler/user"
 	"lms-backend/internal/middleware"
@@ -36,13 +37,14 @@ func PublicRoutes(r fiber.Router) {
 		r.Get("/", bookhandler.HandleList)
 		r.Get("/popular", bookhandler.HandlePopular)
 		r.Get("/:book_id", bookhandler.HandleRead)
-	})
-	// middleware.CacheMiddleware(middleware.VLongExp)
+	}, middleware.CacheMiddleware(middleware.VShortExp))
 }
 
 func PrivateRoutes(r fiber.Router) {
+	r.Get("/auth/signout", auth.HandleSignOut)
 	Route(r, "/user", UserRoutes)
 	Route(r, "/book", BookRoutes)
+	Route(r, "/bookmark", BookmarkRoutes)
 	Route(r, "/loan", LoanRoutes)
 	Route(r, "/reservation", ReservationRoutes)
 	Route(r, "/fine", FineRoutes)

@@ -20,6 +20,7 @@ type Book struct {
 	Genre           string     `gorm:"not null"`
 	Language        string     `gorm:"not null"`
 	BookCopies      []BookCopy `gorm:"->;<-:create"`
+	Bookmarks       []Bookmark `gorm:"->"`
 }
 
 const (
@@ -35,16 +36,7 @@ func (b *Book) Update(db *gorm.DB) error {
 	return db.Updates(b).Error
 }
 
-// All copies associated with this book will be deleted.
-//
-// Need to call preloadAssociations	before calling this method.
 func (b *Book) Delete(db *gorm.DB) error {
-	for _, copy := range b.BookCopies {
-		if err := copy.Delete(db); err != nil {
-			return err
-		}
-	}
-
 	return db.Delete(b).Error
 }
 
