@@ -1,9 +1,13 @@
 package book
 
 import (
+	"lms-backend/internal/dataaccess/loan"
+	"lms-backend/internal/dataaccess/reservation"
+	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/model"
 	"lms-backend/internal/orm"
 	"lms-backend/internal/viewmodel"
+	"lms-backend/pkg/error/externalerrors"
 	"time"
 
 	"gorm.io/gorm"
@@ -217,4 +221,149 @@ func ListPopularBooks(db *gorm.DB) ([]viewmodel.BookLoanCount, error) {
 	}
 
 	return bookLoanCounts, nil
+}
+
+// Ensure the same user cannot loan more than 1 copy of the same book
+func CountNumberOfCopiesLoanedByUser(db *gorm.DB, userID, bookID int64) (int64, error) {
+	var count int64
+
+	result := db.Model(&model.BookCopy{}).
+		Joins("INNER JOIN loans ON book_copies.id = loans.book_copy_id").
+		Where("loans.status = ?", model.LoanStatusBorrowed).
+		Where("loans.user_id = ?", userID).
+		Where("book_copies.book_id = ?", bookID).
+		Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
+}
+
+func CountNumberOfCopiesReservedByUser(db *gorm.DB, userID, bookID int64) (int64, error) {
+	var count int64
+
+	result := db.Model(&model.BookCopy{}).
+		Joins("INNER JOIN reservations ON book_copies.id = reservations.book_copy_id").
+		Where("reservations.status = ?", model.ReservationStatusPending).
+		Where("reservations.user_id = ?", userID).
+		Where("book_copies.book_id = ?", bookID).
+		Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
+}
+
+func Loan(db *gorm.DB, userID, bookID int64) (*model.Loan, error) {
+	hasExceededMaxLoan, err := user.HasExceededMaxLoan(db, userID)
+	if err != nil {
+		return nil, err
+	}
+	if hasExceededMaxLoan {
+		return nil, externalerrors.BadRequest("You have reached the maximum number of loans")
+	}
+
+	loanCount, err := CountNumberOfCopiesLoanedByUser(db, userID, bookID)
+	if err != nil {
+		return nil, err
+	}
+	if loanCount > 0 {
+		return nil, externalerrors.BadRequest("You have already loaned a copy of this book")
+	}
+
+	resCount, err := CountNumberOfCopiesReservedByUser(db, userID, bookID)
+	if err != nil {
+		return nil, err
+	}
+	if resCount > 0 {
+		return nil, externalerrors.BadRequest("You have already reserved a copy of this book")
+	}
+
+	book, err := ReadWithCopies(db, bookID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, copy := range book.BookCopies {
+		if copy.Status == model.BookStatusOnLoan {
+			continue
+		}
+
+		if copy.Status == model.BookStatusOnReserve {
+			continue
+		}
+
+		ln, err := loan.Loan(db, userID, int64(copy.ID))
+		if err != nil {
+			return nil, err
+		}
+
+		// Update book status
+		copy.Status = model.BookStatusOnLoan
+		if err := copy.Update(db); err != nil {
+			return nil, err
+		}
+
+		return ln, nil
+	}
+
+	return nil, externalerrors.BadRequest("No copies are available for loan")
+}
+
+func Reserve(db *gorm.DB, userID, bookID int64) (*model.Reservation, error) {
+	hasExceededMaxReservation, err := user.HasExceededMaxReservation(db, userID)
+	if err != nil {
+		return nil, err
+	}
+	if hasExceededMaxReservation {
+		return nil, externalerrors.BadRequest("You have reached the maximum number of reservations")
+	}
+
+	loanCount, err := CountNumberOfCopiesLoanedByUser(db, userID, bookID)
+	if err != nil {
+		return nil, err
+	}
+	if loanCount > 0 {
+		return nil, externalerrors.BadRequest("You have already loaned a copy of this book")
+	}
+
+	resCount, err := CountNumberOfCopiesReservedByUser(db, userID, bookID)
+	if err != nil {
+		return nil, err
+	}
+	if resCount > 0 {
+		return nil, externalerrors.BadRequest("You have already reserved a copy of this book")
+	}
+
+	book, err := ReadWithCopies(db, bookID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, copy := range book.BookCopies {
+		if copy.Status == model.BookStatusOnLoan {
+			continue
+		}
+
+		if copy.Status == model.BookStatusOnReserve {
+			continue
+		}
+
+		res, err := reservation.ReserveBook(db, userID, int64(copy.ID))
+		if err != nil {
+			return nil, err
+		}
+
+		// Update book status
+		copy.Status = model.BookStatusOnReserve
+		if err := copy.Update(db); err != nil {
+			return nil, err
+		}
+
+		return res, nil
+	}
+
+	return nil, externalerrors.BadRequest("No copies are available for reservation")
 }

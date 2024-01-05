@@ -5,8 +5,8 @@ import (
 )
 
 type UserBookParams struct {
-	UserID     int64 `json:"user_id"`
-	BookCopyID int64 `json:"book_copy_id"`
+	UserID int64 `json:"user_id"`
+	BookID int64 `json:"book_id"`
 }
 
 func (params *UserBookParams) Validate() error {
@@ -14,8 +14,8 @@ func (params *UserBookParams) Validate() error {
 		return fiber.NewError(fiber.StatusBadRequest, "user_id is required")
 	}
 
-	if params.BookCopyID <= 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "book_copy_id is required")
+	if params.BookID <= 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "book_id is required")
 	}
 
 	return nil

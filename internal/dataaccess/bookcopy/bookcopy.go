@@ -1,6 +1,7 @@
 package bookcopy
 
 import (
+	"lms-backend/internal/dataaccess/book"
 	"lms-backend/internal/dataaccess/loan"
 	"lms-backend/internal/dataaccess/reservation"
 	"lms-backend/internal/dataaccess/user"
@@ -140,6 +141,22 @@ func LoanCopy(db *gorm.DB, userID, id int64) (*model.Loan, error) {
 		return nil, externalerrors.BadRequest("You have reached the maximum number of loans")
 	}
 
+	loanCount, err := book.CountNumberOfCopiesLoanedByUser(db, userID, int64(b.BookID))
+	if err != nil {
+		return nil, err
+	}
+	if loanCount > 0 {
+		return nil, externalerrors.BadRequest("You have already loaned a copy of this book")
+	}
+
+	resCount, err := book.CountNumberOfCopiesReservedByUser(db, userID, int64(b.BookID))
+	if err != nil {
+		return nil, err
+	}
+	if resCount > 0 {
+		return nil, externalerrors.BadRequest("You have already reserved a copy of this book")
+	}
+
 	ln, err := loan.Loan(db, userID, id)
 	if err != nil {
 		return nil, err
@@ -228,6 +245,22 @@ func ReserveCopy(db *gorm.DB, userID, id int64) (*model.Reservation, error) {
 	}
 	if hasExceededMaxReservation {
 		return nil, externalerrors.BadRequest("You have reached the maximum number of reservations")
+	}
+
+	loanCount, err := book.CountNumberOfCopiesLoanedByUser(db, userID, int64(b.BookID))
+	if err != nil {
+		return nil, err
+	}
+	if loanCount > 0 {
+		return nil, externalerrors.BadRequest("You have already loaned a copy of this book")
+	}
+
+	resCount, err := book.CountNumberOfCopiesReservedByUser(db, userID, int64(b.BookID))
+	if err != nil {
+		return nil, err
+	}
+	if resCount > 0 {
+		return nil, externalerrors.BadRequest("You have already reserved a copy of this book")
 	}
 
 	res, err := reservation.ReserveBook(db, userID, id)
