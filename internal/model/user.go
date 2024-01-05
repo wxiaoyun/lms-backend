@@ -20,10 +20,13 @@ type User struct {
 	SignInCount       int    `gorm:"not null;default:0"`
 	CurrentSignInAt   time.Time
 	LastSignInAt      time.Time
-	PersonID          uint    `gorm:"not null"`
-	Person            *Person `gorm:"->;<-:create"`
-	Roles             []Role  `gorm:"many2many:user_roles;->"`
-	Loans             []Loan  `gorm:"->"`
+	PersonID          uint          `gorm:"not null"`
+	Person            *Person       `gorm:"->;<-:create"`
+	Roles             []Role        `gorm:"many2many:user_roles;->"`
+	Bookmarks         []Bookmark    `gorm:"->"`
+	Loans             []Loan        `gorm:"->"`
+	Reservations      []Reservation `gorm:"->"`
+	Fines             []Fine        `gorm:"->"`
 }
 
 var (

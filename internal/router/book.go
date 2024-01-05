@@ -2,6 +2,7 @@ package router
 
 import (
 	bookhandler "lms-backend/internal/handler/book"
+	bookmarkhandler "lms-backend/internal/handler/bookmark"
 	loanhandler "lms-backend/internal/handler/loan"
 	reservationhandler "lms-backend/internal/handler/reservation"
 	"lms-backend/internal/middleware"
@@ -18,7 +19,7 @@ func BookRoutes(r fiber.Router) {
 
 		Route(r, "/loan", BookLoanRoutes)
 		Route(r, "/reservation", BookReservationRoutes)
-		Route(r, "/bookmark", BookmarkRoutes)
+		Route(r, "/bookmark", BookBookmarkRoutes)
 	})
 
 	Route(r, "/autocomplete", func(r fiber.Router) {
@@ -32,4 +33,8 @@ func BookLoanRoutes(r fiber.Router) {
 
 func BookReservationRoutes(r fiber.Router) {
 	r.Post("/", reservationhandler.HandleReserve)
+}
+
+func BookBookmarkRoutes(r fiber.Router) {
+	r.Post("/", bookmarkhandler.HandleCreate)
 }

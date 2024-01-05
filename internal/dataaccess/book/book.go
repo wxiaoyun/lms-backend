@@ -13,6 +13,10 @@ func preloadCopies(db *gorm.DB) *gorm.DB {
 	return db.Preload("BookCopies")
 }
 
+func preloadAssociations(db *gorm.DB) *gorm.DB {
+	return db.Scopes(preloadCopies).Preload("Bookmarks")
+}
+
 func Read(db *gorm.DB, bookID int64) (*model.Book, error) {
 	var book model.Book
 	result := db.Model(&model.Book{}).
@@ -32,6 +36,22 @@ func ReadWithCopies(db *gorm.DB, bookID int64) (*model.Book, error) {
 	var book model.Book
 	result := db.Model(&model.Book{}).
 		Scopes(preloadCopies).
+		Where("id = ?", bookID).
+		First(&book)
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, orm.ErrRecordNotFound(model.BookModelName)
+		}
+		return nil, err
+	}
+
+	return &book, nil
+}
+
+func ReadDetailed(db *gorm.DB, bookID int64) (*model.Book, error) {
+	var book model.Book
+	result := db.Model(&model.Book{}).
+		Scopes(preloadAssociations).
 		Where("id = ?", bookID).
 		First(&book)
 	if err := result.Error; err != nil {
@@ -83,9 +103,21 @@ func Update(db *gorm.DB, book *model.Book) (*model.Book, error) {
 }
 
 func Delete(db *gorm.DB, bookID int64) (*model.Book, error) {
-	book, err := Read(db, bookID)
+	book, err := ReadDetailed(db, bookID)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, copy := range book.BookCopies {
+		if err := copy.Delete(db); err != nil {
+			return nil, err
+		}
+	}
+
+	for _, bookmark := range book.Bookmarks {
+		if err := bookmark.Delete(db); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := book.Delete(db); err != nil {
