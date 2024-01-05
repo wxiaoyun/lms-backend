@@ -27,6 +27,53 @@ func HandleCreate(c *fiber.Ctx) error {
 		return err
 	}
 
+	var params sharedparams.UserBookcopyParams
+	if err := c.BodyParser(&params); err != nil {
+		return err
+	}
+
+	if err := params.Validate(); err != nil {
+		return err
+	}
+
+	db := database.GetDB()
+
+	username, err := user.GetUserName(db, params.UserID)
+	if err != nil {
+		return err
+	}
+
+	bookTitle, err := bookcopy.GetBookTitle(db, params.BookCopyID)
+	if err != nil {
+		return err
+	}
+
+	tx, rollBackOrCommit := audit.Begin(
+		c, fmt.Sprintf("%s loaning \"%s\"", username, bookTitle),
+	)
+	defer func() { rollBackOrCommit(err) }()
+
+	res, err := bookcopy.ReserveCopy(tx, params.UserID, params.BookCopyID)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(api.Response{
+		Data: reservationview.ToDetailedView(res),
+		Messages: api.Messages(
+			api.SuccessMessage(fmt.Sprintf(
+				"\"%s\" has been reserved until %s.", bookTitle,
+				res.ReservationDate.Format(time.RFC3339),
+			))),
+	})
+}
+
+func HandleCreateByBook(c *fiber.Ctx) error {
+	err := policy.Authorize(c, createReservationAction, reservationpolicy.CreatePolicy())
+	if err != nil {
+		return err
+	}
+
 	var params sharedparams.UserBookParams
 	if err := c.BodyParser(&params); err != nil {
 		return err
@@ -43,7 +90,7 @@ func HandleCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	bookTitle, err := book.GetBookTitle(db, params.BookCopyID)
+	bookTitle, err := book.GetBookTitle(db, params.BookID)
 	if err != nil {
 		return err
 	}
@@ -53,7 +100,7 @@ func HandleCreate(c *fiber.Ctx) error {
 	)
 	defer func() { rollBackOrCommit(err) }()
 
-	res, err := bookcopy.ReserveCopy(tx, params.UserID, params.BookCopyID)
+	res, err := book.Reserve(tx, params.UserID, params.BookID)
 	if err != nil {
 		return err
 	}
