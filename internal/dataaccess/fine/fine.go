@@ -12,7 +12,8 @@ func preloadAssociations(db *gorm.DB) *gorm.DB {
 		Preload("User").
 		Preload("User.Person").
 		Preload("Loan").
-		Preload("Loan.Book")
+		Preload("Loan.BookCopy").
+		Preload("Loan.BookCopy.Book")
 }
 
 func preloadBook(db *gorm.DB) *gorm.DB {
