@@ -17,6 +17,6 @@ func ToDetailedView(fine *model.Fine) *DetailedView {
 		BaseView: *ToBaseView(fine),
 		Book:     sharedview.ToBookView(fine.Loan.BookCopy.Book),
 		Loan:     sharedview.ToLoanView(fine.Loan),
-		User:     sharedview.ToUserView(fine.Loan.User),
+		User:     sharedview.ToUserView(fine.User),
 	}
 }
