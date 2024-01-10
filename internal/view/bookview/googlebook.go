@@ -16,7 +16,7 @@ func GoogleResponseToView(res *googlebookview.ResponseView) []View {
 		bookview.Author = strings.Join(item.VolumeInfo.Authors, ", ")
 		bookview.Publisher = item.VolumeInfo.Publisher
 
-		layout := time.DateOnly
+		layout := "2006-01-02"
 		// nolint:errcheck,gosec // safe to ignore error since we trust google api
 		t, _ := time.Parse(layout, item.VolumeInfo.PublishedDate)
 		bookview.PublicationDate = t.Format(time.RFC3339)
