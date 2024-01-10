@@ -19,41 +19,108 @@ type Config struct {
 	REDISUser     string
 	REDISPassword string
 	// URL standard format Redis URL. If this is set all other config options, Host, Port, Username, Password, Database have no effect.
-	REDISURL    string
-	Port        string
-	FrontendURL string
+	REDISURL     string
+	GoogleAPIKey string
+	Port         string
+	FrontendURL  string
 }
 
 // Returns a Config struct with the values from the environment variables
 //
 // Must be ran after loading env
 func GetConfig() (*Config, error) {
-	var redisPort int
-	rp := os.Getenv("REDIS_PORT")
+	appName := os.Getenv("APP_NAME")
+	if appName == "" {
+		return nil, internalerror.InternalServerError("APP_NAME not set")
+	}
 
-	if rp != "" {
-		port, err := strconv.Atoi(rp)
-		if err != nil {
-			return nil, internalerror.InternalServerError("Bad Redis Port: " + rp)
+	pgHost := os.Getenv("PG_HOST")
+	if pgHost == "" {
+		return nil, internalerror.InternalServerError("PG_HOST not set")
+	}
+
+	pgPort := os.Getenv("PG_PORT")
+	if pgPort == "" {
+		return nil, internalerror.InternalServerError("PG_PORT not set")
+	}
+
+	pgUsername := os.Getenv("PG_USERNAME")
+	if pgUsername == "" {
+		return nil, internalerror.InternalServerError("PG_USERNAME not set")
+	}
+
+	pgPassword := os.Getenv("PG_PASSWORD")
+	if pgPassword == "" {
+		return nil, internalerror.InternalServerError("PG_PASSWORD not set")
+	}
+
+	pgDatabase := os.Getenv("PG_DATABASE")
+	if pgDatabase == "" {
+		return nil, internalerror.InternalServerError("PG_DATABASE not set")
+	}
+
+	sslMode := os.Getenv("SSL_MODE")
+	if sslMode == "" {
+		return nil, internalerror.InternalServerError("SSL_MODE not set")
+	}
+
+	var redisHost, redisPassword, redisUser string
+	var redisPort int
+	redisURL := os.Getenv("REDIS_URL")
+
+	// If REDIS_URL is set, all other config options have no effect
+	if redisURL == "" {
+		redisHost = os.Getenv("REDIS_HOST")
+		if redisHost == "" {
+			return nil, internalerror.InternalServerError("REDIS_HOST not set")
 		}
-		redisPort = port
+
+		rp := os.Getenv("REDIS_PORT")
+
+		if rp != "" {
+			port, err := strconv.Atoi(rp)
+			if err != nil {
+				return nil, internalerror.InternalServerError("Bad Redis Port: " + rp)
+			}
+			redisPort = port
+		}
+
+		redisUser = os.Getenv("REDIS_USER")
+
+		redisPassword = os.Getenv("REDIS_PASSWORD")
+	}
+
+	googleAPIKey := os.Getenv("GOOGLE_API_KEY")
+	if googleAPIKey == "" {
+		return nil, internalerror.InternalServerError("GOOGLE_API_KEY not set")
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		return nil, internalerror.InternalServerError("PORT not set")
+	}
+
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		return nil, internalerror.InternalServerError("FRONTEND_URL not set")
 	}
 
 	return &Config{
-		AppName:       os.Getenv("APP_NAME"),
-		PGHost:        os.Getenv("PG_HOST"),
-		PGPort:        os.Getenv("PG_PORT"),
-		PGUsername:    os.Getenv("PG_USERNAME"),
-		PGPassword:    os.Getenv("PG_PASSWORD"),
-		PGDatabase:    os.Getenv("PG_DATABASE"),
-		SSLMode:       os.Getenv("SSL_MODE"),
-		REDISHost:     os.Getenv("REDIS_HOST"),
+		AppName:       appName,
+		PGHost:        pgHost,
+		PGPort:        pgPort,
+		PGUsername:    pgUsername,
+		PGPassword:    pgPassword,
+		PGDatabase:    pgDatabase,
+		SSLMode:       sslMode,
+		REDISHost:     redisHost,
 		REDISPort:     redisPort,
-		REDISUser:     os.Getenv("REDIS_USER"),
-		REDISPassword: os.Getenv("REDIS_PASSWORD"),
-		REDISURL:      os.Getenv("REDIS_URL"),
-		Port:          os.Getenv("PORT"),
-		FrontendURL:   os.Getenv("FRONTEND_URL"),
+		REDISUser:     redisUser,
+		REDISPassword: redisPassword,
+		REDISURL:      redisURL,
+		GoogleAPIKey:  googleAPIKey,
+		Port:          port,
+		FrontendURL:   frontendURL,
 	}, nil
 }
 

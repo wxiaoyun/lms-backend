@@ -1,6 +1,8 @@
 package bookview
 
-import "lms-backend/internal/viewmodel"
+import (
+	"lms-backend/internal/viewmodel"
+)
 
 type PopularView struct {
 	ID        int64  `json:"id"`
