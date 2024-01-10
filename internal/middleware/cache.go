@@ -13,20 +13,13 @@ import (
 )
 
 var (
-	// VShortExp = 1 * time.Minute
-	// ShortExp  = 5 * time.Minute
-	// MedExp    = 30 * time.Minute
-	// LongExp   = 1 * time.Hour
-	// VLongExp  = 6 * time.Hour
-	// VVLongExp = 24 * time.Hour
-
-	// testing
-	VShortExp = 1 * time.Second
-	ShortExp  = 1 * time.Second
-	MedExp    = 1 * time.Second
-	LongExp   = 1 * time.Second
-	VLongExp  = 1 * time.Second
-	VVLongExp = 1 * time.Second
+	VShortExp  = 1 * time.Minute     // 1 Minute
+	ShortExp   = 5 * time.Minute     // 5 Minutes
+	MedExp     = 30 * time.Minute    // 30 Minutes
+	LongExp    = 1 * time.Hour       // 1 Hour
+	VLongExp   = 6 * time.Hour       // 6 Hours
+	VVLongExp  = 24 * time.Hour      // 24 Hours
+	VVVLongExp = 30 * 24 * time.Hour // 30 Days
 )
 
 func KeyGenerator(c *fiber.Ctx) string {

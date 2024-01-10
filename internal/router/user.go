@@ -8,7 +8,7 @@ import (
 )
 
 func UserRoutes(r fiber.Router) {
-	r.Get("/", middleware.CacheMiddleware(middleware.ShortExp), userhandler.HandleList)
+	r.Get("/", userhandler.HandleList)
 
 	Route(r, "/:user_id", func(r fiber.Router) {
 		r.Get("/", userhandler.HandleRead)
