@@ -19,16 +19,19 @@ func HandleQuery(c *fiber.Ctx) error {
 
 	inTitle := queries["title"]
 	if len(inTitle) > 0 {
+		inTitle = strings.ReplaceAll(inTitle, " ", "+")
 		queryArr = append(queryArr, "intitle:"+inTitle)
 	}
 
 	inAuthor := queries["author"]
 	if len(inAuthor) > 0 {
+		inAuthor = strings.ReplaceAll(inAuthor, " ", "+")
 		queryArr = append(queryArr, "inauthor:"+inAuthor)
 	}
 
 	inPublisher := queries["publisher"]
 	if len(inPublisher) > 0 {
+		inPublisher = strings.ReplaceAll(inPublisher, " ", "+")
 		queryArr = append(queryArr, "inpublisher:"+inPublisher)
 	}
 
