@@ -12,15 +12,16 @@ type UserStatus = string
 type Book struct {
 	gorm.Model
 
-	Title           string     `gorm:"not null"`
-	Author          string     `gorm:"not null"`
-	ISBN            string     `gorm:"not null"`
-	Publisher       string     `gorm:"not null"`
-	PublicationDate time.Time  `gorm:"not null"`
-	Genre           string     `gorm:"not null"`
-	Language        string     `gorm:"not null"`
-	BookCopies      []BookCopy `gorm:"->;<-:create"`
-	Bookmarks       []Bookmark `gorm:"->"`
+	Title           string               `gorm:"not null"`
+	Author          string               `gorm:"not null"`
+	ISBN            string               `gorm:"not null"`
+	Publisher       string               `gorm:"not null"`
+	PublicationDate time.Time            `gorm:"not null"`
+	Genre           string               `gorm:"not null"`
+	Language        string               `gorm:"not null"`
+	BookCopies      []BookCopy           `gorm:"->;<-:create"`
+	Bookmarks       []Bookmark           `gorm:"->"`
+	Thumbnail       *FileUploadReference `gorm:"polymorphic:Attachable;polymorphicValue:book_thumbnail"`
 }
 
 const (

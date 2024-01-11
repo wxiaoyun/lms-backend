@@ -18,7 +18,10 @@ func preloadCopies(db *gorm.DB) *gorm.DB {
 }
 
 func preloadAssociations(db *gorm.DB) *gorm.DB {
-	return db.Scopes(preloadCopies).Preload("Bookmarks")
+	return db.Scopes(preloadCopies).
+		Preload("Bookmarks").
+		Preload("Thumbnail").
+		Preload("Thumbnail.FileUpload")
 }
 
 func Read(db *gorm.DB, bookID int64) (*model.Book, error) {

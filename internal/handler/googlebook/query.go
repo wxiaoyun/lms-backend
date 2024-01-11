@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"lms-backend/internal/api"
+	"lms-backend/internal/config"
 	"lms-backend/internal/view/bookview"
 	"lms-backend/internal/view/googlebookview"
 	"lms-backend/pkg/error/externalerrors"
@@ -46,7 +47,7 @@ func HandleQuery(c *fiber.Ctx) error {
 		return externalerrors.BadRequest("No query is provided.")
 	}
 
-	url := fmt.Sprintf("%s/volumes?q=%s&key=%s", googleAPIBaseURL, query, GetGoogleAPIKey())
+	url := fmt.Sprintf("%s/volumes?q=%s&key=%s", googleAPIBaseURL, query, config.GoogleAPIKey)
 
 	agent := fiber.Get(url)
 	statusCode, body, errs := agent.Bytes()
