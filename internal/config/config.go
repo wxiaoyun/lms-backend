@@ -107,7 +107,7 @@ func GetConfig() (*Config, error) {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		return nil, internalerror.InternalServerError("PORT not set")
+		port = "3000"
 	}
 
 	frontendURL := os.Getenv("FRONTEND_URL")
