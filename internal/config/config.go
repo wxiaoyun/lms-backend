@@ -3,7 +3,18 @@ package config
 import (
 	"lms-backend/pkg/error/internalerror"
 	"os"
+	"path/filepath"
 	"strconv"
+)
+
+var (
+	//nolint:errcheck
+	cwd, _ = os.Getwd()
+	// Path to current working directory, with symlinks evaluated.
+	//nolint:errcheck
+	RuntimeWorkingDirectory, _ = filepath.EvalSymlinks(cwd)
+
+	GoogleAPIKey string
 )
 
 type Config struct {
@@ -19,10 +30,9 @@ type Config struct {
 	REDISUser     string
 	REDISPassword string
 	// URL standard format Redis URL. If this is set all other config options, Host, Port, Username, Password, Database have no effect.
-	REDISURL     string
-	GoogleAPIKey string
-	Port         string
-	FrontendURL  string
+	REDISURL    string
+	Port        string
+	FrontendURL string
 }
 
 // Returns a Config struct with the values from the environment variables
@@ -90,8 +100,8 @@ func GetConfig() (*Config, error) {
 		redisPassword = os.Getenv("REDIS_PASSWORD")
 	}
 
-	googleAPIKey := os.Getenv("GOOGLE_API_KEY")
-	if googleAPIKey == "" {
+	GoogleAPIKey := os.Getenv("GOOGLE_API_KEY")
+	if GoogleAPIKey == "" {
 		return nil, internalerror.InternalServerError("GOOGLE_API_KEY not set")
 	}
 
@@ -118,7 +128,6 @@ func GetConfig() (*Config, error) {
 		REDISUser:     redisUser,
 		REDISPassword: redisPassword,
 		REDISURL:      redisURL,
-		GoogleAPIKey:  googleAPIKey,
 		Port:          port,
 		FrontendURL:   frontendURL,
 	}, nil

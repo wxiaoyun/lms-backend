@@ -6,4 +6,6 @@ vendor
 /.env.development
 /.env.production
 
+/file_storage/**/*
+
 .DS_Store

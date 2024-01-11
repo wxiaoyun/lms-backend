@@ -17,6 +17,7 @@ func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 	middleware.SetupCors(app, cfg)
 	middleware.SetupRecover(app)
 	middleware.SetupLogger(app)
+	middleware.SetupStaticFile(app)
 
 	v1Routes := app.Group("/v1")
 
@@ -51,4 +52,5 @@ func PrivateRoutes(r fiber.Router) {
 	Route(r, "/fine", FineRoutes)
 	Route(r, "/audit_log", AuditLogRoutes)
 	Route(r, "/external", ExternalRoutes)
+	Route(r, "/file", PrivateFileRoutes)
 }
