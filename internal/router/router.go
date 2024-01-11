@@ -44,6 +44,7 @@ func PrivateRoutes(r fiber.Router) {
 	r.Get("/auth/signout", auth.HandleSignOut)
 	Route(r, "/user", UserRoutes)
 	Route(r, "/book", BookRoutes)
+	Route(r, "/bookcopy", BookcopyRoutes)
 	Route(r, "/bookmark", BookmarkRoutes)
 	Route(r, "/loan", LoanRoutes)
 	Route(r, "/reservation", ReservationRoutes)
