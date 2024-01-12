@@ -9,11 +9,10 @@ import (
 type FileUpload struct {
 	gorm.Model
 
-	FileName    string `gorm:"not null"`
-	FilePath    string `gorm:"not null"`
-	ContentType string `gorm:"not null"`
-
-	FileUploadReferences []FileUploadReference
+	FileName             string                `gorm:"not null"`
+	FilePath             string                `gorm:"not null"`
+	ContentType          string                `gorm:"not null"`
+	FileUploadReferences []FileUploadReference `gorm:"->"`
 }
 
 const (

@@ -15,6 +15,7 @@ var (
 	RuntimeWorkingDirectory, _ = filepath.EvalSymlinks(cwd)
 
 	GoogleAPIKey string
+	BackendURL   string
 )
 
 type Config struct {
@@ -41,37 +42,37 @@ type Config struct {
 func GetConfig() (*Config, error) {
 	appName := os.Getenv("APP_NAME")
 	if appName == "" {
-		return nil, internalerror.InternalServerError("APP_NAME not set")
+		appName = "LMS"
 	}
 
 	pgHost := os.Getenv("PG_HOST")
 	if pgHost == "" {
-		return nil, internalerror.InternalServerError("PG_HOST not set")
+		pgHost = "localhost"
 	}
 
 	pgPort := os.Getenv("PG_PORT")
 	if pgPort == "" {
-		return nil, internalerror.InternalServerError("PG_PORT not set")
+		pgPort = "5432"
 	}
 
 	pgUsername := os.Getenv("PG_USERNAME")
 	if pgUsername == "" {
-		return nil, internalerror.InternalServerError("PG_USERNAME not set")
+		pgUsername = "postgres"
 	}
 
 	pgPassword := os.Getenv("PG_PASSWORD")
 	if pgPassword == "" {
-		return nil, internalerror.InternalServerError("PG_PASSWORD not set")
+		pgPassword = "1234"
 	}
 
 	pgDatabase := os.Getenv("PG_DATABASE")
 	if pgDatabase == "" {
-		return nil, internalerror.InternalServerError("PG_DATABASE not set")
+		pgDatabase = "lms-database"
 	}
 
 	sslMode := os.Getenv("SSL_MODE")
 	if sslMode == "" {
-		return nil, internalerror.InternalServerError("SSL_MODE not set")
+		sslMode = "disable"
 	}
 
 	var redisHost, redisPassword, redisUser string
@@ -82,7 +83,7 @@ func GetConfig() (*Config, error) {
 	if redisURL == "" {
 		redisHost = os.Getenv("REDIS_HOST")
 		if redisHost == "" {
-			return nil, internalerror.InternalServerError("REDIS_HOST not set")
+			redisHost = "localhost"
 		}
 
 		rp := os.Getenv("REDIS_PORT")
@@ -93,6 +94,8 @@ func GetConfig() (*Config, error) {
 				return nil, internalerror.InternalServerError("Bad Redis Port: " + rp)
 			}
 			redisPort = port
+		} else {
+			redisPort = 6379
 		}
 
 		redisUser = os.Getenv("REDIS_USER")
@@ -100,7 +103,7 @@ func GetConfig() (*Config, error) {
 		redisPassword = os.Getenv("REDIS_PASSWORD")
 	}
 
-	GoogleAPIKey := os.Getenv("GOOGLE_API_KEY")
+	GoogleAPIKey = os.Getenv("GOOGLE_API_KEY")
 	if GoogleAPIKey == "" {
 		return nil, internalerror.InternalServerError("GOOGLE_API_KEY not set")
 	}
@@ -112,7 +115,12 @@ func GetConfig() (*Config, error) {
 
 	frontendURL := os.Getenv("FRONTEND_URL")
 	if frontendURL == "" {
-		return nil, internalerror.InternalServerError("FRONTEND_URL not set")
+		frontendURL = "http://localhost:5173"
+	}
+
+	BackendURL = os.Getenv("BACKEND_URL")
+	if BackendURL == "" {
+		BackendURL = "http://localhost:3000"
 	}
 
 	return &Config{

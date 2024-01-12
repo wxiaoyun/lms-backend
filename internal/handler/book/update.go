@@ -15,8 +15,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+const (
+	updateBookAction = "update book"
+)
+
 func HandleUpdate(c *fiber.Ctx) error {
-	err := policy.Authorize(c, createBookAction, bookpolicy.UpdatePolicy())
+	err := policy.Authorize(c, updateBookAction, bookpolicy.UpdatePolicy())
 	if err != nil {
 		return err
 	}

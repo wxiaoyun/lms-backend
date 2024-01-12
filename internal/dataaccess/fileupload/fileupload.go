@@ -1,6 +1,7 @@
 package fileupload
 
 import (
+	"lms-backend/internal/filestorage"
 	"lms-backend/internal/model"
 	"lms-backend/internal/orm"
 
@@ -35,17 +36,25 @@ func Create(db *gorm.DB, fileUpload *model.FileUpload) (*model.FileUpload, error
 	return fileUpload, nil
 }
 
-func Delete(db *gorm.DB, fileUploadID int64) error {
+func Delete(db *gorm.DB, fileUploadID int64) (*model.FileUpload, error) {
 	fileUpload, err := Read(db, fileUploadID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, fileUploadReference := range fileUpload.FileUploadReferences {
 		if err := fileUploadReference.Delete(db); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return fileUpload.Delete(db)
+	if err := fileUpload.Delete(db); err != nil {
+		return nil, err
+	}
+
+	if err := filestorage.DeleteFileFromDisk(fileUpload.FilePath); err != nil {
+		return nil, err
+	}
+
+	return fileUpload, nil
 }

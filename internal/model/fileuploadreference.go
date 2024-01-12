@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"lms-backend/internal/config"
 	"lms-backend/pkg/error/externalerrors"
 
 	"gorm.io/gorm"
@@ -10,10 +11,10 @@ import (
 type FileUploadReference struct {
 	gorm.Model
 
-	FileUploadID   uint `gorm:"not null"`
-	FileUpload     *FileUpload
-	AttachableID   uint   `gorm:"not null"`
-	AttachableType string `gorm:"not null"`
+	FileUploadID   uint        `gorm:"not null"`
+	FileUpload     *FileUpload `gorm:"->;<-:create"`
+	AttachableID   uint        `gorm:"not null"`
+	AttachableType string      `gorm:"not null"`
 }
 
 const (
@@ -21,7 +22,7 @@ const (
 )
 
 const (
-	ImageDownloadURL = "/v1/file/image/%s"
+	ImageDownloadURL = "%s/v1/file/image/%s"
 )
 
 func (f *FileUploadReference) Create(db *gorm.DB) error {
@@ -49,7 +50,11 @@ func (f *FileUploadReference) ensureNoDuplicate(db *gorm.DB) error {
 	return nil
 }
 
-func (f *FileUploadReference) ensureFileUploadExists(db *gorm.DB) error {
+func (f *FileUploadReference) ensureFileUploadExistsOrIsNew(db *gorm.DB) error {
+	if f.FileUploadID == 0 {
+		return nil
+	}
+
 	var count int64
 	err := db.Model(f.FileUpload).
 		Where("id = ?", f.FileUploadID).
@@ -71,7 +76,7 @@ func (f *FileUploadReference) Validate(db *gorm.DB) error {
 		return err
 	}
 
-	return f.ensureFileUploadExists(db)
+	return f.ensureFileUploadExistsOrIsNew(db)
 }
 
 func (f *FileUploadReference) BeforeCreate(db *gorm.DB) error {
@@ -80,5 +85,5 @@ func (f *FileUploadReference) BeforeCreate(db *gorm.DB) error {
 
 // FileUpload needs to be preloaded
 func (f *FileUploadReference) GetImageDownloadURL() string {
-	return fmt.Sprintf(ImageDownloadURL, f.FileUpload.FileName)
+	return fmt.Sprintf(ImageDownloadURL, config.BackendURL, f.FileUpload.FileName)
 }

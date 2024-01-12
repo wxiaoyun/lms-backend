@@ -39,6 +39,7 @@ func SaveFileToDisk(c *fiber.Ctx, fileHeader *multipart.FileHeader, subdirectory
 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
 		return "", "", errors.Wrap(err, "creating directory failed")
 	}
+
 	if err := c.SaveFile(fileHeader, filePath); err != nil {
 		return "", "", err
 	}
