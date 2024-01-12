@@ -220,17 +220,19 @@ func AutoComplete(db *gorm.DB, value string) ([]model.Book, error) {
 	return books, nil
 }
 
-func ListPopularBooks(db *gorm.DB) ([]viewmodel.BookLoanCount, error) {
+func ListPopularBooks(db *gorm.DB) ([]viewmodel.PopularBookViewModel, error) {
 	// Calculate the date 3 months ago from now
 	threeMonthsAgo := time.Now().AddDate(0, -3, 0)
 
-	var bookLoanCounts []viewmodel.BookLoanCount
+	var bookLoanCounts []viewmodel.PopularBookViewModel
 
 	result := db.Model(&model.Book{}).
-		Select("books.id, books.title, COUNT(loans.id) AS loan_count").
+		Select("books.id, books.title, COUNT(loans.id) AS loan_count, file_uploads.file_name AS thumbnail_filename").
 		Joins("INNER JOIN book_copies ON books.id = book_copies.book_id").
 		Joins("INNER JOIN loans ON book_copies.id = loans.book_copy_id AND loans.created_at >= ?", threeMonthsAgo).
-		Group("books.id, books.title").
+		Joins("LEFT JOIN file_upload_references ON books.id = file_upload_references.attachable_id AND file_upload_references.attachable_type = 'book_thumbnail'").
+		Joins("LEFT JOIN file_uploads ON file_upload_references.file_upload_id = file_uploads.id").
+		Group("books.id, books.title, file_uploads.file_name").
 		Order("loan_count DESC").
 		Limit(10).
 		Find(&bookLoanCounts)
