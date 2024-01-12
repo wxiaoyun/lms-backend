@@ -33,7 +33,7 @@ setupDB: createDB migrateDB seedDB
 resetDB: dropDB setupDB
 
 runRedis:
-	docker run --hostname=2ea46ec4c044 --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env=REDISBLOOM_ARGS= --env=REDISEARCH_ARGS= --env=REDISJSON_ARGS= --env=REDISTIMESERIES_ARGS= --env=REDIS_ARGS= -p 6379:6379 -p 8001:8001 --restart=no --label='org.opencontainers.image.ref.name=ubuntu' --label='org.opencontainers.image.version=22.04' --runtime=runc -d redis/redis-stack:latest
+	 docker start redis-stack 
 
 count:
 	git ls-files '*.go' | grep -v '^docs/' | xargs wc -l

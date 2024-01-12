@@ -21,7 +21,7 @@ type Book struct {
 	Language        string               `gorm:"not null"`
 	BookCopies      []BookCopy           `gorm:"->;<-:create"`
 	Bookmarks       []Bookmark           `gorm:"->"`
-	Thumbnail       *FileUploadReference `gorm:"polymorphic:Attachable;polymorphicValue:book_thumbnail"`
+	Thumbnail       *FileUploadReference `gorm:"->;polymorphic:Attachable;polymorphicValue:book_thumbnail"`
 }
 
 const (

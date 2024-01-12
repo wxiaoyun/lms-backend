@@ -159,7 +159,7 @@ func List(db *gorm.DB) ([]model.Book, error) {
 	return books, nil
 }
 
-func ListWithCopies(db *gorm.DB) ([]model.Book, error) {
+func ListDetailed(db *gorm.DB) ([]model.Book, error) {
 	books, err := List(db)
 	if err != nil {
 		return nil, err
@@ -178,6 +178,22 @@ func ListWithCopies(db *gorm.DB) ([]model.Book, error) {
 		}
 
 		books[i].BookCopies = copies
+
+		var thumbnail *model.FileUploadReference
+
+		result = db.Model(&model.FileUploadReference{}).
+			Preload("FileUpload").
+			Where("attachable_id = ?", b.ID).
+			Where("attachable_type = ?", model.BookThumbnailFileUploadReferenceAttachableType).
+			First(&thumbnail)
+		if result.Error != nil {
+			if orm.IsRecordNotFound(result.Error) {
+				continue
+			}
+			return nil, result.Error
+		}
+
+		books[i].Thumbnail = thumbnail
 	}
 
 	return books, nil

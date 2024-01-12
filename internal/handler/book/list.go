@@ -35,7 +35,7 @@ func HandleList(c *fiber.Ctx) error {
 
 	dbSorted := cq.Sort(dbFiltered, book.Sorters())
 	dbPaginated := cq.Paginate(dbSorted)
-	books, err := book.ListWithCopies(dbPaginated)
+	books, err := book.ListDetailed(dbPaginated)
 	if err != nil {
 		return err
 	}

@@ -16,6 +16,7 @@ func BookRoutes(r fiber.Router) {
 
 	Route(r, "/:book_id", func(r fiber.Router) {
 		r.Patch("/", bookhandler.HandleUpdate)
+		r.Patch("/thumbnail", bookhandler.HandleUpdateThumbnail)
 		r.Delete("/", bookhandler.HandleDelete)
 
 		Route(r, "/loan", BookLoanRoutes)

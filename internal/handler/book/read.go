@@ -32,7 +32,7 @@ func HandleRead(c *fiber.Ctx) error {
 
 	db := database.GetDB()
 
-	bookModel, err := book.ReadWithCopies(db, bookID)
+	bookModel, err := book.ReadDetailed(db, bookID)
 	if err != nil {
 		return err
 	}
