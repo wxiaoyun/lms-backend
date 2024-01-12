@@ -3,7 +3,6 @@ package book
 import (
 	"lms-backend/internal/dataaccess/fileupload"
 	"lms-backend/internal/model"
-	"lms-backend/util"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +16,6 @@ func CreateOrUpdateThumbnail(db *gorm.DB, bookID int64, thumbnail *model.FileUpl
 
 	// delete old thumbnail if exists
 	if book.Thumbnail != nil {
-		util.Debug("Deleting old thumbnail")
 		_, err := fileupload.Delete(db, int64(book.Thumbnail.ID))
 		if err != nil {
 			return nil, err
@@ -25,7 +23,6 @@ func CreateOrUpdateThumbnail(db *gorm.DB, bookID int64, thumbnail *model.FileUpl
 	}
 
 	// create new thumbnail
-	util.Debug("Creating new thumbnail")
 	thumbnailRef := &model.FileUploadReference{
 		FileUpload:     thumbnail,
 		AttachableID:   book.ID,

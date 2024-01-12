@@ -1,6 +1,7 @@
 package fileupload
 
 import (
+	"lms-backend/internal/filestorage"
 	"lms-backend/internal/model"
 	"lms-backend/internal/orm"
 
@@ -48,6 +49,10 @@ func Delete(db *gorm.DB, fileUploadID int64) (*model.FileUpload, error) {
 	}
 
 	if err := fileUpload.Delete(db); err != nil {
+		return nil, err
+	}
+
+	if err := filestorage.DeleteFileFromDisk(fileUpload.FilePath); err != nil {
 		return nil, err
 	}
 
