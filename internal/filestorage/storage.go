@@ -47,6 +47,11 @@ func SaveFileToDisk(c *fiber.Ctx, fileHeader *multipart.FileHeader, subdirectory
 	return filename, filePath, nil
 }
 
+// filePath should not be a user input.
 func DeleteFileFromDisk(filePath string) error {
+	if err := fileStorage.ValidateFilePath(filePath); err != nil {
+		return err
+	}
+
 	return os.Remove(filePath)
 }
