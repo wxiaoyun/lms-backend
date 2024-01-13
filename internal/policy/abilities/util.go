@@ -40,7 +40,6 @@ func GetAllAbilities() []model.Ability {
 		CanReadReservation,
 		CanCreateReservation,
 		CanCancelReservation,
-		CanCheckoutReservation,
 		CanDeleteReservation,
 
 		CanReadBookMark,

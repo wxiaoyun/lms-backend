@@ -55,17 +55,6 @@ func CreatePolicy() policy.Policy {
 	)
 }
 
-func CheckoutPolicy(resID int64) policy.Policy {
-	return commonpolicy.Any(
-		commonpolicy.HasAnyAbility(
-			abilities.CanManageAll.Name,
-			abilities.CanManageBookRecords.Name,
-			abilities.CanCheckoutReservation.Name,
-		),
-		AllowIfReservationBelongsToUser(resID),
-	)
-}
-
 func CancelPolicy(resID int64) policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
