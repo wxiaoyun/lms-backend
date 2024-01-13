@@ -9,5 +9,6 @@ import (
 func BookcopyRoutes(r fiber.Router) {
 	Route(r, "/:bookcopy_id", func(r fiber.Router) {
 		r.Delete("/", bookcopyhandler.HandleDelete)
+		r.Get("/qrcode", bookcopyhandler.HandleGenerateQRCode)
 	})
 }
