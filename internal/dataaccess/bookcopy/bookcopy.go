@@ -125,14 +125,7 @@ func LoanCopy(db *gorm.DB, userID, id int64) (*model.Loan, error) {
 		return nil, err
 	}
 
-	if b.Status == model.BookStatusOnLoan {
-		return nil, externalerrors.BadRequest("Book is already on loan")
-	}
-
-	if b.Status == model.BookStatusOnReserve {
-		return nil, externalerrors.BadRequest("Book is currently on reserve")
-	}
-
+	// Check if user has exceeded max loan
 	hasExceededMaxLoan, err := user.HasExceededMaxLoan(db, userID)
 	if err != nil {
 		return nil, err
@@ -141,6 +134,7 @@ func LoanCopy(db *gorm.DB, userID, id int64) (*model.Loan, error) {
 		return nil, externalerrors.BadRequest("You have reached the maximum number of loans")
 	}
 
+	// Check if user has loaned or reserved this book
 	loanCount, err := book.CountNumberOfCopiesLoanedByUser(db, userID, int64(b.BookID))
 	if err != nil {
 		return nil, err
@@ -149,12 +143,33 @@ func LoanCopy(db *gorm.DB, userID, id int64) (*model.Loan, error) {
 		return nil, externalerrors.BadRequest("You have already loaned a copy of this book")
 	}
 
-	resCount, err := book.CountNumberOfCopiesReservedByUser(db, userID, int64(b.BookID))
-	if err != nil {
-		return nil, err
+	// Check if book is on loan
+	if b.Status == model.BookStatusOnLoan {
+		return nil, externalerrors.BadRequest("Book is already on loan")
 	}
-	if resCount > 0 {
-		return nil, externalerrors.BadRequest("You have already reserved a copy of this book")
+
+	// Check if book is on reserve
+	if b.Status == model.BookStatusOnReserve {
+		// check if the book is reserved by the same user
+		var r model.Reservation
+		result := db.Model(&model.Reservation{}).
+			Where("user_id = ? AND book_copy_id = ? AND status = ?", userID, id, model.ReservationStatusPending).
+			First(&r)
+		if err := result.Error; err != nil {
+			if orm.IsRecordNotFound(err) {
+				return nil, externalerrors.BadRequest("Book is currently on reserve by another user")
+			}
+			return nil, err
+		}
+
+		// This book is reserved by the same user, so we can loan it
+		// Fulfill the reservation
+		r.Status = model.ReservationStatusFulfilled
+		if err := r.Update(db); err != nil {
+			return nil, err
+		}
+
+		// Proceed to loan
 	}
 
 	ln, err := loan.Loan(db, userID, id)
@@ -270,49 +285,6 @@ func ReserveCopy(db *gorm.DB, userID, id int64) (*model.Reservation, error) {
 
 	// Update book status
 	b.Status = model.BookStatusOnReserve
-	if err := b.Update(db); err != nil {
-		return nil, err
-	}
-
-	return res, nil
-}
-
-func CheckOutCopy(db *gorm.DB, userID, resID int64) (*model.Reservation, error) {
-	res, err := reservation.Read(db, resID)
-	if err != nil {
-		return nil, err
-	}
-
-	b, err := Read(db, int64(res.BookCopyID))
-	if err != nil {
-		return nil, err
-	}
-
-	if b.Status != model.BookStatusOnReserve {
-		return nil, externalerrors.BadRequest("Book is not on reserve")
-	}
-
-	// Fulfill the reservation
-	res, err = reservation.FullfilReservation(db, resID)
-	if err != nil {
-		return nil, err
-	}
-
-	hasExceededMaxLoan, err := user.HasExceededMaxLoan(db, userID)
-	if err != nil {
-		return nil, err
-	}
-	if hasExceededMaxLoan {
-		return nil, externalerrors.BadRequest("You have reached the maximum number of loans")
-	}
-
-	_, err = loan.Loan(db, userID, int64(b.ID))
-	if err != nil {
-		return nil, err
-	}
-
-	// Update book status
-	b.Status = model.BookStatusOnLoan
 	if err := b.Update(db); err != nil {
 		return nil, err
 	}
