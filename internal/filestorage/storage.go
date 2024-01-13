@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-var fileStorage = storage.Storage{
+var Storage = storage.Storage{
 	BaseDirectoryElems: []string{config.RuntimeWorkingDirectory, "file_storage"},
 }
 
@@ -29,7 +29,7 @@ func SaveFileToDisk(c *fiber.Ctx, fileHeader *multipart.FileHeader, subdirectory
 	fileUUID := utils.UUIDv4()
 	filename := fileUUID + filepath.Ext(fileHeader.Filename)
 
-	filePath, err := fileStorage.ConstructFilePath(subdirectory, filename)
+	filePath, err := Storage.ConstructFilePath(subdirectory, filename)
 	if err != nil {
 		return "", "", err
 	}
@@ -49,9 +49,28 @@ func SaveFileToDisk(c *fiber.Ctx, fileHeader *multipart.FileHeader, subdirectory
 
 // filePath should not be a user input.
 func DeleteFileFromDisk(filePath string) error {
-	if err := fileStorage.ValidateFilePath(filePath); err != nil {
+	if err := Storage.ValidateFilePath(filePath); err != nil {
 		return err
 	}
 
 	return os.Remove(filePath)
+}
+
+func FileExists(filename, subdirectory string) bool {
+	filePath, err := Storage.ConstructFilePath(subdirectory, filename)
+	if err != nil {
+		return false
+	}
+
+	// Create directory
+	dir := filepath.Dir(filePath)
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		return false
+	}
+
+	info, err := os.Stat(filePath)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
