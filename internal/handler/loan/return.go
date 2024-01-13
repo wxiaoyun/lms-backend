@@ -28,7 +28,7 @@ func HandleReturn(c *fiber.Ctx) error {
 		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid loan id.", param))
 	}
 
-	err = policy.Authorize(c, returnBookAction, loanpolicy.ReturnPolicy(loanID))
+	err = policy.Authorize(c, returnBookAction, loanpolicy.ReturnPolicy())
 	if err != nil {
 		return err
 	}

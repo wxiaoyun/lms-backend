@@ -56,14 +56,13 @@ func CreatePolicy() policy.Policy {
 	)
 }
 
-func ReturnPolicy(loanID int64) policy.Policy {
+func ReturnPolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(
 			abilities.CanManageAll.Name,
 			abilities.CanManageBookRecords.Name,
 			abilities.CanReturnBook.Name,
 		),
-		AllowIfLoanBelongsToUser(loanID),
 	)
 }
 
