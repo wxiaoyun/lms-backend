@@ -25,4 +25,5 @@ func BookLoanRoutes(r fiber.Router) {
 
 func BookReservationRoutes(r fiber.Router) {
 	r.Post("/", reservationhandler.HandleReserve)
+	r.Patch("/cancel", reservationhandler.HandleCancelByBookcopy)
 }
