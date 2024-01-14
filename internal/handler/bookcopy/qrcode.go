@@ -6,7 +6,7 @@ import (
 	"lms-backend/internal/dataaccess/bookcopy"
 	"lms-backend/internal/database"
 	"lms-backend/internal/filestorage"
-	"lms-backend/internal/view/bookcopyview"
+	"lms-backend/internal/view/sharedview"
 	"lms-backend/pkg/error/externalerrors"
 	"lms-backend/pkg/error/internalerror"
 	"net/http"
@@ -34,13 +34,13 @@ func HandleGenerateQRCode(c *fiber.Ctx) error {
 	exists := filestorage.FileExists(fmt.Sprintf("%d.jpeg", bookcopyID), QRCodeSubDirectory)
 	if !exists {
 		db := database.DB
-		bookcopyModel, err := bookcopy.ReadWithBook(db, bookcopyID)
+		bookcopyModel, err := bookcopy.Read(db, bookcopyID)
 		if err != nil {
 			return err
 		}
 
 		bookcopyModel.Status = "-" // The status is not needed for the QR code
-		rawJSON, err := json.Marshal(bookcopyview.ToDetailedView(bookcopyModel))
+		rawJSON, err := json.Marshal(sharedview.ToBookCopyView(bookcopyModel))
 		if err != nil {
 			return internalerror.InternalServerError("Error marshaling book copy into JSON")
 		}

@@ -52,11 +52,23 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 				abilities.CanUpdateBook.Name,
 				abilities.CanDeleteBook.Name,
 
-				abilities.CanManageBookRecords.Name,
+				abilities.CanLoanBook.Name,
+				abilities.CanReturnBook.Name,
+				abilities.CanRenewBook.Name,
+
+				abilities.CanReadReservation.Name,
+				abilities.CanCreateReservation.Name,
+				abilities.CanCancelReservation.Name,
+
+				abilities.CanReadFine.Name,
+				abilities.CanSettleFine.Name,
+				abilities.CanDeleteFine.Name,
 
 				abilities.CanReadBookMark.Name,
 				abilities.CanCreateBookMark.Name,
 				abilities.CanDeleteBookMark.Name,
+
+				abilities.CanManageBookRecords.Name,
 			},
 
 			roles.Staff.Name: {
@@ -65,22 +77,27 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 
 				abilities.CanReadBook.Name,
 
-				abilities.CanManageBookRecords.Name,
+				abilities.CanLoanBook.Name,
+				abilities.CanReturnBook.Name,
+				abilities.CanRenewBook.Name,
+
+				abilities.CanReadReservation.Name,
+				abilities.CanCreateReservation.Name,
+				abilities.CanCancelReservation.Name,
+
+				abilities.CanReadFine.Name,
+				abilities.CanSettleFine.Name,
+				abilities.CanDeleteFine.Name,
 
 				abilities.CanReadBookMark.Name,
 				abilities.CanCreateBookMark.Name,
+				abilities.CanDeleteBookMark.Name,
+
+				abilities.CanManageBookRecords.Name,
 			},
 
 			roles.Basic.Name: {
 				abilities.CanReadBook.Name,
-
-				abilities.CanReadLoan.Name,
-				abilities.CanLoanBook.Name,
-
-				abilities.CanReadReservation.Name,
-				abilities.CanCreateReservation.Name,
-
-				abilities.CanReadBookMark.Name,
 				abilities.CanCreateBookMark.Name,
 			},
 		}
