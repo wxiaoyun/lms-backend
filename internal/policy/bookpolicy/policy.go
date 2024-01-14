@@ -35,9 +35,3 @@ func DeletePolicy() policy.Policy {
 		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanDeleteBook.Name),
 	)
 }
-
-func ManageBookRecordPolicy() policy.Policy {
-	return commonpolicy.Any(
-		commonpolicy.HasAnyAbility(abilities.CanManageAll.Name, abilities.CanManageBookRecords.Name),
-	)
-}

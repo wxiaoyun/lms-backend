@@ -37,15 +37,12 @@ func DeletePolicy() policy.Policy {
 	)
 }
 
+// loan for self
 func LoanPolicy() policy.Policy {
-	return commonpolicy.Any(
-		commonpolicy.HasAnyAbility(
-			abilities.CanManageAll.Name,
-			abilities.CanLoanBook.Name,
-		),
-	)
+	return commonpolicy.AllowAll()
 }
 
+// loan for others
 func CreatePolicy() policy.Policy {
 	return commonpolicy.Any(
 		commonpolicy.HasAnyAbility(

@@ -17,7 +17,7 @@ const (
 )
 
 func HandleList(c *fiber.Ctx) error {
-	err := policy.Authorize(c, listBookReservationAction, reservationpolicy.ReadBookPolicy())
+	err := policy.Authorize(c, listBookReservationAction, reservationpolicy.ReadPolicy())
 	if err != nil {
 		return err
 	}
