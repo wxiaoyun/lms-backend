@@ -63,3 +63,51 @@ func HandleReturn(c *fiber.Ctx) error {
 			))),
 	})
 }
+
+func HandleReturnByBookcopy(c *fiber.Ctx) error {
+	param := c.Params("bookcopy_id")
+	bookcopyID, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		return externalerrors.BadRequest(fmt.Sprintf("%s is not a valid book copy id.", param))
+	}
+
+	err = policy.Authorize(c, returnBookAction, loanpolicy.ReturnPolicy())
+	if err != nil {
+		return err
+	}
+
+	userID, err := session.GetLoginSession(c)
+	if err != nil {
+		return err
+	}
+
+	db := database.GetDB()
+
+	username, err := user.GetUserName(db, userID)
+	if err != nil {
+		return err
+	}
+
+	title, err := bookcopy.GetBookTitle(db, bookcopyID)
+	if err != nil {
+		return err
+	}
+
+	tx, rollBackOrCommit := audit.Begin(
+		c, fmt.Sprintf("%s returning \"%s\"", username, title),
+	)
+	defer func() { rollBackOrCommit(err) }()
+
+	ln, err := bookcopy.ReturnByBookCopyID(tx, bookcopyID)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(api.Response{
+		Data: loanview.ToDetailedView(ln),
+		Messages: api.Messages(
+			api.SuccessMessage(fmt.Sprintf(
+				"\"%s\" has been returned.", title,
+			))),
+	})
+}

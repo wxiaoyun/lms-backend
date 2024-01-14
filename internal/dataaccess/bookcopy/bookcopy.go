@@ -215,6 +215,44 @@ func ReturnCopy(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	return ln, nil
 }
 
+func ReturnByBookCopyID(db *gorm.DB, bookCopyID int64) (*model.Loan, error) {
+	var ln model.Loan
+
+	result := db.Model(&model.Loan{}).
+		Where("book_copy_id = ?", bookCopyID).
+		Where("status = ?", model.LoanStatusBorrowed).
+		First(&ln)
+
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, externalerrors.BadRequest("Book is not on loan")
+		}
+		return nil, result.Error
+	}
+
+	b, err := Read(db, int64(ln.BookCopyID))
+	if err != nil {
+		return nil, err
+	}
+
+	if b.Status != model.BookStatusOnLoan {
+		return nil, externalerrors.BadRequest("Book is not on loan")
+	}
+
+	returnedLn, err := loan.ReturnLoan(db, int64(ln.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	// Update book status
+	b.Status = model.BookStatusAvailable
+	if err := b.Update(db); err != nil {
+		return nil, err
+	}
+
+	return returnedLn, nil
+}
+
 func RenewCopy(db *gorm.DB, loanID int64) (*model.Loan, error) {
 	ln, err := loan.Read(db, loanID)
 	if err != nil {
