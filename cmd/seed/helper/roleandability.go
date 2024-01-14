@@ -67,6 +67,8 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 				abilities.CanReadBookMark.Name,
 				abilities.CanCreateBookMark.Name,
 				abilities.CanDeleteBookMark.Name,
+
+				abilities.CanManageBookRecords.Name,
 			},
 
 			roles.Staff.Name: {
@@ -90,6 +92,8 @@ func LinkRoleAndAbility(db *gorm.DB) error {
 				abilities.CanReadBookMark.Name,
 				abilities.CanCreateBookMark.Name,
 				abilities.CanDeleteBookMark.Name,
+
+				abilities.CanManageBookRecords.Name,
 			},
 
 			roles.Basic.Name: {
