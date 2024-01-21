@@ -3,9 +3,13 @@
 vendor/
 vendor
 
+/tmp
+/tmp/**/*  
+
+/.env
 /.env.development
 /.env.production
 
 /file_storage/**/*
 
-.DS_Store
+**.DS_Store

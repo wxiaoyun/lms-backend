@@ -1,0 +1,6 @@
+# Dependencies
+/vendor/
+vendor/
+vendor
+
+**.DS_Store

@@ -45,27 +45,27 @@ func GetConfig() (*Config, error) {
 		appName = "LMS"
 	}
 
-	pgHost := os.Getenv("PG_HOST")
+	pgHost := os.Getenv("POSTGRES_HOST")
 	if pgHost == "" {
 		pgHost = "localhost"
 	}
 
-	pgPort := os.Getenv("PG_PORT")
+	pgPort := os.Getenv("POSTGRES_PORT")
 	if pgPort == "" {
 		pgPort = "5432"
 	}
 
-	pgUsername := os.Getenv("PG_USERNAME")
+	pgUsername := os.Getenv("POSTGRES_USER")
 	if pgUsername == "" {
 		pgUsername = "postgres"
 	}
 
-	pgPassword := os.Getenv("PG_PASSWORD")
+	pgPassword := os.Getenv("POSTGRES_PASSWORD")
 	if pgPassword == "" {
 		pgPassword = "1234"
 	}
 
-	pgDatabase := os.Getenv("PG_DATABASE")
+	pgDatabase := os.Getenv("POSTGRES_DB")
 	if pgDatabase == "" {
 		pgDatabase = "lms-database"
 	}
