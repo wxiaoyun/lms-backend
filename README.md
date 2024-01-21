@@ -9,6 +9,7 @@ Welcome to the backend of our Library Management System (LMS). Designed for effi
 - **Advanced Admin Capabilities**: Provides administrative tools for efficient and effective library management.
 - **Role-Based Access Control (RBAC)**: Implements fine-grained access control for secure and efficient management of library resources.
 - **Session-Based Authentication**: Ensures secure user authentication and management.
+- **Dockerized Deployment**: Offers a convenient way to deploy the backend with Docker.
 - **Scalable Data Storage with Postgres**: Utilizes PostgreSQL for robust and scalable data storage.
 - **Redis for Performance**: Leverages Redis for high-speed caching and session storage, ensuring a responsive and efficient system.
 
@@ -22,6 +23,7 @@ The LMS backend is built using a range of powerful technologies:
 - **Databases**:
   - [**Postgres**](https://www.postgresql.org/): A versatile and reliable relational database system.
   - [**Redis**](https://redis.io/): A fast key-value store, excellent for caching and session storage.
+- **Deployment**: [Docker](https://www.docker.com/) - A containerization platform for easy deployment.
 
 ## Accessing a Deployed Version
 
@@ -43,29 +45,45 @@ Download and install Go from [here](https://go.dev/doc/install).
 - Copy `.env.example` to `.env.development`.
 - Modify the variables in `.env.development` to suit your environment.
 
-### 3. Setup Backend
+### 3. Running the Server
 
-To set up the main Postgres database, run:
+Start the server with:
 
 ```bash
-make setupDB
+make dockerup
 ```
 
-### 4. Additional Development Setup
+### 4. Setting up Database
+
+Run the docker-compose file to start the database:
+
+```bash
+# Keep the container running in a separate terminal
+make dockerup
+```
+
+Run the database migrations:
+
+```bash
+# Execute a Shell Inside the Container
+make dockerterminal
+```
+
+- Run the following commands inside the container:
+- Create the database: `go run cmd/createdb/main.go`
+- Migrate the database: `go run cmd/migration/main.go -dir=up`
+- Rollback the database (specify the number of steps to roll back): `go run cmd/migration/main.go -dir=down -step= #$(step)`
+- Seed the database: `go run cmd/seed/main.go`
+- Drop the database (if necessary): `go run cmd/dropdb/main.go`
+- Exit the container: `exit`
+
+### 5. Additional Development Setup
 
 Install necessary Go packages and initialize Git hooks:
 
 ```bash
 go get -u github.com/swellaby/captain-githook
 captain-githook init
-```
-
-### 5. Running the Server
-
-Start the server with:
-
-```bash
-make run
 ```
 
 ---

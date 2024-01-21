@@ -34,3 +34,9 @@ dockerbuild:
 
 dockerup:
 	docker compose --env-file .env.development up
+
+dockerdown:
+	docker compose --env-file .env.development down
+
+dockerterminal:
+	docker exec -it lms-backend-server-1 sh
