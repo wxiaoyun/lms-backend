@@ -82,7 +82,34 @@ func DropDB(cf *config.Config) error {
 		//nolint:revive // ignore lint
 		log.Fatalf("Failed to drop database '%s': %v\n", dbName, err)
 	}
-	log.Printf("Successfully drop database '%s'\n", dbName)
+
+	return nil
+}
+
+func DropAllTables(cf *config.Config) error {
+	err := SetupPostgres(cf)
+	if err != nil {
+		return err
+	}
+
+	db := GetDB()
+
+	// Get list of all tables
+	tables, err := db.Migrator().GetTables()
+	if err != nil {
+		return err
+	}
+
+	db.Exec("SET FOREIGN_KEY_CHECKS = 0;")
+
+	// Drop each table
+	for _, table := range tables {
+		if err := db.Migrator().DropTable(table); err != nil {
+			return err // Return error if any
+		}
+	}
+
+	db.Exec("SET FOREIGN_KEY_CHECKS = 1;")
 
 	return nil
 }

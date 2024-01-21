@@ -1,7 +1,7 @@
 package main
 
 import (
-	shelper "lms-backend/cmd/seed/helper"
+	shelper "lms-backend/cmd/seeddb/helper"
 	"lms-backend/internal/app"
 	"lms-backend/internal/database"
 	logger "lms-backend/internal/log"

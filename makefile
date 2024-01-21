@@ -7,20 +7,23 @@ clean:
 test:
 	go test -v ./...
 
-createDB:
+createdb:
 	go run cmd/createdb/main.go
 
-dropDB:
+dropdb:
 	go run cmd/dropdb/main.go
 
-migrateDB:
-	go run cmd/migration/main.go -dir=up
+migratedb:
+	go run cmd/migratedb/main.go -dir=up
 
-rollbackDB:
-	go run cmd/migration/main.go -dir=down -step=$(step) 
+rollbackdb:
+	go run cmd/migratedb/main.go -dir=down -step=$(step) 
 
-seedDB:
-	go run cmd/seed/main.go
+seeddb:
+	go run cmd/seeddb/main.go
+
+flushdb:
+	go run cmd/flushdb/main.go
 
 setupDB: createDB migrateDB seedDB
 
@@ -38,5 +41,5 @@ dockerup:
 dockerdown:
 	docker compose --env-file .env.development down
 
-dockerterminal:
+dockershell:
 	docker exec -it lms-backend-server-1 sh

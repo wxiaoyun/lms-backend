@@ -66,14 +66,15 @@ Run the database migrations:
 
 ```bash
 # Execute a Shell Inside the Container
-make dockerterminal
+make dockershell
 ```
 
 - Run the following commands inside the container:
 - Create the database: `go run cmd/createdb/main.go`
-- Migrate the database: `go run cmd/migration/main.go -dir=up`
-- Rollback the database (specify the number of steps to roll back): `go run cmd/migration/main.go -dir=down -step= #$(step)`
-- Seed the database: `go run cmd/seed/main.go`
+- Migrate the database: `go run cmd/migratedb/main.go -dir=up`
+- Rollback the database (specify the number of steps to roll back): `go run cmd/migratedb/main.go -dir=down -step= #$(step)`
+- Seed the database: `go run cmd/seeddb/main.go`
+- Drop all tables (if necessary): `go run cmd/flushdb/main.go`
 - Drop the database (if necessary): `go run cmd/dropdb/main.go`
 - Exit the container: `exit`
 

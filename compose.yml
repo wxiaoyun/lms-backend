@@ -23,6 +23,8 @@ services:
   cache:
     image: redis:7.2.4-alpine
     env_file: .env.development
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - lms-cache-storage:/data
 

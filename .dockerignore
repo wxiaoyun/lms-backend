@@ -10,9 +10,7 @@ tmp/**/*
 .github/
 .golangci.yml
 captaingithook.json
-LICENSE
 makefile
-README.md
 
 # MacOS files
 **.DS_Store
