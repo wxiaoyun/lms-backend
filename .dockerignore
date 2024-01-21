@@ -3,4 +3,16 @@
 vendor/
 vendor
 
+tmp/
+tmp/**/*
+
+# Dev related files
+.github/
+.golangci.yml
+captaingithook.json
+LICENSE
+makefile
+README.md
+
+# MacOS files
 **.DS_Store
