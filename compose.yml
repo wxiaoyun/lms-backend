@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  server:
+    depends_on:
+      - db
+      - cache
+    env_file: .env.development
+    build: .
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:16.1-alpine
+    env_file: .env.development
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - lms-db-storage:/var/lib/postgresql/data
+
+  cache:
+    image: redis:7.2.4-alpine
+    env_file: .env.development
+    volumes:
+      - lms-cache-storage:/data
+
+volumes:
+  lms-db-storage:
+  lms-cache-storage:

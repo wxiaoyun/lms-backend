@@ -127,6 +127,24 @@ func ReadByBookID(db *gorm.DB, bookID int64) ([]model.Reservation, error) {
 
 	return reservations, nil
 }
+
+func ReadReservedByBookCopyID(db *gorm.DB, bookCopyID int64) (*model.Reservation, error) {
+	var res model.Reservation
+
+	result := db.Model(&model.Reservation{}).
+		Where("book_copy_id = ?", bookCopyID).
+		Where("status = ?", model.ReservationStatusPending).
+		First(&res)
+
+	if err := result.Error; err != nil {
+		if orm.IsRecordNotFound(err) {
+			return nil, externalerrors.BadRequest("Book is not reserved")
+		}
+		return nil, result.Error
+	}
+	return &res, nil
+}
+
 func ListWithBookUser(db *gorm.DB) ([]model.Reservation, error) {
 	var res []model.Reservation
 

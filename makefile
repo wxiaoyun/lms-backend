@@ -4,12 +4,6 @@ clean:
 	go mod tidy
 	go mod vendor
 
-docs:
-	swag init
-	
-run:
-	go run main.go
-
 test:
 	go test -v ./...
 
@@ -32,8 +26,11 @@ setupDB: createDB migrateDB seedDB
 
 resetDB: dropDB setupDB
 
-runRedis:
-	 docker start redis-stack 
-
 count:
 	git ls-files '*.go' | grep -v '^docs/' | xargs wc -l
+
+dockerbuild:
+	docker compose --env-file .env.development build
+
+dockerup:
+	docker compose --env-file .env.development up
