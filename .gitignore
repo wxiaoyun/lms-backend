@@ -12,4 +12,7 @@ vendor
 
 /file_storage/**/*
 
+
+.vscode/
+
 **.DS_Store
