@@ -12,8 +12,6 @@ const (
 	MaxAge = time.Hour * 1 // 1 hour
 )
 
-// fiber csrf middleware cannot be used as it enforces referer and host to be the same.
-// since we are hosting backend and frontend on different domains, we need to use custom csrf middleware.
 func SetupCSRF(app *fiber.App) {
 	app.Use(csrf.New(csrf.Config{
 		KeyLookup:      "header:" + csrf.HeaderName,

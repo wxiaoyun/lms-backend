@@ -22,7 +22,7 @@ const (
 )
 
 const (
-	ImageDownloadURL = "%s/v1/file/image/%s"
+	ImageDownloadURL = "%s/file/image/%s"
 )
 
 func (f *FileUploadReference) Create(db *gorm.DB) error {
