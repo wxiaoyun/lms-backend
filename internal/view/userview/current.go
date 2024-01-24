@@ -21,9 +21,10 @@ func ToGuestView() *CurrentUserView {
 func ToCurrentUserView(
 	user *model.User,
 	abilities []model.Ability,
+	csrfToken string,
 ) *CurrentUserView {
 	return &CurrentUserView{
 		IsLoggedIn: true,
-		LoginView:  *ToLoginView(user, abilities),
+		LoginView:  *ToLoginView(user, abilities, csrfToken),
 	}
 }

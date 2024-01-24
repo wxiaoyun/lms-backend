@@ -5,6 +5,7 @@ import (
 	"lms-backend/internal/api"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
+	"lms-backend/internal/middleware"
 	"lms-backend/internal/params/userparams"
 	"lms-backend/internal/session"
 	"lms-backend/internal/view/userview"
@@ -13,12 +14,6 @@ import (
 )
 
 func HandleSignIn(c *fiber.Ctx) error {
-	// if handler, ok := c.Locals(csrf.ConfigDefault.HandlerContextKey).(*csrf.CSRFHandler); ok {
-	// 	if err := handler.DeleteToken(c); err != nil {
-	// 		return err
-	// 	}
-	// }
-
 	var params userparams.SignInParams
 	if err := c.BodyParser(&params); err != nil {
 		return err
@@ -56,8 +51,13 @@ func HandleSignIn(c *fiber.Ctx) error {
 		return err
 	}
 
+	csrfToken, ok := c.Locals(middleware.CSRFContextKey).(string)
+	if !ok {
+		csrfToken = ""
+	}
+
 	return c.Status(fiber.StatusOK).JSON(api.Response{
-		Data: userview.ToLoginView(usr, abilities),
+		Data: userview.ToLoginView(usr, abilities, csrfToken),
 		Messages: api.Messages(
 			api.SilentMessage(fmt.Sprintf(
 				"%s is logged in successfully", usr.Username,

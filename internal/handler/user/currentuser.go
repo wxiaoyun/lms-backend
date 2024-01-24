@@ -5,6 +5,7 @@ import (
 	"lms-backend/internal/api"
 	"lms-backend/internal/dataaccess/user"
 	"lms-backend/internal/database"
+	"lms-backend/internal/middleware"
 	"lms-backend/internal/session"
 	"lms-backend/internal/view/userview"
 
@@ -37,13 +38,18 @@ func HandleGetCurrentUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	abilites, err := user.GetAbilities(db, id)
+	abilities, err := user.GetAbilities(db, id)
 	if err != nil {
 		return err
 	}
 
+	csrfToken, ok := c.Locals(middleware.CSRFContextKey).(string)
+	if !ok {
+		csrfToken = ""
+	}
+
 	return c.JSON(api.Response{
-		Data: userview.ToCurrentUserView(usr, abilites),
+		Data: userview.ToCurrentUserView(usr, abilities, csrfToken),
 		Messages: api.Messages(
 			api.SuccessMessage(fmt.Sprintf("Welcome back, %s!", usr.Username)),
 		),
