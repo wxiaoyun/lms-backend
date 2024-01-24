@@ -8,12 +8,6 @@ import (
 )
 
 func SetupStaticFile(app *fiber.App) {
-	app.Static("/", "./frontend", fiber.Static{
-		Compress:  true,
-		ByteRange: true,
-		Browse:    false,
-		Index:     "index.html",
-	})
 	app.Static("/assets", "./frontend/assets", fiber.Static{
 		Compress:  true,
 		ByteRange: true,

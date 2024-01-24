@@ -18,7 +18,7 @@ func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 	middleware.SetupCSRF(app)
 	middleware.SetupRecover(app)
 	middleware.SetupLogger(app)
-	middleware.SetupRedirect(app)
+	middleware.SetupFrontend(app)
 	middleware.SetupStaticFile(app)
 
 	v1Routes := app.Group("/api/v1")
