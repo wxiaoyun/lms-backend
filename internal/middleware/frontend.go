@@ -23,4 +23,9 @@ func SetupFrontend(app *fiber.App) {
 		// For any other unprompted routes, redirect to index.html
 		return c.SendFile("./frontend/index.html")
 	})
+
+	// For the root path, respond with index.html
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendFile("./frontend/index.html")
+	})
 }
