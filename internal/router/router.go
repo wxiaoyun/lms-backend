@@ -15,11 +15,13 @@ import (
 func SetUpRoutes(app *fiber.App, cfg *config.Config) {
 	session.SetupStore()
 	middleware.SetupCors(app, cfg)
+	middleware.SetupCSRF(app)
 	middleware.SetupRecover(app)
 	middleware.SetupLogger(app)
+	middleware.SetupRedirect(app)
 	middleware.SetupStaticFile(app)
 
-	v1Routes := app.Group("/v1")
+	v1Routes := app.Group("/api/v1")
 
 	publicRoutes := v1Routes.Group("/")
 	Route(publicRoutes, "/", PublicRoutes)
