@@ -22,7 +22,7 @@ const (
 )
 
 const (
-	ImageDownloadURL = "%s/file/%s"
+	ImageDownloadURL = "%s/file/%s/%s"
 )
 
 func (f *FileUploadReference) Create(db *gorm.DB) error {
@@ -85,5 +85,5 @@ func (f *FileUploadReference) BeforeCreate(db *gorm.DB) error {
 
 // FileUpload needs to be preloaded
 func (f *FileUploadReference) GetImageDownloadURL() string {
-	return fmt.Sprintf(ImageDownloadURL, config.BackendURL, f.FileUpload.FileName)
+	return fmt.Sprintf(ImageDownloadURL, config.BackendURL, ThumbnailFolder, f.FileUpload.FileName)
 }

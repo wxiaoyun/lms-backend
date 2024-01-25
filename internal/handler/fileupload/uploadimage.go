@@ -48,7 +48,7 @@ func HandleUploadImage(c *fiber.Ctx) error {
 	}
 
 	tx, rollBackOrCommit := audit.Begin(
-		c, fmt.Sprintf("User %s uploading thumbnail %s.", username, fileName),
+		c, fmt.Sprintf("User %s uploading image %s.", username, fileName),
 	)
 	defer func() { rollBackOrCommit(err) }()
 

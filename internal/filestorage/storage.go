@@ -20,7 +20,7 @@ var Storage = storage.Storage{
 // It returns the filename of the saved file and the path to the file.
 //
 //nolint:revive
-func SaveFileToDisk(c *fiber.Ctx, fileHeader *multipart.FileHeader) (string, string, error) {
+func SaveFileToDisk(c *fiber.Ctx, fileHeader *multipart.FileHeader, subdirectory ...string) (string, string, error) {
 	err := ValidateFileUpload(fileHeader)
 	if err != nil {
 		return "", "", err
@@ -29,7 +29,7 @@ func SaveFileToDisk(c *fiber.Ctx, fileHeader *multipart.FileHeader) (string, str
 	fileUUID := utils.UUIDv4()
 	filename := fileUUID + filepath.Ext(fileHeader.Filename)
 
-	filePath, err := Storage.ConstructFilePath(filename)
+	filePath, err := Storage.ConstructFilePath(append(subdirectory, filename)...)
 	if err != nil {
 		return "", "", err
 	}
@@ -56,14 +56,8 @@ func DeleteFileFromDisk(filePath string) error {
 	return os.Remove(filePath)
 }
 
-func FileExists(filename string) bool {
-	filePath, err := Storage.ConstructFilePath(filename)
-	if err != nil {
-		return false
-	}
-
-	// Create directory
-	dir := filepath.Dir(filePath)
+func FileExists(filePath string) bool {
+	dir := filepath.Dir("file_storage/" + filePath)
 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
 		return false
 	}

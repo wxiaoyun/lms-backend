@@ -17,7 +17,7 @@ type PopularView struct {
 func ToPopularView(b *viewmodel.PopularBookViewModel) *PopularView {
 	thumbnailURL := ""
 	if b.ThumbnailFilename != "" {
-		thumbnailURL = fmt.Sprintf(model.ImageDownloadURL, config.BackendURL, b.ThumbnailFilename)
+		thumbnailURL = fmt.Sprintf(model.ImageDownloadURL, config.BackendURL, model.ImageFolder, b.ThumbnailFilename)
 	}
 	return &PopularView{
 		ID:           b.ID,

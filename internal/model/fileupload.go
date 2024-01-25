@@ -19,6 +19,12 @@ const (
 	FileUploadModelName = "file_upload"
 )
 
+const (
+	ThumbnailFolder = BookThumbnailFileUploadReferenceAttachableType
+	ImageFolder     = "image"
+	QRCodeFolder    = "qrcode"
+)
+
 func (f *FileUpload) Create(db *gorm.DB) error {
 	return db.Create(f).Error
 }

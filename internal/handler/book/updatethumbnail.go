@@ -45,7 +45,7 @@ func HandleUpdateThumbnail(c *fiber.Ctx) error {
 		return err
 	}
 
-	fileName, filePath, err := filestorage.SaveFileToDisk(c, fileHeader)
+	fileName, filePath, err := filestorage.SaveFileToDisk(c, fileHeader, model.ThumbnailFolder)
 	if err != nil {
 		return err
 	}
