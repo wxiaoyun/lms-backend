@@ -11,6 +11,7 @@ services:
       - "${PORT}:${PORT}"
     volumes:
       - .:/app
+      - lms-file-storage:/app/file_storage
 
   db:
     image: postgres:16.1-alpine
@@ -31,3 +32,4 @@ services:
 volumes:
   lms-db-storage:
   lms-cache-storage:
+  lms-file-storage:
