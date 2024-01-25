@@ -4,6 +4,7 @@
 package app
 
 import (
+	migratedb "lms-backend/cmd/migratedb/migrate"
 	"lms-backend/internal/api"
 	"lms-backend/internal/config"
 	"lms-backend/internal/cron"
@@ -16,6 +17,17 @@ import (
 // SetupAndRunApp sets up the app and runs it
 func SetupAndRunApp() error {
 	cfg, err := config.LoadEnvAndGetConfig()
+	if err != nil {
+		return err
+	}
+
+	db, err := database.ConnectToDB(cfg)
+	if err != nil {
+		return err
+	}
+
+	// migrate db on startup
+	_, err = migratedb.Migrate(db, "up", 0)
 	if err != nil {
 		return err
 	}

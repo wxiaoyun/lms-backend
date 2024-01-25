@@ -15,7 +15,7 @@ full_bin = "APP_ENV=dev APP_USER=air ./tmp/main"
 # Watch these filename extensions.
 include_ext = ["go", "tpl", "tmpl", "html", "css", "js", "jsx", "ts", "tsx"]
 # Ignore these filename extensions or directories.
-exclude_dir = ["assets", "tmp", "vendor", "file_storage", "app/file_storage"]
+exclude_dir = ["assets", "tmp", "vendor", "file_storage"]
 # Watch these directories if you specified.
 include_dir = []
 # Watch these files.
@@ -46,8 +46,6 @@ kill_delay = 500 # nanosecond
 rerun = false
 # Delay after each executions
 rerun_delay = 500
-# Add additional arguments when running binary (bin/full_bin). Will run './tmp/main hello world'.
-args_bin = ["hello", "world"]
 
 [log]
 # Show log time
