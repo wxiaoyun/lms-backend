@@ -11,7 +11,15 @@ WORKDIR /app
 COPY go.mod go.sum ./
 
 USER root
-RUN chown -R app:app .
+RUN chown -R app:app 
+# Create the file_storage directory
+RUN mkdir -p /app/file_storage
+
+# Change the ownership to 'app' user and 'app' group
+RUN chown -R app:app /app/file_storage
+
+# Set write permissions for user and group
+RUN chmod -R u+w,g+w /app/file_storage
 
 USER app
 
@@ -20,18 +28,5 @@ RUN go mod download
 RUN go install github.com/cosmtrek/air@latest
 
 COPY . .
-
-# Switch back to the root user to adjust permissions in the entrypoint script
-USER root
-
-# Copy the entrypoint script and give execute permission
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Switch back to the app user
-USER app
-
-# Set the entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["air", "-c", ".air.toml"]
