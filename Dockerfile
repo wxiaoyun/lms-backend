@@ -16,6 +16,9 @@ RUN chown -R app:app . && \
 
 USER app
 
+# Set umask for the app user
+RUN echo "umask 002" >> ~/.profile
+
 RUN go mod download
 RUN go install github.com/cosmtrek/air@latest
 
