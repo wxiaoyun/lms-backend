@@ -11,8 +11,9 @@ WORKDIR /app
 COPY go.mod go.sum ./
 
 USER root
-
-RUN chown -R app:app .
+RUN chown -R app:app . && \
+    mkdir -p /app/file_storage && \
+    chown -R app:app /app/file_storage
 
 USER app
 
