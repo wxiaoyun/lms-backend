@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	migratedb "lms-backend/cmd/migratedb/migrate"
-	"lms-backend/internal/app"
 	"lms-backend/internal/config"
 	"lms-backend/internal/database"
 	"log"
@@ -18,11 +17,6 @@ func main() {
 
 	if *dir != "up" && *dir != "down" {
 		log.Fatal("Direction must be up or down")
-	}
-
-	err := app.LoadEnvAndConnectToDB()
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	cfg, err := config.LoadEnvAndGetConfig()
