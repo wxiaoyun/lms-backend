@@ -20,8 +20,7 @@ import (
 )
 
 const (
-	UploadField       = "file"
-	ImageSubdirectory = "image"
+	UploadField = "file"
 )
 
 func HandleUpdateThumbnail(c *fiber.Ctx) error {
@@ -46,7 +45,7 @@ func HandleUpdateThumbnail(c *fiber.Ctx) error {
 		return err
 	}
 
-	fileName, filePath, err := filestorage.SaveFileToDisk(c, fileHeader, ImageSubdirectory)
+	fileName, filePath, err := filestorage.SaveFileToDisk(c, fileHeader)
 	if err != nil {
 		return err
 	}
