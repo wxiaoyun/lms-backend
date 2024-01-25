@@ -3,15 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	migratedb "lms-backend/cmd/migratedb/migrate"
 	"lms-backend/internal/app"
 	"lms-backend/internal/config"
 	"lms-backend/internal/database"
 	"log"
 	"math"
-	"path/filepath"
-
-	"github.com/ForAeons/ternary"
-	migrate "github.com/rubenv/sql-migrate"
 )
 
 func main() {
@@ -28,34 +25,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	absPath, err := filepath.Abs("./migrations/")
+	cfg, err := config.LoadEnvAndGetConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	cf, err := config.LoadEnvAndGetConfig()
+	db, err := database.ConnectToDB(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	db, err := database.ConnectToDB(cf)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	migrations := &migrate.FileMigrationSource{
-		Dir: absPath,
-	}
-
-	n, err := migrate.ExecMax(
-		db,
-		"postgres",
-		migrations,
-		ternary.If[migrate.MigrationDirection](*dir == "up").
-			Then(migrate.Up).
-			Else(migrate.Down),
-		*step,
-	)
+	n, err := migratedb.Migrate(db, *dir, *step)
 	if err != nil {
 		log.Fatal(err)
 	}
