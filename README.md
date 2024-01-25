@@ -78,7 +78,11 @@ make dockershell
 - Drop the database (if necessary): `go run cmd/dropdb/main.go`
 - Exit the container: `exit`
 
-### 5. Making Changes to Frontend
+### 5. Persisting File Storage
+
+- Create a docker volume for file storage and mount it at `/app/file_storage` in the container.
+
+### 6. Making Changes to Frontend
 
 The current is a single-page application (SPA) built using React. You can find the source code [here](https://github.com/ForAeons/lms-frontend-v2).
 
@@ -97,7 +101,7 @@ mv path_to_frontend/dist/* path_to_backend/frontend/
 
 Great! You are now ready to serve the updated frontend from the backend.
 
-### 6. Additional Development Setup
+### 7. Additional Development Setup
 
 Install necessary Go packages and initialize Git hooks:
 
