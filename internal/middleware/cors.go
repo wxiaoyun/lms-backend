@@ -21,24 +21,18 @@ var (
 func SetupCors(app *fiber.App, cfg *config.Config) {
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
-		AllowOriginsFunc: allowedOrigins(cfg.FrontendURL),
+		AllowOriginsFunc: allowedOrigins(cfg),
 		AllowHeaders:     strings.Join(AllowHeaders, ", "),
 	}))
 }
 
-// Allow anythin from https://*lms-cambodia-dev.netlify.app/
-// e.g. https://deploy-preview-21--lms-cambodia-dev.netlify.app/
-func allowedOrigins(s string) func(string) bool {
+func allowedOrigins(cfg *config.Config) func(string) bool {
 	return func(header string) bool {
-		if s == header {
+		if strings.HasSuffix(header, cfg.FrontendURL) {
 			return true
 		}
 
-		if strings.HasSuffix(header, "lms-cambodia-dev.netlify.app") {
-			return true
-		}
-
-		if strings.HasSuffix(header, "wxiaoyun.com") {
+		if cfg.Mode == "development" {
 			return true
 		}
 

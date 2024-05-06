@@ -19,6 +19,7 @@ var (
 )
 
 type Config struct {
+	Mode          string
 	AppName       string
 	PGHost        string
 	PGPort        string
@@ -40,6 +41,8 @@ type Config struct {
 //
 // Must be ran after loading env
 func GetConfig() (*Config, error) {
+	mode := os.Getenv("GO_ENV")
+
 	appName := os.Getenv("APP_NAME")
 	if appName == "" {
 		appName = "LMS"
@@ -124,6 +127,7 @@ func GetConfig() (*Config, error) {
 	}
 
 	return &Config{
+		Mode:          mode,
 		AppName:       appName,
 		PGHost:        pgHost,
 		PGPort:        pgPort,
